@@ -1,2 +1,2 @@
-# VPS-Manager.sh
-VPS-Manager written in bash
+# vps-manager.sh
+vps-manager written in bash
