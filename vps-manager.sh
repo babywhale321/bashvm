@@ -11,8 +11,9 @@ while true; do
     echo "2. Storage Pools"
     echo "3. Networks"
     echo "4. Snapshots"
-    echo "5. Host Information"
-    echo "6. Exit"
+    echo "5. VNC"
+    echo "6. Host Information"
+    echo "7. Exit"
 
     # Prompt user for input
     read -p "Enter your choice: " main_choice
@@ -45,8 +46,7 @@ while true; do
                             echo "5. Create a vm"
                             echo "6. Delete a vm"
                             echo "7. Add a NAT port to forward"
-                            echo "8. Console into VM"
-                            echo "9. Back to Virtual Machines Menu"
+                            echo "8. Back to Virtual Machines Menu"
 
                             read -p "Enter your choice: " vm_manage_choice
 
@@ -85,18 +85,13 @@ while true; do
                                     read -p "Enter the name for the new virtual machine: " new_vm_name
                                     read -p "Enter the amount of memory in MB: " new_memory
                                     read -p "Enter the number of virtual CPUs: " new_vcpus
-                                    read -p "Enter the path to save the virtual machine disk (e.g., /var/lib/libvirt/images): " disk_path
+                                    read -p "Enter the full path to the ISO file (e.g., /etc/libvirt/qemu/mini.iso): " iso_path
+                                    read -p "Enter the full path of the virtual machine disk (e.g., /etc/libvirt/qemu/vm.qcow2): " disk_path
                                     read -p "Enter the network name to connect the virtual machine to (e.g., default): " network_name
-                                    read -p "Enter the path to the ISO file: " iso_path
+                                    
 
                                     # Generate a random MAC address
                                     random_mac=$(generate_random_mac)
-
-                                    # Define the path for the new QCOW2 file
-                                    qcow2_file="$disk_path/$new_vm_name.qcow2"
-
-                                    # Create the QCOW2 file
-                                    qemu-img create -f qcow2 "$qcow2_file" $((new_memory * 1024 * 2))
 
                                     # Generate a UUID
                                     uuid=$(cat /proc/sys/kernel/random/uuid)
@@ -109,7 +104,7 @@ while true; do
                                     <currentMemory unit='KiB'>$((new_memory * 1024))</currentMemory>
                                     <vcpu placement='static'>$new_vcpus</vcpu>
                                     <os>
-                                        <type arch='x86_64' machine='pc-q35-7.2'>hvm</type>
+                                        <type arch='x86_64' machine='q35'>hvm</type>
                                         <boot dev='hd'/>
                                         <boot dev='cdrom'/>
                                     </os>
@@ -137,7 +132,7 @@ while true; do
                                         <emulator>/usr/bin/qemu-system-x86_64</emulator>
                                         <disk type='file' device='disk'>
                                         <driver name='qemu' type='qcow2' cache='none' io='native'/>
-                                        <source file='$disk_path/$new_vm_name.qcow2'/>
+                                        <source file='$disk_path'/>
                                         <target dev='vda' bus='virtio'/>
                                         <address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x0'/>
                                         </disk>
@@ -278,11 +273,6 @@ while true; do
                                     virsh net-update default add portmap --live --config --parent eth0 --protocol tcp --dstport $host_port --source $guest_port
                                     ;;
                                 8)
-                                    # Console into VM
-                                    read -p "Enter the name of the virtual machine to console into: " console_vm_name
-                                    virsh console "$console_vm_name"
-                                    ;;
-                                9)
                                     # Back to Virtual Machines Menu
                                     break
                                     ;;
@@ -372,8 +362,8 @@ while true; do
 
                                 6)
                                     # Create a storage volume
-                                    read -p "Enter the name of the storage pool: " pool_name
-                                    read -p "Enter the name of the new storage volume: " volume_name
+                                    read -p "Enter the name of the storage pool to use: " pool_name
+                                    read -p "Enter the name of the new storage volume (e.g., new-vm.qcow2): " volume_name
                                     read -p "Enter the size of the volume (e.g., 10G): " volume_capacity
                                     virsh vol-create-as --pool "$pool_name" --name "$volume_name" --capacity "$volume_capacity" --format qcow2
                                     ;;
@@ -381,7 +371,7 @@ while true; do
                                 7)
                                     # Delete a storage volume
                                     # Prompt user for details
-                                    read -p "Enter the name of the storage pool: " pool_name
+                                    read -p "Enter the storage pool name that the volume is under: " pool_name
                                     read -p "Enter the name of the volume to delete: " volume_name
 
                                     # Delete the storage volume
@@ -581,7 +571,13 @@ while true; do
                 esac
             done
             ;;
+        
         5)
+            #VNC access
+            ;;
+        
+        
+        6)
             # Host Information
             echo -e "\n===== Host Information ====="
             echo "Hostname: $(hostname)"
@@ -589,7 +585,7 @@ while true; do
             echo "Memory Information: $(free -h)"
             echo "Disk Usage: $(df -h)"
             ;;
-        6)
+        7)
             # Exit the script
             echo "Exiting."
             exit 0
