@@ -482,11 +482,11 @@ while true; do
                                     echo "${network_xml}" > "${net_xml_file}"
 
                                     #define and start network
-                                    virsh net-define "${network_name}.xml"
-                                    virsh net-start "${network_name}"
-                                    virsh net-autostart "${network_name}"
+                                    virsh net-define "${net_xml_file}"
+                                    virsh net-start "${net_xml_file}"
+                                    virsh net-autostart "${net_xml_file}"
 
-                                    echo "VM network $network_name created and started successfully."
+                                    echo "network $network_name created and started successfully."
 
                                     ;;
                                 5)
