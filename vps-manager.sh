@@ -39,16 +39,14 @@ while true; do
                         while true; do
                             echo -e "\n===== Manage Virtual Machine ====="
                             echo "1. Show details"
-                            echo "2. Start"
-                            echo "3. Stop"
-                            echo "4. Configure CPU and Memory"
-                            echo "5. Create"
-                            echo "6. Delete"
-                            echo "7. Add NAT port"
-                            echo "8. Create Snapshot"
-                            echo "9. Manage Snapshots"
-                            echo "10. Console into VM"
-                            echo "11. Back to Virtual Machines Menu"
+                            echo "2. Start a vm"
+                            echo "3. Stop a vm"
+                            echo "4. Configure vcpu and memory of a vm"
+                            echo "5. Create a vm"
+                            echo "6. Delete a vm"
+                            echo "7. Add a NAT port to forward"
+                            echo "8. Console into VM"
+                            echo "9. Back to Virtual Machines Menu"
 
                             read -p "Enter your choice: " vm_manage_choice
 
@@ -273,63 +271,18 @@ while true; do
                                     virsh undefine "$delete_vm_name"
                                     ;;
                                 7)
-                                    # Add a NAT port to a virtual machine
+                                    # Add a NAT port to forward
                                     read -p "Enter the name of the virtual machine: " vm_name
                                     read -p "Enter the host port to forward: " host_port
                                     read -p "Enter the guest port to forward: " guest_port
                                     virsh net-update default add portmap --live --config --parent eth0 --protocol tcp --dstport $host_port --source $guest_port
                                     ;;
                                 8)
-                                    # Create a snapshot of a virtual machine
-                                    read -p "Enter the name of the virtual machine: " vm_name
-                                    read -p "Enter the name for the new snapshot: " snapshot_name
-                                    virsh snapshot-create-as "$vm_name" "$snapshot_name"
-                                    ;;
-                                9)
-                                    # Submenu for managing snapshots of a virtual machine
-                                    while true; do
-                                        echo -e "\n===== Manage Snapshots ====="
-                                        echo "1. List all snapshots"
-                                        echo "2. Delete a snapshot"
-                                        echo "3. Revert to a snapshot"
-                                        echo "4. Back to Manage Virtual Machine"
-                                        
-                                        read -p "Enter your choice: " snapshot_manage_choice
-
-                                        case $snapshot_manage_choice in
-                                            1)
-                                                # List all snapshots of a virtual machine
-                                                read -p "Enter the name of the virtual machine: " vm_name
-                                                virsh snapshot-list "$vm_name"
-                                                ;;
-                                            2)
-                                                # Delete a snapshot of a virtual machine
-                                                read -p "Enter the name of the virtual machine: " vm_name
-                                                read -p "Enter the name of the snapshot to delete: " snapshot_name
-                                                virsh snapshot-delete "$vm_name" "$snapshot_name"
-                                                ;;
-                                            3)
-                                                # Revert to a snapshot of a virtual machine
-                                                read -p "Enter the name of the virtual machine: " vm_name
-                                                read -p "Enter the name of the snapshot to revert to: " snapshot_name
-                                                virsh snapshot-revert "$vm_name" "$snapshot_name"
-                                                ;;
-                                            4)
-                                                # Back to Manage Virtual Machine
-                                                break
-                                                ;;
-                                            *)
-                                                echo "Invalid choice. Please enter a valid option."
-                                                ;;
-                                        esac
-                                    done
-                                    ;;
-                                10)
                                     # Console into VM
                                     read -p "Enter the name of the virtual machine to console into: " console_vm_name
                                     virsh console "$console_vm_name"
                                     ;;
-                                11)
+                                9)
                                     # Back to Virtual Machines Menu
                                     break
                                     ;;
@@ -476,11 +429,11 @@ while true; do
                         # Submenu for managing a network
                         while true; do
                             echo -e "\n===== Manage Network ====="
-                            echo "1. Show details"
-                            echo "2. Start"
-                            echo "3. Stop"
-                            echo "4. Create"
-                            echo "5. Delete"
+                            echo "1. Show details of a network"
+                            echo "2. Start a network"
+                            echo "3. Stop a network"
+                            echo "4. Create a NAT network"
+                            echo "5. Delete a network"
                             echo "6. Back to Networks Menu"
 
                             read -p "Enter your choice: " network_manage_choice
@@ -502,12 +455,39 @@ while true; do
                                     virsh net-destroy "$network_name"
                                     ;;
                                 4)
-                                    # Create a new network
-                                    read -p "Enter the name of the new network: " new_network_name
-                                    read -p "Enter the type of the new network (e.g., bridge, nat, network, user): " network_type
-                                    virsh net-define "<network-definition-xml>"
-                                    virsh net-start "$new_network_name"
-                                    virsh net-autostart "$new_network_name"
+
+                                    # Prompt user for network configuration
+                                    read -p "Enter network name: " network_name
+                                    read -p "Enter bridge name: " bridge_name
+                                    read -p "Enter network IP address (e.g., 192.168.100.1): " network_ip
+                                    read -p "Enter network netmask (e.g., 255.255.255.0): " netmask
+                                    read -p "Enter DHCP range start (e.g., 192.168.100.2): " dhcp_start
+                                    read -p "Enter DHCP range end (e.g., 192.168.100.254): " dhcp_end
+
+                                    # Create network XML file
+                                    network_xml="
+                                    <network>
+                                    <name>${network_name}</name>
+                                    <forward mode='nat'/>
+                                    <bridge name='${bridge_name}'/>
+                                    <ip address='${network_ip}' netmask='${netmask}'>
+                                        <dhcp>
+                                        <range start='${dhcp_start}' end='${dhcp_end}'/>
+                                        </dhcp>
+                                    </ip>
+                                    </network>"
+
+                                    # Save the network XML to a file
+                                    net_xml_file="/etc/libvirt/qemu/networks/$network_name.xml"
+                                    echo "${network_xml}" > "${net_xml_file}"
+
+                                    #define and start network
+                                    virsh net-define "${network_name}.xml"
+                                    virsh net-start "${network_name}"
+                                    virsh net-autostart "${network_name}"
+
+                                    echo "VM network $network_name created and started successfully."
+
                                     ;;
                                 5)
                                     # Delete a network
