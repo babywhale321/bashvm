@@ -6,7 +6,7 @@
 
 while true; do
     # Display the main menu
-    echo "===== Main Menu ====="
+    echo -e "\n===== Main Menu ====="
     echo "1. Virtual Machines"
     echo "2. Storage Pools"
     echo "3. Networks"
