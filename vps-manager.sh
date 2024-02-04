@@ -606,11 +606,7 @@ while true; do
         
         6)
             # Host Information
-            echo -e "\n===== Host Information ====="
-            echo "Hostname: $(hostname)"
-            echo "CPU Information: $(lscpu)"
-            echo "Memory Information: $(free -h)"
-            echo "Disk Usage: $(df -h)"
+            neofetch
             ;;
         7)
             # Exit the script
