@@ -45,8 +45,7 @@ while true; do
                             echo "4. Configure vcpu and memory of a vm"
                             echo "5. Create a vm"
                             echo "6. Delete a vm"
-                            echo "7. Add a NAT port to forward"
-                            echo "8. Back to Virtual Machines Menu"
+                            echo "7. Back to Virtual Machines Menu"
 
                             read -p "Enter your choice: " vm_manage_choice
 
@@ -265,14 +264,8 @@ while true; do
                                     virsh destroy "$delete_vm_name"
                                     virsh undefine "$delete_vm_name"
                                     ;;
+                                
                                 7)
-                                    # Add a NAT port to forward
-                                    read -p "Enter the name of the virtual machine: " vm_name
-                                    read -p "Enter the host port to forward: " host_port
-                                    read -p "Enter the guest port to forward: " guest_port
-                                    virsh net-update default add portmap --live --config --parent eth0 --protocol tcp --dstport $host_port --source $guest_port
-                                    ;;
-                                8)
                                     # Back to Virtual Machines Menu
                                     break
                                     ;;
@@ -423,8 +416,9 @@ while true; do
                             echo "2. Start a network"
                             echo "3. Stop a network"
                             echo "4. Create a NAT network"
-                            echo "5. Delete a network"
-                            echo "6. Back to Networks Menu"
+                            echo "5. Add a port to forward from guest to host"
+                            echo "6. Delete a network"
+                            echo "7. Back to Networks Menu"
 
                             read -p "Enter your choice: " network_manage_choice
 
@@ -481,12 +475,24 @@ while true; do
 
                                     ;;
                                 5)
+                                    # Add a port to forward
+                                    read -p "Enter the host ip address that you wish to listen on: " host_ip
+                                    read -p "Enter the nat ip address that you wish to forward: " nat_ip
+                                    read -p "Enter the host port to listen on: " host_port
+                                    read -p "Enter the guest port to forward: " guest_port
+
+                                    iptables -t nat -A PREROUTING -d $host_ip -p tcp -m tcp --dport $host_port -j DNAT --to-destination $nat_ip:$guest_port
+                                    
+                                    echo "Rule has been added."
+
+                                    ;;
+                                6)
                                     # Delete a network
                                     read -p "Enter the name of the network to delete: " delete_network_name
                                     virsh net-destroy "$delete_network_name"
                                     virsh net-undefine "$delete_network_name"
                                     ;;
-                                6)
+                                7)
                                     # Back to Networks Menu
                                     break
                                     ;;
