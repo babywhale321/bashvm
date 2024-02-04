@@ -10,6 +10,7 @@ apt install libvirt-clients -y || echo "Installing libvirt-clients has failed. P
 apt install bridge-utils -y || echo "Installing bridge-utils has failed. Please check the logs or console output above."
 apt install git -y || echo "Installing git has failed. Please check the logs or console output above."
 apt install neofetch -y || echo "Installing neofetch has failed. Please check the logs or console output above."
+apt install net-tools -y || echo "Installing net-tools has failed. Please check the logs or console output above."
 
 git clone https://github.com/novnc/noVNC.git || echo "cloning novnc has failed. Please check the logs or console output above."
 
