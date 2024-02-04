@@ -312,39 +312,39 @@ while true; do
                         # Submenu for managing a storage pool
                         while true; do
                             echo -e "\n===== Manage Storage Pool ====="
-                            echo "0. Show all volumes from a pool"
-                            echo "1. Show details of storage pools"
-                            echo "2. Activate a storage pool"
-                            echo "3. Deactivate a storage pool"
-                            echo "4. Create a storage pool"
-                            echo "5. Delete a storage pool"
-                            echo "6. Create a storage volume"
-                            echo "7. Delete a storage volume"
-                            echo "8. Back to Storage Pools Menu"
+                            echo "1. Show all volumes from a pool"
+                            echo "2. Show details of storage pools"
+                            echo "3. Activate a storage pool"
+                            echo "4. Deactivate a storage pool"
+                            echo "5. Create a storage pool"
+                            echo "6. Delete a storage pool"
+                            echo "7. Create a storage volume"
+                            echo "8. Delete a storage volume"
+                            echo "9. Back to Storage Pools Menu"
 
                             read -p "Enter your choice: " storage_manage_choice
 
                             case $storage_manage_choice in
 
-                                0)
+                                1)
                                     read -p "Enter the name of the storage pool: " pool_name
                                     virsh vol-list --pool "$pool_name"
                                     ;;
-                                1)
+                                2)
                                     # Show details of pools
                                     virsh pool-list --details
                                     ;;
-                                2)
+                                3)
                                     # Activate a storage pool
                                     read -p "Enter the name of the storage pool to activate: " pool_name
                                     virsh pool-start "$pool_name"
                                     ;;
-                                3)
+                                4)
                                     # Deactivate a storage pool
                                     read -p "Enter the name of the storage pool to deactivate: " pool_name
                                     virsh pool-destroy "$pool_name"
                                     ;;
-                                4)
+                                5)
                                     # Create a new storage pool
                                     read -p "Enter the name of the new storage pool: " new_pool_name
                                     read -p "Enter the type of the new storage pool (e.g., dir, logical, fs): " pool_type
@@ -353,14 +353,14 @@ while true; do
                                     virsh pool-start "$new_pool_name"
                                     virsh pool-autostart "$new_pool_name"
                                     ;;
-                                5)
+                                6)
                                     # Delete a storage pool
                                     read -p "Enter the name of the storage pool to delete: " delete_pool_name
                                     virsh pool-destroy "$delete_pool_name"
                                     virsh pool-delete "$delete_pool_name"
                                     ;;
 
-                                6)
+                                7)
                                     # Create a storage volume
                                     read -p "Enter the name of the storage pool to use: " pool_name
                                     read -p "Enter the name of the new storage volume (e.g., new-vm.qcow2): " volume_name
@@ -368,7 +368,7 @@ while true; do
                                     virsh vol-create-as --pool "$pool_name" --name "$volume_name" --capacity "$volume_capacity" --format qcow2
                                     ;;
                                 
-                                7)
+                                8)
                                     # Delete a storage volume
                                     # Prompt user for details
                                     read -p "Enter the storage pool name that the volume is under: " pool_name
@@ -379,7 +379,7 @@ while true; do
 
                                     echo "Storage volume $volume_name deleted successfully from pool $pool_name."
                                     ;;
-                                8)
+                                9)
                                     # Back to Storage Pools Menu
                                     break
                                     ;;
@@ -574,6 +574,33 @@ while true; do
         
         5)
             #VNC access
+            while true; do
+                echo -e "\n===== VNC Access ====="
+                echo "1. Show listening ports"
+                echo "2. Start noVNC"
+                echo "3. Back to main menu"
+
+                read -p "Enter your choice: " vnc_manage_choice
+
+                case $vnc_manage_choice in
+                    1)
+                        # list listening ports
+                        netstat -l | head -n 30
+                        ;;
+                    2)
+                        # Start noVNC
+                        read -p "Enter the port number that the vm is listening on: " vnc_port
+                        ./noVNC/utils/novnc_proxy --vnc localhost:$vnc_port
+                        ;;
+                    3)
+                        # Back to Main Menu
+                        break
+                        ;;
+                    *)
+                        echo "Invalid choice. Please enter a valid option."
+                        ;;
+                esac
+            done
             ;;
         
         
