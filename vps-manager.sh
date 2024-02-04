@@ -438,6 +438,7 @@ while true; do
                                     # Start a network
                                     read -p "Enter the name of the network to start: " network_name
                                     virsh net-start "$network_name"
+                                    virsh net-autostart "$network_name"
                                     ;;
                                 3)
                                     # Stop a network
