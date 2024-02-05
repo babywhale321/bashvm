@@ -350,6 +350,7 @@ while true; do
             # Networks Menu       
             while true; do
                 echo -e "\n===== Manage Network ====="
+                echo "s. Show all networks"
                 echo "1. Show details of a network"
                 echo "2. Start a network"
                 echo "3. Stop a network"
@@ -366,10 +367,11 @@ while true; do
                 read -p "Enter your choice: " network_manage_choice
 
                 case $network_manage_choice in
+                    s)
+                        # List all networks
+                        virsh net-list --all
+                        ;;
                     1)
-
-
-
                         # Show detailnano 1.shs of a network
                         read -p "Enter the name of the network: " network_name
                         virsh net-info "$network_name"
