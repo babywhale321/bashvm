@@ -360,10 +360,6 @@ while true; do
                 echo "7. Delete a network"
                 echo "q. Back to main menu"
 
-
-
-
-
                 read -p "Enter your choice: " network_manage_choice
 
                 case $network_manage_choice in
