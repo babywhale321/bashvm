@@ -30,7 +30,7 @@ while true; do
                 echo "4. Configure vcpu and memory of a vm"
                 echo "5. Create a vm"
                 echo "6. Delete a vm"
-                echo "q. Back to Virtual Machines Menu"
+                echo "q. Back to main menu"
 
                 read -p "Enter your choice: " vm_manage_choice
 
@@ -358,7 +358,7 @@ while true; do
                 echo "4. Create a NAT network"
                 echo "5. Add a port to forward from guest to host"
                 echo "6. Delete a network"
-                echo "q. Back main menu"
+                echo "q. Back to main menu"
 
                 read -p "Enter your choice: " network_manage_choice
 
@@ -433,7 +433,7 @@ while true; do
                         virsh net-undefine "$delete_network_name"
                         ;;
                     q)
-                        # Back to Networks Menu
+                        # Back to Menu
                         break
                         ;;
                     *)
@@ -450,7 +450,7 @@ while true; do
                 echo "1. Create a snapshot"
                 echo "2. Delete a snapshot"
                 echo "3. Revert to a snapshot"
-                echo "q. Back to Snapshots Menu"
+                echo "q. Back to main menu"
 
                 read -p "Enter your choice: " snapshot_manage_choice
 
@@ -479,7 +479,7 @@ while true; do
                         virsh snapshot-revert "$vm_name" "$snapshot_name"
                         ;;
                     q)
-                        # Back to Snapshots Menu
+                        # Back to main menu
                         break
                         ;;
                     *)
