@@ -359,11 +359,18 @@ while true; do
                 echo "7. Delete a network"
                 echo "q. Back to main menu"
 
+
+
+
+
                 read -p "Enter your choice: " network_manage_choice
 
                 case $network_manage_choice in
                     1)
-                        # Show details of a network
+
+
+
+                        # Show detailnano 1.shs of a network
                         read -p "Enter the name of the network: " network_name
                         virsh net-info "$network_name"
                         ;;
@@ -406,22 +413,33 @@ while true; do
 
                         # Define and start network
                         virsh net-define "${net_xml_file}"
-                        virsh net-start "${net_xml_file}"
-                        virsh net-autostart "${net_xml_file}"
+                        virsh net-start "${network_name}"
+                        virsh net-autostart "${network_name}"
 
                         echo "Network $network_name created and started successfully."
                         ;;
                     5) 
                     
+                        read -p "Enter the new network name: " network_name
                         read -p "Enter the physical network interface to attach: " int_name
 
-                        net_xml_file="<interface type='direct'>
+                        network_xml="
+                            <network>
+                            <name>${network_name}</name>
+                            <interface type='direct'>
                             <source network='$int_name'/>
-                            </interface>"
-                        virsh net-define "${net_xml_file}"
-                        virsh net-start "${net_xml_file}"
-                        virsh net-autostart "${net_xml_file}"
+                            </interface>
+                            </network>"
 
+                        net_xml_file="/etc/libvirt/qemu/networks/$network_name.xml"
+                        echo "${network_xml}" > "${net_xml_file}"
+
+                        # Define and start network
+                        virsh net-define "${net_xml_file}"
+                        virsh net-start "${network_name}"
+                        virsh net-autostart "${network_name}"
+
+                        echo "Network $network_name created and started successfully."
                         ;;
                     6)
                         # Add a port to forward
