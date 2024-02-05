@@ -354,8 +354,9 @@ while true; do
                 echo "2. Start a network"
                 echo "3. Stop a network"
                 echo "4. Create a NAT network"
-                echo "5. Add a port to forward from guest to host"
-                echo "6. Delete a network"
+                echo "5. Create a macvtap network"
+                echo "6. Add a port to forward from guest to host"
+                echo "7. Delete a network"
                 echo "q. Back to main menu"
 
                 read -p "Enter your choice: " network_manage_choice
@@ -410,7 +411,19 @@ while true; do
 
                         echo "Network $network_name created and started successfully."
                         ;;
-                    5)
+                    5) 
+                    
+                        read -p "Enter the physical network interface to attach: " int_name
+
+                        net_xml_file="<interface type='direct'>
+                            <source network='$int_name'/>
+                            </interface>"
+                        virsh net-define "${net_xml_file}"
+                        virsh net-start "${net_xml_file}"
+                        virsh net-autostart "${net_xml_file}"
+
+                        ;;
+                    6)
                         # Add a port to forward
                         read -p "Enter the host IP address that you wish to listen on: " host_ip
                         read -p "Enter the NAT IP address that you wish to forward: " nat_ip
@@ -421,7 +434,7 @@ while true; do
                         
                         echo "Rule has been added."
                         ;;
-                    6)
+                    7)
                         # Delete a network
                         read -p "Enter the name of the network to delete: " delete_network_name
                         virsh net-destroy "$delete_network_name"
