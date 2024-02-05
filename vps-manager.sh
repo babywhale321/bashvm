@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-#vps-manager written in bash
+# vps-manager written in Bash
 #
-#Author: Kyle Schroeder "BabyWhale"
+# Author: Kyle Schroeder "BabyWhale"
 
 while true; do
     # Display the main menu
@@ -25,11 +25,11 @@ while true; do
                 echo -e "\n===== Manage Virtual Machine ====="
                 echo "s. List all virtual machines"
                 echo "1. Show details"
-                echo "2. Start a vm"
-                echo "3. Stop a vm"
-                echo "4. Configure vcpu and memory of a vm"
-                echo "5. Create a vm"
-                echo "6. Delete a vm"
+                echo "2. Start a VM"
+                echo "3. Stop a VM"
+                echo "4. Configure vCPU and memory of a VM"
+                echo "5. Create a VM"
+                echo "6. Delete a VM"
                 echo "q. Back to main menu"
 
                 read -p "Enter your choice: " vm_manage_choice
@@ -64,7 +64,6 @@ while true; do
                         virsh setmem "$vm_name" "$memory"MB --live
                         ;;
                     5)
-
                         # Function to generate a random MAC address
                         generate_random_mac() {
                             printf '52:54:%02x:%02x:%02x:%02x\n' $((RANDOM%256)) $((RANDOM%256)) $((RANDOM%256)) $((RANDOM%256))
@@ -78,7 +77,6 @@ while true; do
                         read -p "Enter the full path of the virtual machine disk (e.g., /etc/libvirt/qemu/vm.qcow2): " disk_path
                         read -p "Enter the network name to connect the virtual machine to (e.g., default): " network_name
                         
-
                         # Generate a random MAC address
                         random_mac=$(generate_random_mac)
 
@@ -380,7 +378,6 @@ while true; do
                         virsh net-destroy "$network_name"
                         ;;
                     4)
-
                         # Prompt user for network configuration
                         read -p "Enter network name: " network_name
                         read -p "Enter bridge name: " bridge_name
@@ -406,25 +403,23 @@ while true; do
                         net_xml_file="/etc/libvirt/qemu/networks/$network_name.xml"
                         echo "${network_xml}" > "${net_xml_file}"
 
-                        #define and start network
+                        # Define and start network
                         virsh net-define "${net_xml_file}"
                         virsh net-start "${net_xml_file}"
                         virsh net-autostart "${net_xml_file}"
 
-                        echo "network $network_name created and started successfully."
-
+                        echo "Network $network_name created and started successfully."
                         ;;
                     5)
                         # Add a port to forward
-                        read -p "Enter the host ip address that you wish to listen on: " host_ip
-                        read -p "Enter the nat ip address that you wish to forward: " nat_ip
+                        read -p "Enter the host IP address that you wish to listen on: " host_ip
+                        read -p "Enter the NAT IP address that you wish to forward: " nat_ip
                         read -p "Enter the host port to listen on: " host_port
                         read -p "Enter the guest port to forward: " guest_port
 
                         iptables -t nat -A PREROUTING -d $host_ip -p tcp -m tcp --dport $host_port -j DNAT --to-destination $nat_ip:$guest_port
                         
                         echo "Rule has been added."
-
                         ;;
                     6)
                         # Delete a network
@@ -443,7 +438,7 @@ while true; do
             done
             ;;
         4)
-            # managing a snapshot
+            # Managing a snapshot
             while true; do
                 echo -e "\n===== Manage Snapshot ====="
                 echo "s. List all snapshots of a virtual machine"
@@ -490,7 +485,7 @@ while true; do
             ;;
         
         5)
-            #VNC access
+            # VNC access
             while true; do
                 echo -e "\n===== VNC Access ====="
                 echo "1. Show listening ports"
@@ -501,12 +496,12 @@ while true; do
 
                 case $vnc_manage_choice in
                     1)
-                        # list listening ports
+                        # List listening ports
                         netstat -l | head -n 30
                         ;;
                     2)
                         # Start noVNC
-                        read -p "Enter the port number that the vm is listening on: " vnc_port
+                        read -p "Enter the port number that the VM is listening on: " vnc_port
                         ./noVNC/utils/novnc_proxy --vnc localhost:$vnc_port
                         ;;
                     q)
