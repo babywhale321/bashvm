@@ -441,14 +441,32 @@ while true; do
                         ;;
                     6)
                         # Add a port to forward
+                        read -p "Enter the VM name" vm_name
                         read -p "Enter the host IP address that you wish to listen on: " host_ip
                         read -p "Enter the NAT IP address that you wish to forward: " nat_ip
                         read -p "Enter the host port to listen on: " host_port
-                        read -p "Enter the guest port to forward: " guest_port
+                        read -p "Enter the guest port to forward: " nat_port
 
-                        iptables -t nat -A PREROUTING -d $host_ip -p tcp -m tcp --dport $host_port -j DNAT --to-destination $nat_ip:$guest_port
+                        # IMPORTANT: Change the "VM NAME" string to match your actual VM Name.
+                        # In order to create rules to other VMs, just duplicate the below block and configure
+                        # it accordingly.
+                        nat_script="
+                        if [ '${1}' = '$vm_name' ]; then
+
+                        if [ '${2}' = 'stopped' ] || [ '${2}' = 'reconnect' ]; then
+                            /sbin/iptables -D FORWARD -o virbr0 -p tcp -d $nat_ip --dport $nat_port -j ACCEPT
+                            /sbin/iptables -t nat -D PREROUTING -p tcp --dport $host_port -j DNAT --to $nat_ip:$nat_port
+                        fi
+                        if [ '${2}' = 'start' ] || [ '${2}' = 'reconnect' ]; then
+                            /sbin/iptables -I FORWARD -o virbr0 -p tcp -d $nat_ip --dport $nat_port -j ACCEPT
+                            /sbin/iptables -t nat -I PREROUTING -p tcp --dport $host_port -j DNAT --to $nat_ip:$nat_port
+                        fi
+                        fi"
+
+                        echo "$nat_script" > /etc/libvirt/hooks/$vm_name
                         
-                        echo "Rule has been added."
+                        echo "Please shutdown $vm_name then restart libvirtd."
+
                         ;;
                     7)
                         # Delete a network
@@ -559,3 +577,4 @@ while true; do
             ;;
     esac
 done
+
