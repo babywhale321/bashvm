@@ -1,4 +1,4 @@
-# vps-manager.sh
+# bashvm
 
 A vps manager written in bash
 
