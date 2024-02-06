@@ -547,7 +547,7 @@ while true; do
         
         6)
             # Host Information
-            neofetch
+            htop -C htoprc
             ;;
         q)
             # Exit the script
