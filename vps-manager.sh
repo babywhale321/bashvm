@@ -517,18 +517,18 @@ while true; do
             # VNC access
             while true; do
                 echo -e "\n===== VNC Access ====="
-                echo "1. Show listening ports"
-                echo "2. Start noVNC"
+                echo "s. Show listening ports"
+                echo "1. Start noVNC"
                 echo "q. Back to main menu"
 
                 read -p "Enter your choice: " vnc_manage_choice
 
                 case $vnc_manage_choice in
-                    1)
+                    s)
                         # List listening ports
                         netstat -l | head -n 30
                         ;;
-                    2)
+                    1)
                         # Start noVNC
                         read -p "Enter the port number that the VM is listening on: " vnc_port
                         ./noVNC/utils/novnc_proxy --vnc localhost:$vnc_port
