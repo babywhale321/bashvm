@@ -1,6 +1,6 @@
 # bashvm
 
-A vps manager written in bash
+a vps manager written in bash
 
 ## How to use
 
