@@ -422,12 +422,12 @@ while true; do
                         read -p "Enter the physical network interface to attach: " int_name
 
                         network_xml="
-                            <network>
-                            <name>${network_name}</name>
-                            <interface type='direct'>
-                            <source network='$int_name'/>
-                            </interface>
-                            </network>"
+                        <network>
+                        <name>$network_name</name>
+                        <forward mode='bridge'>
+                            <interface dev='$int_name'/>
+                        </forward>
+                        </network>"
 
                         net_xml_file="/etc/libvirt/qemu/networks/$network_name.xml"
                         echo "${network_xml}" > "${net_xml_file}"
