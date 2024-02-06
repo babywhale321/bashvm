@@ -12,7 +12,7 @@ while true; do
     echo "3. Networks"
     echo "4. Snapshots"
     echo "5. VNC"
-    echo "6. Host Information"
+    echo "6. System Monitor"
     echo "q. Exit"
 
     # Prompt user for input
@@ -546,7 +546,7 @@ while true; do
         
         
         6)
-            # Host Information
+            # System Monitor
             htop -C htoprc
             ;;
         q)
