@@ -547,7 +547,7 @@ while true; do
         
         6)
             # System Monitor
-            htop -C htoprc
+            htop
             ;;
         q)
             # Exit the script
