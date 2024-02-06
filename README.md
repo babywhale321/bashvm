@@ -7,7 +7,7 @@ A vps manager written in bash
 ### Install required packages
 bash bashvm-installer.sh
 
-### Run vps-manager.sh
+### Run bashvm.sh
 bash bashvm.sh
 
 ### Donations:
