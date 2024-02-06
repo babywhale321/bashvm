@@ -73,8 +73,8 @@ while true; do
                         read -p "Enter the name for the new virtual machine: " new_vm_name
                         read -p "Enter the amount of memory in MB: " new_memory
                         read -p "Enter the number of virtual CPUs: " new_vcpus
-                        read -p "Enter the full path to the ISO file (e.g., /etc/libvirt/qemu/mini.iso): " iso_path
-                        read -p "Enter the full path of the virtual machine disk (e.g., /etc/libvirt/qemu/vm.qcow2): " disk_path
+                        read -p "Enter the full path to the ISO file (e.g., /var/lib/libvirt/images/mini.iso): " iso_path
+                        read -p "Enter the full path of the virtual machine disk (e.g., /var/lib/libvirt/qemu/vm.qcow2): " disk_path
                         read -p "Enter the network name to connect the virtual machine to (e.g., default): " network_name
                         
                         # Generate a random MAC address
