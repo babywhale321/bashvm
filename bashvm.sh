@@ -442,7 +442,7 @@ while true; do
                     6)
                         # Add a port to forward
                         read -p "Enter the VM name" vm_name
-                        read -p "Enter the physical network interface name: " int_name
+                        read -p "Enter the NAT network interface name: " int_name
                         read -p "Enter the host IP address that you wish to listen on: " host_ip
                         read -p "Enter the NAT IP address that you wish to forward: " nat_ip
                         read -p "Enter the host port to listen on: " host_port
