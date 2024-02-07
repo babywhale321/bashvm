@@ -450,27 +450,28 @@ while true; do
                         ;;
                     6)
                             # Add a port to forward
-                        read -p "Enter the VM name" vm_name
+                        read -p "Enter the VM name: " vm_name
                         read -p "Enter the NAT network interface name: " int_name
                         read -p "Enter the NAT IP address that you wish to forward: " nat_ip
                         read -p "Enter the host port to listen on: " host_port
                         read -p "Enter the guest port to forward: " nat_port
 
-                        nat_script='if [ "${1}" = "$vm_name" ]; then
+                        nat_script='#!/bin/bash
+                        if [ "${1}" = "'$vm_name'" ]; then
 
                             # Update the following variables to fit your setup
 
                             if [ "${2}" = "stopped" ] || [ "${2}" = "reconnect" ]; then
-                                /sbin/iptables -D FORWARD -o $int_name -p tcp -d $nat_ip --dport $nat_port -j ACCEPT
-                                /sbin/iptables -t nat -D PREROUTING -p tcp --dport $host_port -j DNAT --to $nat_ip:$nat_port
+                                /sbin/iptables -D FORWARD -o '$int_name' -p tcp -d '$nat_ip' --dport '$nat_port' -j ACCEPT
+                                /sbin/iptables -t nat -D PREROUTING -p tcp --dport '$host_port' -j DNAT --to '$nat_ip':'$nat_port'
                             fi
                             if [ "${2}" = "start" ] || [ "${2}" = "reconnect" ]; then
-                                /sbin/iptables -I FORWARD -o $int_name -p tcp -d $nat_ip --dport $nat_port -j ACCEPT
-                                /sbin/iptables -t nat -I PREROUTING -p tcp --dport $host_port -j DNAT --to $nat_ip:$nat_port
+                                /sbin/iptables -I FORWARD -o '$int_name' -p tcp -d '$nat_ip' --dport '$nat_port' -j ACCEPT
+                                /sbin/iptables -t nat -I PREROUTING -p tcp --dport '$host_port' -j DNAT --to '$nat_ip':'$nat_port'
                             fi
                         fi'
 
-                        echo $nat_script > /etc/libvirt/hooks/qemu
+                        echo "$nat_script" > /etc/libvirt/hooks/qemu
 
                         chmod +x /etc/libvirt/hooks/qemu
                         
