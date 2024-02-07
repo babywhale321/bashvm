@@ -11,8 +11,9 @@ while true; do
     echo "2. Storage Pools"
     echo "3. Networks"
     echo "4. Snapshots"
-    echo "5. VNC"
-    echo "6. System Monitor"
+    echo "5. Edit XML"
+    echo "6. VNC Access"
+    echo "7. System Monitor"
     echo "q. Exit"
 
     # Prompt user for input
@@ -542,24 +543,38 @@ while true; do
             ;;
         
         5)
-            # VNC access
+            # Edit XML
             while true; do
-                echo -e "\n===== VNC Access ====="
-                echo "s. Show listening ports"
-                echo "1. Start noVNC"
+                echo -e "\n===== Edit XML ====="
+                echo "1. Edit a VM"
+                echo "2. Edit a storage pool"
+                echo "3. Edit a network"
+                echo "4. Edit a snapshot"
                 echo "q. Back to main menu"
 
-                read -p "Enter your choice: " vnc_manage_choice
+                read -p "Enter your choice: " xml_manage_choice
 
-                case $vnc_manage_choice in
-                    s)
-                        # List listening ports
-                        netstat -l | head -n 30
+                case $xml_manage_choice in
+                    1)  
+                        # edit a vm
+                        read -p "Enter the VM name: " vm_name
+                        virsh edit $vm_name
                         ;;
-                    1)
-                        # Start noVNC
-                        read -p "Enter the port number that the VM is listening on: " vnc_port
-                        ./noVNC/utils/novnc_proxy --vnc localhost:$vnc_port
+                    2)
+                        # edit a storage pool
+                        read -p "Enter the storage pool name: " pool_name
+                        virsh pool-edit $pool_name
+                        ;;
+                    3)
+                        # edit a network
+                        read -p "Enter the network name: " net_name
+                        virsh net-edit $net_name
+                        ;;
+                    4)
+                        # edit a snapshot
+                        read -p "Enter the VM name: " vm_name
+                        read -p "Enter the snapshot name: " snap_name
+                        virsh snapshot-edit --snapshotname $snap_name --domain $vm_name
                         ;;
                     q)
                         # Back to Main Menu
@@ -571,9 +586,14 @@ while true; do
                 esac
             done
             ;;
-        
-        
         6)
+            # VNC Access
+            echo ""
+            echo "Please use a VNC client to access the vm (e.g., remmina)"
+            echo "The port thats associated with the vm can be found with (netstat -l)"
+            echo "Please note that vnc access will always be on unless you block the port with a firewall (e.g., ufw)"
+            ;;
+        7)
             # System Monitor
             htop
             ;;
