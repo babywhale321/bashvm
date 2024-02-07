@@ -26,10 +26,11 @@ while true; do
                 echo "s. List all virtual machines"
                 echo "1. Show details"
                 echo "2. Start a VM"
-                echo "3. Stop a VM"
-                echo "4. Configure vCPU and memory of a VM"
-                echo "5. Create a VM"
-                echo "6. Delete a VM"
+                echo "3. Shutdown a VM (graceful)"
+                echo "4. Shutdown a VM (force)"
+                echo "5. Configure vCPU and memory of a VM"
+                echo "6. Create a VM"
+                echo "7. Delete a VM"
                 echo "q. Back to main menu"
 
                 read -p "Enter your choice: " vm_manage_choice
@@ -49,13 +50,21 @@ while true; do
                         # Start a virtual machine
                         read -p "Enter the name of the virtual machine to start: " vm_name
                         virsh start "$vm_name"
+                        virsh autostart "$vm_name"
                         ;;
                     3)
-                        # Stop a virtual machine
+                        # Shutdown a VM (graceful)
                         read -p "Enter the name of the virtual machine to stop: " vm_name
                         virsh shutdown "$vm_name"
                         ;;
+
                     4)
+                        # Shutdown a VM (force)
+                        read -p "Enter the name of the virtual machine to stop: " vm_name
+                        virsh destroy "$vm_name"
+                        ;;
+
+                    5)
                         # Configure CPU and Memory for a virtual machine
                         read -p "Enter the name of the virtual machine to configure: " vm_name
                         read -p "Enter the new number of virtual CPUs: " vcpus
@@ -63,7 +72,7 @@ while true; do
                         virsh setvcpus "$vm_name" "$vcpus"
                         virsh setmem "$vm_name" "$memory"MB --live
                         ;;
-                    5)
+                    6)
                         # Function to generate a random MAC address
                         generate_random_mac() {
                             printf '52:54:%02x:%02x:%02x:%02x\n' $((RANDOM%256)) $((RANDOM%256)) $((RANDOM%256)) $((RANDOM%256))
@@ -246,7 +255,7 @@ while true; do
                         echo "Virtual machine $new_vm_name created successfully."
                         ;;
 
-                    6)
+                    7)
                         # Delete a virtual machine
                         read -p "Enter the name of the virtual machine to delete: " delete_vm_name
                         virsh destroy "$delete_vm_name"
