@@ -10,11 +10,9 @@ Guide: Setting Up a Virtual Machine With bashvm
 
     Create a storage volume within the previously created storage pool. This volume will serve as the disk for your VM.
 
-
 3. Add an ISO Image to the Storage Pool:
 
     Copy the ISO image of your choice into the storage pool directory. This ISO will be used for installing the operating system on your VM.
-
 
 4. Make a Network:
 
@@ -26,17 +24,14 @@ Guide: Setting Up a Virtual Machine With bashvm
     Define the configuration for your virtual machine, including CPU, memory, storage, network settings, etc.
     Set up the virtual machine using the chosen configuration. Make sure to specify the storage volume and network settings.
 
-
 6. Start the Virtual Machine:
 
     Once the ISO image is added to the storage pool, start the virtual machine.
     Ensure that the VM boots from the ISO image to begin the installation process.
 
-
 7. Configure The virtual Machine with VNC:
 
     Once the Virtual Machine is running, determine what port the VNC console is running on and use a VNC client to connect to it.
-
 
 8. Block VNC Ports:
 
