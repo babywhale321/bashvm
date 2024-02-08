@@ -451,9 +451,9 @@ while true; do
                         ;;
                     6)
 
-                        #port forwarding
+                        # Add portforwarding rules to a VM behind a NAT
                         read -p "Enter the VM name: " vm_name
-                        read -p "Enter interface name: " int_name
+                        read -p "Enter the NAT interface name: " int_name
                         read -p "Enter the NAT ip of the VM: " nat_ip
                         read -p "Enter the starting port for the host to listen on: " nat_start_port
                         read -p "Enter the ending port for the host to listen on (next 20 ports): " nat_end_port
@@ -469,8 +469,7 @@ while true; do
                             if [ "${2}" = "stopped" ] || [ "${2}" = "reconnect" ]; then'
 
                         echo "$nat_script" >> /etc/libvirt/hooks/qemu
-
-                        # Function to forward ports
+                        
 
                         for ((port=start_port; port<=end_port; port++)); do
                             nat_port=$((port - start_port + nat_start_port))
