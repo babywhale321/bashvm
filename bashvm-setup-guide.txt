@@ -25,8 +25,10 @@ Guide: Setting Up a Virtual Machine With bashvm
 
 5. Make a Virtual Machine:
 
-    Define the configuration for your virtual machine, including CPU, memory, storage, network settings, etc.
-    Set up the virtual machine using the chosen configuration. Make sure to specify the storage volume and network settings.
+    Define the configuration for your virtual machine.
+    Including CPU, memory, storage, network settings, etc.
+    Set up the virtual machine using the chosen configuration.
+    Make sure to specify the storage volume and network settings.
 
 6. Start the Virtual Machine:
 
