@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#vps-manager written in bash ("INSTALLER")
+#bashvm is a console tool to manage your virtual machines. ("INSTALLER")
 #
 #Author: Kyle Schroeder "BabyWhale"
 
