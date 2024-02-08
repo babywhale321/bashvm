@@ -1,6 +1,6 @@
-# bashvm
+# BashVM
 
-a vps manager written in bash
+BashVM is a console tool to manage your virtual machines, written in Bash. 
 
 ## How to use
 
