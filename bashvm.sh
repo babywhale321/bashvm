@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# vps-manager written in Bash
+#bashvm is a console tool to manage your virtual machines.
 #
-# Author: Kyle Schroeder "BabyWhale"
+#Author: Kyle Schroeder "BabyWhale"
 
 while true; do
     # Display the main menu
