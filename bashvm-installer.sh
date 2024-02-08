@@ -11,6 +11,7 @@ apt install bridge-utils -y || echo "Installing bridge-utils has failed. Please 
 apt install qemu-utils -y || echo "Installing qemu-utils has failed. Please check the logs or console output above."
 apt install htop -y || echo "Installing htop has failed. Please check the logs or console output above."
 apt install net-tools -y || echo "Installing net-tools has failed. Please check the logs or console output above."
+apt install ufw -y || echo "Installing ufw has failed. Please check the logs or console output above."
 
 echo ""
 echo "If no errors then everything should be up and ready to use!"
