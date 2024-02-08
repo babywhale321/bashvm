@@ -1,6 +1,6 @@
-# BashVM
+# bashvm
 
-BashVM is a console tool to manage your virtual machines, written in Bash. 
+bashvm is a console tool to manage your virtual machines, written in Bash. 
 
 ## How to use
 
