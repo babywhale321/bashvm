@@ -366,7 +366,7 @@ while true; do
                 echo "3. Stop a network"
                 echo "4. Create a NAT network"
                 echo "5. Create a macvtap network"
-                echo "6. Add portforwarding rules to a VM behind a NAT"
+                echo "6. Add port forwarding rules to a VM behind a NAT"
                 echo "7. Delete a network"
                 echo "q. Back to main menu"
 
@@ -451,7 +451,7 @@ while true; do
                         ;;
                     6)
 
-                        # Add portforwarding rules to a VM behind a NAT
+                        # Add port forwarding rules to a VM behind a NAT
                         read -p "Enter the VM name: " vm_name
                         read -p "Enter the NAT interface name: " int_name
                         read -p "Enter the NAT ip of the VM: " nat_ip
