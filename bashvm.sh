@@ -366,7 +366,7 @@ while true; do
                 echo "3. Stop a network"
                 echo "4. Create a NAT network"
                 echo "5. Create a macvtap network"
-                echo "6. Add a port to forward from guest to host"
+                echo "6. Add portforwarding rules to a VM behind a NAT"
                 echo "7. Delete a network"
                 echo "q. Back to main menu"
 
@@ -450,33 +450,58 @@ while true; do
                         echo "Network $network_name created and started successfully."
                         ;;
                     6)
-                            # Add a port to forward
+
+                        #port forwarding
                         read -p "Enter the VM name: " vm_name
-                        read -p "Enter the NAT network interface name: " int_name
-                        read -p "Enter the NAT IP address that you wish to forward: " nat_ip
-                        read -p "Enter the host port to listen on: " host_port
-                        read -p "Enter the guest port to forward: " nat_port
+                        read -p "Enter interface name: " int_name
+                        read -p "Enter the NAT ip of the VM: " nat_ip
+                        read -p "Enter the starting port for the host to listen on: " nat_start_port
+                        read -p "Enter the ending port for the host to listen on (next 20 ports): " nat_end_port
+
+                        start_port=22
+                        end_port=42
 
                         nat_script='#!/bin/bash
                         if [ "${1}" = "'$vm_name'" ]; then
 
                             # Update the following variables to fit your setup
 
-                            if [ "${2}" = "stopped" ] || [ "${2}" = "reconnect" ]; then
-                                /sbin/iptables -D FORWARD -o '$int_name' -p tcp -d '$nat_ip' --dport '$nat_port' -j ACCEPT
-                                /sbin/iptables -t nat -D PREROUTING -p tcp --dport '$host_port' -j DNAT --to '$nat_ip':'$nat_port'
-                            fi
-                            if [ "${2}" = "start" ] || [ "${2}" = "reconnect" ]; then
-                                /sbin/iptables -I FORWARD -o '$int_name' -p tcp -d '$nat_ip' --dport '$nat_port' -j ACCEPT
-                                /sbin/iptables -t nat -I PREROUTING -p tcp --dport '$host_port' -j DNAT --to '$nat_ip':'$nat_port'
-                            fi
+                            if [ "${2}" = "stopped" ] || [ "${2}" = "reconnect" ]; then'
+
+                        echo "$nat_script" >> /etc/libvirt/hooks/qemu
+
+                        # Function to forward ports
+
+                        for ((port=start_port; port<=end_port; port++)); do
+                            nat_port=$((port - start_port + nat_start_port))
+
+                            echo '      /sbin/iptables -D FORWARD -o '$int_name' -p tcp -d '$nat_ip' --dport '$port' -j ACCEPT' >> /etc/libvirt/hooks/qemu
+                            echo '      /sbin/iptables -t nat -D PREROUTING -p tcp --dport '$nat_port' -j DNAT --to '$nat_ip':'$port'' >> /etc/libvirt/hooks/qemu
+                        done
+
+                        middle_script='    fi
+                            if [ "${2}" = "start" ] || [ "${2}" = "reconnect" ]; then'
+
+                        echo "$middle_script" >> /etc/libvirt/hooks/qemu
+
+
+                        for ((port=start_port; port<=end_port; port++)); do
+                            nat_port=$((port - start_port + nat_start_port))
+
+                            echo '      /sbin/iptables -I FORWARD -o '$int_name' -p tcp -d '$nat_ip' --dport '$port' -j ACCEPT' >> /etc/libvirt/hooks/qemu
+                            echo '      /sbin/iptables -t nat -I PREROUTING -p tcp --dport '$nat_port' -j DNAT --to '$nat_ip':'$port'' >> /etc/libvirt/hooks/qemu
+                        done
+
+                        last_script='    fi
                         fi'
 
-                        echo "$nat_script" > /etc/libvirt/hooks/qemu
+                        echo "$last_script" >> /etc/libvirt/hooks/qemu
 
                         chmod +x /etc/libvirt/hooks/qemu
-                        
+
                         echo "Please shutdown $vm_name then restart libvirtd."
+
+
 
                         ;;
                     7)
