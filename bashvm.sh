@@ -12,8 +12,9 @@ while true; do
     echo "3. Networks"
     echo "4. Snapshots"
     echo "5. Edit XML"
-    echo "6. VNC Access"
-    echo "7. System Monitor"
+    echo "6. Firewall Settings"
+    echo "7. VNC Access"
+    echo "8. System Monitor"
     echo "q. Exit"
 
     # Prompt user for input
@@ -600,14 +601,88 @@ while true; do
                 esac
             done
             ;;
+        
         6)
+
+            # Firewall Settings
+            while true; do
+                echo -e "\n===== Firewall Settings ====="
+                echo "s. Show ufw status"
+                echo "1. List listening ports"
+                echo "2. Allow port range"
+                echo "3. Deny port range"
+                echo "4. Allow single port"
+                echo "5. Deny single port"
+                echo "6. enable and reload ufw"
+                echo "7. disable and reset ufw"
+                echo "q. Back to main menu"
+
+                read -p "Enter your choice: " firewall_choice
+
+                case $firewall_choice in
+                    s)  
+                        # Show ufw status
+                        ufw status numbered
+                        ;;
+                    1)
+                        # List listening ports
+                        netstat -l
+                        ;;
+                    2)
+                        # Allow port range
+                        read -p "Enter starting port: " port_start
+                        read -p "Enter ending port: " port_end
+                        ufw allow $port_start:$port_end/tcp
+                        ufw reload
+                        ;;
+                    3)
+                        # Deny Port range
+                        read -p "Enter starting port: " port_start
+                        read -p "Enter ending port: " port_end
+                        ufw deny $port_start:$port_end/tcp
+                        ufw reload
+                        ;;
+                    4)
+                        # Allow single port
+                        read -p "Enter the port number: " port
+                        ufw allow $port
+                        ufw reload
+                        ;;
+                    5)
+                        # Deny single port
+                        read -p "Enter the port number: " port
+                        ufw deny $port
+                        ufw reload
+                        ;;
+                    6)
+                        # ufw enable and reload
+                        ufw enable
+                        ufw reload
+                        ;;
+                    7)
+                        # ufw disable and reset
+                        ufw disable
+                        ufw reset
+                        ;;
+                    q)
+                        # Back to Main Menu
+                        break
+                        ;;
+                    *)
+                        echo "Invalid choice. Please enter a valid option."
+                        ;;
+                esac
+            done
+            ;;
+
+        7)
             # VNC Access
             echo ""
             echo "Please use a VNC client to access the vm (e.g., remmina)"
             echo "The port thats associated with the vm can be found with (netstat -l)"
             echo "Please note that vnc access will always be on unless you block the port with a firewall (e.g., ufw)"
             ;;
-        7)
+        8)
             # System Monitor
             htop
             ;;
