@@ -613,8 +613,9 @@ while true; do
                 echo "3. Deny port range"
                 echo "4. Allow single port"
                 echo "5. Deny single port"
-                echo "6. enable and reload ufw"
-                echo "7. disable and reset ufw"
+                echo "6. Delete a rule"
+                echo "7. Enable and reload ufw"
+                echo "8. Disable and reset ufw"
                 echo "q. Back to main menu"
 
                 read -p "Enter your choice: " firewall_choice
@@ -655,11 +656,18 @@ while true; do
                         ufw reload
                         ;;
                     6)
+                        # Delete a rule
+                        ufw status numbered
+                        read -p "Enter the rule number to delete: " rule_number
+                        ufw delete $rule_number
+                        ufw reload
+                        ;;
+                    7)
                         # ufw enable and reload
                         ufw enable
                         ufw reload
                         ;;
-                    7)
+                    8)
                         # ufw disable and reset
                         ufw disable
                         ufw reset
