@@ -371,7 +371,8 @@ while true; do
                 echo "4. Create a NAT network"
                 echo "5. Create a macvtap network"
                 echo "6. Add port forwarding rules to a VM behind a NAT"
-                echo "7. Delete a network"
+                echo "7. Edit port forwarding rule file"
+                echo "8. Delete a network"
                 echo "q. Back to main menu"
 
                 read -p "Enter your choice: " network_manage_choice
@@ -498,6 +499,10 @@ while true; do
                         chmod +x /etc/libvirt/hooks/qemu
                         ;;
                     7)
+                        # Edit port forwarding rules
+                        nano /etc/libvirt/hooks/qemu || vim /etc/libvirt/hooks/qemu
+                        ;;
+                    8)
                         # Delete a network
                         read -p "Enter the name of the network to delete: " delete_network_name
                         virsh net-destroy "$delete_network_name"
