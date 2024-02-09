@@ -256,8 +256,6 @@ while true; do
 
                         # Create the new virtual machine
                         virsh define "$vm_xml_file"
-
-                        echo "Virtual machine $new_vm_name created successfully."
                         ;;
 
                     8)
@@ -347,8 +345,6 @@ while true; do
 
                         # Delete the storage volume
                         virsh vol-delete --pool "$pool_name" "$volume_name"
-
-                        echo "Storage volume $volume_name deleted successfully from pool $pool_name."
                         ;;
                     q)
                         # Back to Menu
@@ -399,7 +395,7 @@ while true; do
                         virsh net-destroy "$network_name"
                         ;;
                     4)
-                        # Prompt user for network configuration
+                        # Prompt user for NAT network configuration
                         read -p "Enter network name: " network_name
                         read -p "Enter bridge name: " bridge_name
                         read -p "Enter network IP address (e.g., 192.168.100.1): " network_ip
@@ -428,11 +424,9 @@ while true; do
                         virsh net-define "${net_xml_file}"
                         virsh net-start "${network_name}"
                         virsh net-autostart "${network_name}"
-
-                        echo "Network $network_name created and started successfully."
                         ;;
                     5) 
-                    
+                        # Prompt user for macvtap network configuration
                         read -p "Enter the new network name: " network_name
                         read -p "Enter the physical network interface to attach: " int_name
 
@@ -451,8 +445,6 @@ while true; do
                         virsh net-define "${net_xml_file}"
                         virsh net-start "${network_name}"
                         virsh net-autostart "${network_name}"
-
-                        echo "Network $network_name created and started successfully."
                         ;;
                     6)
 
