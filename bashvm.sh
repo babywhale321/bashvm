@@ -12,7 +12,7 @@ while true; do
     echo "7. VNC Access         8. System Monitor   q. Exit"
     echo ""
     # Prompt user for input
-    read -p "Enter your choice: " main_choice
+    read -ep "Enter your choice: " main_choice
     case $main_choice in
         1)
             # Virtual Machines Menu    
@@ -24,7 +24,7 @@ while true; do
                     echo "6. Disable autostart             7. Create a VM"
                     echo "8. Delete a VM                   q. Back to main menu"
                     echo ""
-                read -p "Enter your choice: " vm_manage_choice
+                read -ep "Enter your choice: " vm_manage_choice
                 case $vm_manage_choice in
                     s)
                         # List all virtual machines
@@ -33,35 +33,35 @@ while true; do
                         ;;
                     1)
                         # Show details of a virtual machine
-                        read -p "Enter the name of the virtual machine: " vm_name
+                        read -ep "Enter the name of the virtual machine: " vm_name
                         virsh dominfo "$vm_name"
                         ;;
                     2)
                         # Start a virtual machine
-                        read -p "Enter the name of the virtual machine to start: " vm_name
+                        read -ep "Enter the name of the virtual machine to start: " vm_name
                         virsh start "$vm_name"
                         ;;
                     3)
                         # Shutdown a VM (graceful)
-                        read -p "Enter the name of the virtual machine to stop: " vm_name
+                        read -ep "Enter the name of the virtual machine to stop: " vm_name
                         virsh shutdown "$vm_name"
                         ;;
 
                     4)
                         # Shutdown a VM (force)
-                        read -p "Enter the name of the virtual machine to stop: " vm_name
+                        read -ep "Enter the name of the virtual machine to stop: " vm_name
                         virsh destroy "$vm_name"
                         ;;
 
                     5)
                         # Enable autostart
-                        read -p "Enter the name of the virtual machine to autostart on boot: " vm_name
+                        read -ep "Enter the name of the virtual machine to autostart on boot: " vm_name
                         virsh autostart "$vm_name"
                         ;;
                     
                     6)
                         # Disable autostart
-                        read -p "Enter the name of the virtual machine to disable autostart on boot: " vm_name
+                        read -ep "Enter the name of the virtual machine to disable autostart on boot: " vm_name
                         virsh autostart --disable "$vm_name"
                         ;;
                     7)
@@ -71,12 +71,12 @@ while true; do
                         }
                     
                         # Prompt user for VM details
-                        read -p "Enter the name for the new virtual machine: " new_vm_name
-                        read -p "Enter the amount of memory in MB: " new_memory
-                        read -p "Enter the number of virtual CPUs: " new_vcpus
-                        read -p "Enter the full path to the ISO file (e.g., /var/lib/libvirt/images/mini.iso): " iso_path
-                        read -p "Enter the full path of the virtual machine disk (e.g., /var/lib/libvirt/qemu/vm.qcow2): " disk_path
-                        read -p "Enter the network name to connect the virtual machine to (e.g., default): " network_name
+                        read -ep "Enter the name for the new virtual machine: " new_vm_name
+                        read -ep "Enter the amount of memory in MB: " new_memory
+                        read -ep "Enter the number of virtual CPUs: " new_vcpus
+                        read -ep "Enter the full path to the ISO file (e.g., /var/lib/libvirt/images/mini.iso): " iso_path
+                        read -ep "Enter the full path of the virtual machine disk (e.g., /var/lib/libvirt/qemu/vm.qcow2): " disk_path
+                        read -ep "Enter the network name to connect the virtual machine to (e.g., default): " network_name
                         
                         # Generate a random MAC address
                         random_mac=$(generate_random_mac)
@@ -247,7 +247,7 @@ while true; do
 
                     8)
                         # Delete a virtual machine
-                        read -p "Enter the name of the virtual machine to delete: " delete_vm_name
+                        read -ep "Enter the name of the virtual machine to delete: " delete_vm_name
                         virsh destroy "$delete_vm_name"
                         virsh undefine "$delete_vm_name"
                         ;;
@@ -273,7 +273,7 @@ while true; do
                 echo "6. Create a storage volume        7. Delete a storage volume"
                 echo "q. Back to main menu"
                 echo ""
-                read -p "Enter your choice: " storage_manage_choice
+                read -ep "Enter your choice: " storage_manage_choice
 
                 case $storage_manage_choice in
                     s)
@@ -282,49 +282,49 @@ while true; do
                         ;;
 
                     1)
-                        read -p "Enter the name of the storage pool: " pool_name
+                        read -ep "Enter the name of the storage pool: " pool_name
                         virsh vol-list --pool "$pool_name"
                         ;;
                     
                     2)
                         # Activate a storage pool
-                        read -p "Enter the name of the storage pool to activate: " pool_name
+                        read -ep "Enter the name of the storage pool to activate: " pool_name
                         virsh pool-start "$pool_name"
                         ;;
                     3)
                         # Deactivate a storage pool
-                        read -p "Enter the name of the storage pool to deactivate: " pool_name
+                        read -ep "Enter the name of the storage pool to deactivate: " pool_name
                         virsh pool-destroy "$pool_name"
                         ;;
                     4)
                         # Create a new storage pool
-                        read -p "Enter the name of the new storage pool: " new_pool_name
-                        read -p "Enter the type of the new storage pool (e.g., dir, logical, fs): " pool_type
-                        read -p "Enter the target path or source for the new storage pool: " pool_source
+                        read -ep "Enter the name of the new storage pool: " new_pool_name
+                        read -ep "Enter the type of the new storage pool (e.g., dir, logical, fs): " pool_type
+                        read -ep "Enter the target path or source for the new storage pool: " pool_source
                         virsh pool-define-as "$new_pool_name" "$pool_type" --target "$pool_source"
                         virsh pool-start "$new_pool_name"
                         virsh pool-autostart "$new_pool_name"
                         ;;
                     5)
                         # Delete a storage pool
-                        read -p "Enter the name of the storage pool to delete: " delete_pool_name
+                        read -ep "Enter the name of the storage pool to delete: " delete_pool_name
                         virsh pool-destroy "$delete_pool_name"
                         virsh pool-delete "$delete_pool_name"
                         ;;
 
                     6)
                         # Create a storage volume
-                        read -p "Enter the name of the storage pool to use: " pool_name
-                        read -p "Enter the name of the new storage volume (e.g., new-vm.qcow2): " volume_name
-                        read -p "Enter the size of the volume (e.g., 10G): " volume_capacity
+                        read -ep "Enter the name of the storage pool to use: " pool_name
+                        read -ep "Enter the name of the new storage volume (e.g., new-vm.qcow2): " volume_name
+                        read -ep "Enter the size of the volume (e.g., 10G): " volume_capacity
                         virsh vol-create-as --pool "$pool_name" --name "$volume_name" --capacity "$volume_capacity" --format qcow2
                         ;;
                     
                     7)
                         # Delete a storage volume
                         # Prompt user for details
-                        read -p "Enter the storage pool name that the volume is under: " pool_name
-                        read -p "Enter the name of the volume to delete: " volume_name
+                        read -ep "Enter the storage pool name that the volume is under: " pool_name
+                        read -ep "Enter the name of the volume to delete: " volume_name
 
                         # Delete the storage volume
                         virsh vol-delete --pool "$pool_name" "$volume_name"
@@ -349,7 +349,7 @@ while true; do
                 echo "6. Add port forwarding to a VM     7. Edit port forwarding rule file"       
                 echo "8. Delete a network                q. Back to main menu"
                 echo ""
-                read -p "Enter your choice: " network_manage_choice
+                read -ep "Enter your choice: " network_manage_choice
 
                 case $network_manage_choice in
                     s)
@@ -358,28 +358,28 @@ while true; do
                         ;;
                     1)
                         # Show detailnano 1.shs of a network
-                        read -p "Enter the name of the network: " network_name
+                        read -ep "Enter the name of the network: " network_name
                         virsh net-info "$network_name"
                         ;;
                     2)
                         # Start a network
-                        read -p "Enter the name of the network to start: " network_name
+                        read -ep "Enter the name of the network to start: " network_name
                         virsh net-start "$network_name"
                         virsh net-autostart "$network_name"
                         ;;
                     3)
                         # Stop a network
-                        read -p "Enter the name of the network to stop: " network_name
+                        read -ep "Enter the name of the network to stop: " network_name
                         virsh net-destroy "$network_name"
                         ;;
                     4)
                         # Prompt user for NAT network configuration
-                        read -p "Enter network name: " network_name
-                        read -p "Enter bridge name: " bridge_name
-                        read -p "Enter network IP address (e.g., 192.168.100.1): " network_ip
-                        read -p "Enter network netmask (e.g., 255.255.255.0): " netmask
-                        read -p "Enter DHCP range start (e.g., 192.168.100.2): " dhcp_start
-                        read -p "Enter DHCP range end (e.g., 192.168.100.254): " dhcp_end
+                        read -ep "Enter network name: " network_name
+                        read -ep "Enter bridge name: " bridge_name
+                        read -ep "Enter network IP address (e.g., 192.168.100.1): " network_ip
+                        read -ep "Enter network netmask (e.g., 255.255.255.0): " netmask
+                        read -ep "Enter DHCP range start (e.g., 192.168.100.2): " dhcp_start
+                        read -ep "Enter DHCP range end (e.g., 192.168.100.254): " dhcp_end
 
                         # Create network XML file
                         network_xml="
@@ -405,8 +405,8 @@ while true; do
                         ;;
                     5) 
                         # Prompt user for macvtap network configuration
-                        read -p "Enter the new network name: " network_name
-                        read -p "Enter the physical network interface to attach: " int_name
+                        read -ep "Enter the new network name: " network_name
+                        read -ep "Enter the physical network interface to attach: " int_name
 
                         network_xml="
                         <network>
@@ -427,12 +427,12 @@ while true; do
                     6)
 
                         # Add port forwarding rules to a VM behind a NAT
-                        read -p "Enter the VM name: " vm_name
-                        read -p "Enter the NAT interface name: " int_name
-                        read -p "Enter the NAT ip of the VM: " nat_ip
+                        read -ep "Enter the VM name: " vm_name
+                        read -ep "Enter the NAT interface name: " int_name
+                        read -ep "Enter the NAT ip of the VM: " nat_ip
                         echo "Enter the starting port for the host to listen on"
-                        read -p "Note, SSH port will be what you type minus 1: " start_port
-                        read -p "Enter the ending port for the host to listen on: " end_port
+                        read -ep "Note, SSH port will be what you type minus 1: " start_port
+                        read -ep "Enter the ending port for the host to listen on: " end_port
 
                         nat_script='#!/bin/bash
                         if [ "${1}" = "'$vm_name'" ]; then
@@ -474,7 +474,7 @@ while true; do
                         ;;
                     8)
                         # Delete a network
-                        read -p "Enter the name of the network to delete: " delete_network_name
+                        read -ep "Enter the name of the network to delete: " delete_network_name
                         virsh net-destroy "$delete_network_name"
                         virsh net-undefine "$delete_network_name"
                         ;;
@@ -496,30 +496,30 @@ while true; do
                 echo "2. Delete a snapshot            3. Revert to a snapshot"
                 echo "q. Back to main menu"
                 echo ""
-                read -p "Enter your choice: " snapshot_manage_choice
+                read -ep "Enter your choice: " snapshot_manage_choice
 
                 case $snapshot_manage_choice in
                     s)
                         # List all snapshots of a virtual machine
-                        read -p "Enter the name of the virtual machine: " vm_name
+                        read -ep "Enter the name of the virtual machine: " vm_name
                         virsh snapshot-list "$vm_name"
                         ;;
                     1)
                         # Create a snapshot of a virtual machine
-                        read -p "Enter the name of the virtual machine: " vm_name
-                        read -p "Enter the name for the new snapshot: " snapshot_name
+                        read -ep "Enter the name of the virtual machine: " vm_name
+                        read -ep "Enter the name for the new snapshot: " snapshot_name
                         virsh snapshot-create-as "$vm_name" "$snapshot_name"
                         ;;
                     2)
                         # Delete a snapshot of a virtual machine
-                        read -p "Enter the name of the virtual machine: " vm_name
-                        read -p "Enter the name of the snapshot to delete: " snapshot_name
+                        read -ep "Enter the name of the virtual machine: " vm_name
+                        read -ep "Enter the name of the snapshot to delete: " snapshot_name
                         virsh snapshot-delete "$vm_name" "$snapshot_name"
                         ;;
                     3)
                         # Revert to a snapshot of a virtual machine
-                        read -p "Enter the name of the virtual machine: " vm_name
-                        read -p "Enter the name of the snapshot to revert to: " snapshot_name
+                        read -ep "Enter the name of the virtual machine: " vm_name
+                        read -ep "Enter the name of the snapshot to revert to: " snapshot_name
                         virsh snapshot-revert "$vm_name" "$snapshot_name"
                         ;;
                     q)
@@ -541,28 +541,28 @@ while true; do
                 echo "3. Edit a network       4. Edit a snapshot"
                 echo "q. Back to main menu"
                 echo ""
-                read -p "Enter your choice: " xml_manage_choice
+                read -ep "Enter your choice: " xml_manage_choice
 
                 case $xml_manage_choice in
                     1)  
                         # edit a vm
-                        read -p "Enter the VM name: " vm_name
+                        read -ep "Enter the VM name: " vm_name
                         virsh edit $vm_name
                         ;;
                     2)
                         # edit a storage pool
-                        read -p "Enter the storage pool name: " pool_name
+                        read -ep "Enter the storage pool name: " pool_name
                         virsh pool-edit $pool_name
                         ;;
                     3)
                         # edit a network
-                        read -p "Enter the network name: " net_name
+                        read -ep "Enter the network name: " net_name
                         virsh net-edit $net_name
                         ;;
                     4)
                         # edit a snapshot
-                        read -p "Enter the VM name: " vm_name
-                        read -p "Enter the snapshot name: " snap_name
+                        read -ep "Enter the VM name: " vm_name
+                        read -ep "Enter the snapshot name: " snap_name
                         virsh snapshot-edit --snapshotname $snap_name --domain $vm_name
                         ;;
                     q)
@@ -587,7 +587,7 @@ while true; do
                 echo "6. Delete a rule           7. Enable and reload ufw"
                 echo "8. Disable and reset ufw   q. Back to main menu"
                 echo ""
-                read -p "Enter your choice: " firewall_choice
+                read -ep "Enter your choice: " firewall_choice
 
                 case $firewall_choice in
                     s)  
@@ -600,34 +600,34 @@ while true; do
                         ;;
                     2)
                         # Allow port range
-                        read -p "Enter starting port: " port_start
-                        read -p "Enter ending port: " port_end
+                        read -ep "Enter starting port: " port_start
+                        read -ep "Enter ending port: " port_end
                         ufw allow $port_start:$port_end/tcp
                         ufw reload
                         ;;
                     3)
                         # Deny Port range
-                        read -p "Enter starting port: " port_start
-                        read -p "Enter ending port: " port_end
+                        read -ep "Enter starting port: " port_start
+                        read -ep "Enter ending port: " port_end
                         ufw deny $port_start:$port_end/tcp
                         ufw reload
                         ;;
                     4)
                         # Allow single port
-                        read -p "Enter the port number: " port
+                        read -ep "Enter the port number: " port
                         ufw allow $port
                         ufw reload
                         ;;
                     5)
                         # Deny single port
-                        read -p "Enter the port number: " port
+                        read -ep "Enter the port number: " port
                         ufw deny $port
                         ufw reload
                         ;;
                     6)
                         # Delete a rule
                         ufw status numbered
-                        read -p "Enter the rule number to delete: " rule_number
+                        read -ep "Enter the rule number to delete: " rule_number
                         ufw delete $rule_number
                         ufw reload
                         ;;
