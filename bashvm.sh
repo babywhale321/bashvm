@@ -6,38 +6,25 @@
 
 while true; do
     # Display the main menu
-    echo -e "\n===== Main Menu ====="
-    echo "1. Virtual Machines"
-    echo "2. Storage Pools"
-    echo "3. Networks"
-    echo "4. Snapshots"
-    echo "5. Edit XML"
-    echo "6. Firewall Settings"
-    echo "7. VNC Access"
-    echo "8. System Monitor"
-    echo "q. Exit"
-
+    echo -e "\n========================== Main Menu =========================="
+    echo "1. Virtual Machines   2. Storage Pools    3. Networks"
+    echo "4. Snapshots          5. Edit XML         6. Firewall Settings"
+    echo "7. VNC Access         8. System Monitor   q. Exit"
+    echo ""
     # Prompt user for input
     read -p "Enter your choice: " main_choice
-
     case $main_choice in
         1)
             # Virtual Machines Menu    
             while true; do
-                echo -e "\n===== Manage Virtual Machine ====="
-                echo "s. List all virtual machines"
-                echo "1. Show details"
-                echo "2. Start a VM"
-                echo "3. Shutdown a VM (graceful)"
-                echo "4. Shutdown a VM (force)"
-                echo "5. Enable autostart"
-                echo "6. Disable autostart"
-                echo "7. Create a VM"
-                echo "8. Delete a VM"
-                echo "q. Back to main menu"
-
+                    echo "==================== Manage Virtual Machine ===================="
+                    echo "s. List all virtual machines     1. Show details"
+                    echo "2. Start a VM                    3. Shutdown a VM (graceful)"
+                    echo "4. Shutdown a VM (force)         5. Enable autostart"
+                    echo "6. Disable autostart             7. Create a VM"
+                    echo "8. Delete a VM                   q. Back to main menu"
+                    echo ""
                 read -p "Enter your choice: " vm_manage_choice
-
                 case $vm_manage_choice in
                     s)
                         # List all virtual machines
@@ -279,17 +266,13 @@ while true; do
         2)
             # Storage Pools Menu
             while true; do
-                echo -e "\n===== Manage Storage Pool ====="
-                echo "s. Show details of storage pools"
-                echo "1. Show all volumes from a pool"
-                echo "2. Activate a storage pool"
-                echo "3. Deactivate a storage pool"
-                echo "4. Create a storage pool"
-                echo "5. Delete a storage pool"
-                echo "6. Create a storage volume"
-                echo "7. Delete a storage volume"
+                echo -e "\n====================== Manage Storage Pool ======================"
+                echo "s. Show details of storage pools  1. Show all volumes in a pool"
+                echo "2. Activate a storage pool        3. Deactivate a storage pool"
+                echo "4. Create a storage pool          5. Delete a storage pool"
+                echo "6. Create a storage volume        7. Delete a storage volume"
                 echo "q. Back to main menu"
-
+                echo ""
                 read -p "Enter your choice: " storage_manage_choice
 
                 case $storage_manage_choice in
@@ -359,18 +342,13 @@ while true; do
         3)
             # Networks Menu       
             while true; do
-                echo -e "\n===== Manage Network ====="
-                echo "s. Show all networks"
-                echo "1. Show details of a network"
-                echo "2. Start a network"
-                echo "3. Stop a network"
-                echo "4. Create a NAT network"
-                echo "5. Create a macvtap network"
-                echo "6. Add port forwarding rules to a VM behind a NAT"
-                echo "7. Edit port forwarding rule file"
-                echo "8. Delete a network"
-                echo "q. Back to main menu"
-
+                echo -e "\n========================== Manage Network =========================="
+                echo "s. Show all networks               1. Show details of a network"
+                echo "2. Start a network                 3. Stop a network"
+                echo "4. Create a NAT network            5. Create a macvtap network"
+                echo "6. Add port forwarding to a VM     7. Edit port forwarding rule file"       
+                echo "8. Delete a network                q. Back to main menu"
+                echo ""
                 read -p "Enter your choice: " network_manage_choice
 
                 case $network_manage_choice in
@@ -513,13 +491,11 @@ while true; do
         4)
             # Managing a snapshot
             while true; do
-                echo -e "\n===== Manage Snapshot ====="
-                echo "s. List all snapshots of a virtual machine"
-                echo "1. Create a snapshot"
-                echo "2. Delete a snapshot"
-                echo "3. Revert to a snapshot"
+                echo -e "\n================== Manage Snapshot =================="
+                echo "s. Show all snapshots of a VM   1. Create a snapshot"
+                echo "2. Delete a snapshot            3. Revert to a snapshot"
                 echo "q. Back to main menu"
-
+                echo ""
                 read -p "Enter your choice: " snapshot_manage_choice
 
                 case $snapshot_manage_choice in
@@ -560,13 +536,11 @@ while true; do
         5)
             # Edit XML
             while true; do
-                echo -e "\n===== Edit XML ====="
-                echo "1. Edit a VM"
-                echo "2. Edit a storage pool"
-                echo "3. Edit a network"
-                echo "4. Edit a snapshot"
+                echo -e "\n====================== Edit XML ======================"
+                echo "1. Edit a VM            2. Edit a storage pool"
+                echo "3. Edit a network       4. Edit a snapshot"
                 echo "q. Back to main menu"
-
+                echo ""
                 read -p "Enter your choice: " xml_manage_choice
 
                 case $xml_manage_choice in
@@ -606,18 +580,13 @@ while true; do
 
             # Firewall Settings
             while true; do
-                echo -e "\n===== Firewall Settings ====="
-                echo "s. Show ufw status"
-                echo "1. List listening ports"
-                echo "2. Allow port range"
-                echo "3. Deny port range"
-                echo "4. Allow single port"
-                echo "5. Deny single port"
-                echo "6. Delete a rule"
-                echo "7. Enable and reload ufw"
-                echo "8. Disable and reset ufw"
-                echo "q. Back to main menu"
-
+                echo -e "\n================== Firewall Settings =================="
+                echo "s. Show ufw status         1. List listening ports"
+                echo "2. Allow port range        3. Deny port range"
+                echo "4. Allow single port       5. Deny single port"
+                echo "6. Delete a rule           7. Enable and reload ufw"
+                echo "8. Disable and reset ufw   q. Back to main menu"
+                echo ""
                 read -p "Enter your choice: " firewall_choice
 
                 case $firewall_choice in
