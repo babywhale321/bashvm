@@ -18,7 +18,7 @@ while true; do
             # Virtual Machines Menu    
             while true; do
                     echo "==================== Manage Virtual Machine ===================="
-                    echo "s. List all virtual machines     1. Show details"
+                    echo "s. Show all virtual machines     1. Show details"
                     echo "2. Start a VM                    3. Shutdown a VM (graceful)"
                     echo "4. Shutdown a VM (force)         5. Enable autostart"
                     echo "6. Disable autostart             7. Create a VM"
@@ -267,7 +267,7 @@ while true; do
             # Storage Pools Menu
             while true; do
                 echo -e "\n====================== Manage Storage Pool ======================"
-                echo "s. Show details of storage pools  1. Show all volumes in a pool"
+                echo "s. Show all storage pools         1. Show all volumes in a pool"
                 echo "2. Activate a storage pool        3. Deactivate a storage pool"
                 echo "4. Create a storage pool          5. Delete a storage pool"
                 echo "6. Create a storage volume        7. Delete a storage volume"
