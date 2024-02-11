@@ -9,6 +9,7 @@ apt install libvirt-daemon-system -y || echo "Installing libvirt-daemon-system h
 apt install libvirt-clients -y || echo "Installing libvirt-clients has failed. Please check the logs or console output above."
 apt install bridge-utils -y || echo "Installing bridge-utils has failed. Please check the logs or console output above."
 apt install qemu-utils -y || echo "Installing qemu-utils has failed. Please check the logs or console output above."
+apt install virt-manager -y || echo "Installing virt-manager has failed. Please check the logs or console output above."
 apt install htop -y || echo "Installing htop has failed. Please check the logs or console output above."
 apt install net-tools -y || echo "Installing net-tools has failed. Please check the logs or console output above."
 apt install ufw -y || echo "Installing ufw has failed. Please check the logs or console output above."
