@@ -15,6 +15,10 @@ else
     wget https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2
 fi
 
+#Enable default network
+virsh net-start default
+virsh net-autostart default
+
 #Deply VM
 virt-install --name $hostname --memory 2048 --vcpus 2 --disk=size=20,backing_store=/var/lib/libvirt/images/debian-12-generic-amd64.qcow2 --cloud-init user-data=./bashvm-cloudinit.yaml,disable=on --network bridge=virbr0 --osinfo=debian11
 
