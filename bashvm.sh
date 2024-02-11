@@ -9,7 +9,7 @@ while true; do
     echo -e "\n========================== Main Menu =========================="
     echo "1. Virtual Machines   2. Storage Pools    3. Networks"
     echo "4. Snapshots          5. Edit XML         6. Firewall Settings"
-    echo "7. VNC Access         8. System Monitor   q. Exit"
+    echo "7. System Monitor     q. Exit"
     echo ""
     # Prompt user for input
     read -ep "Enter your choice: " main_choice
@@ -653,13 +653,6 @@ while true; do
             ;;
 
         7)
-            # VNC Access
-            echo ""
-            echo "Please use a VNC client to access the vm (e.g., remmina)"
-            echo "The port thats associated with the vm can be found with (netstat -l)"
-            echo "Please note that vnc access will always be on unless you block the port with a firewall (e.g., ufw)"
-            ;;
-        8)
             # System Monitor
             htop
             ;;
