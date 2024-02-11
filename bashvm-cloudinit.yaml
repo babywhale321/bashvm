@@ -1,0 +1,44 @@
+#cloud-config
+
+# hostname will be replaced with bashvm-cloudinit.sh script
+hostname: default-vm
+locale: en_US.UTF-8
+
+# disable ssh access as root.
+disable_root: true
+
+# ssh with password enabled
+ssh_pwauth: true
+
+# users
+users:
+  - name: bashvm
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, adm
+    shell: /bin/bash
+    lock_passwd: false
+    plain_text_passwd: bashvm
+    #ssh_authorized_keys:
+    #  - ""
+
+# env variables
+write_files:
+  - path: /etc/environment
+    content: |
+      MY_ENV="value"
+    append: true
+
+# list of packages to install after the VM is up
+package_upgrade: true
+package_reboot_if_required: true
+package_update: true
+packages:
+  - qemu-guest-agent
+  - nano
+
+# run dhclient after the first install.
+runcmd:
+  - dhclient
+
+# output to /var/log/cloud-init-output.log
+final_message: "The system is up, after $UPTIME seconds"
