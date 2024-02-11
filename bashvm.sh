@@ -23,7 +23,7 @@ while true; do
                     echo "4. Shutdown a VM (force)         5. Enable autostart"
                     echo "6. Disable autostart             7. Create a VM"
                     echo "8. Delete a VM                   9. Create a VM (Automated)"                
-                    echo "q. Back to main menu"
+                    echo "10.Console into a VM             q. Back to main menu"
                     echo ""
                 read -ep "Enter your choice: " vm_manage_choice
                 case $vm_manage_choice in
@@ -263,8 +263,12 @@ while true; do
                         echo "Aborted"
                         fi
                         ;;
-
-
+                    
+                    10)
+                        # Console into a VM
+                        read -ep "Enter the VM name to console into: " hostname
+                        virsh console $hostname
+                        ;;
                     q)
                         # Back to Menu
                         break
