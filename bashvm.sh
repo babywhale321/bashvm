@@ -9,7 +9,7 @@ while true; do
     echo -e "\n========================== Main Menu =========================="
     echo "1. Virtual Machines   2. Storage Pools    3. Networks"
     echo "4. Snapshots          5. Edit XML         6. Firewall Settings"
-    echo "7. System Monitor     q. Exit"
+    echo "7. Port Forwarding    8. System Monitor   q. Exit"
     echo ""
     # Prompt user for input
     read -ep "Enter your choice: " main_choice
@@ -362,9 +362,8 @@ while true; do
                 echo -e "\n========================== Manage Network =========================="
                 echo "s. Show all networks               1. Show details of a network"
                 echo "2. Start a network                 3. Stop a network"
-                echo "4. Create a NAT network            5. Create a macvtap network"
-                echo "6. Add port forwarding to a VM     7. Edit port forwarding rule file"       
-                echo "8. Delete a network                q. Back to main menu"
+                echo "4. Create a NAT network            5. Create a macvtap network"      
+                echo "6. Delete a network                q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " network_manage_choice
 
@@ -442,54 +441,6 @@ while true; do
                         virsh net-autostart "${network_name}"
                         ;;
                     6)
-
-                        # Add port forwarding rules to a VM behind a NAT
-                        read -ep "Enter the VM name: " vm_name
-                        read -ep "Enter the NAT interface name: " int_name
-                        read -ep "Enter the NAT ip of the VM: " nat_ip
-                        echo "Enter the starting port for the host to listen on"
-                        read -ep "Note, SSH port will be what you type minus 1: " start_port
-                        read -ep "Enter the ending port for the host to listen on: " end_port
-
-                        nat_script='#!/bin/bash
-                        if [ "${1}" = "'$vm_name'" ]; then
-
-                            if [ "${2}" = "stopped" ] || [ "${2}" = "reconnect" ]; then'
-                        echo "$nat_script" >> /etc/libvirt/hooks/qemu
-
-                        ssh_port=$(($start_port - 1))
-                        echo '      /sbin/iptables -D FORWARD -o '$int_name' -p tcp -d '$nat_ip' --dport 22 -j ACCEPT' >> /etc/libvirt/hooks/qemu
-                        echo '      /sbin/iptables -t nat -D PREROUTING -p tcp --dport '$ssh_port' -j DNAT --to '$nat_ip':22' >> /etc/libvirt/hooks/qemu
-                        for ((port=start_port; port<=end_port; port++)); do
-
-                            echo '      /sbin/iptables -D FORWARD -o '$int_name' -p tcp -d '$nat_ip' --dport '$port' -j ACCEPT' >> /etc/libvirt/hooks/qemu
-                            echo '      /sbin/iptables -t nat -D PREROUTING -p tcp --dport '$port' -j DNAT --to '$nat_ip':'$port'' >> /etc/libvirt/hooks/qemu
-                        done
-
-                        middle_script='    fi
-                            if [ "${2}" = "start" ] || [ "${2}" = "reconnect" ]; then'
-                        echo "$middle_script" >> /etc/libvirt/hooks/qemu
-
-                        ssh_port=$(($start_port - 1))
-                        echo '      /sbin/iptables -I FORWARD -o '$int_name' -p tcp -d '$nat_ip' --dport 22 -j ACCEPT' >> /etc/libvirt/hooks/qemu
-                        echo '      /sbin/iptables -t nat -I PREROUTING -p tcp --dport '$ssh_port' -j DNAT --to '$nat_ip':22' >> /etc/libvirt/hooks/qemu
-                        for ((port=start_port; port<=end_port; port++)); do
-
-                            echo '      /sbin/iptables -I FORWARD -o '$int_name' -p tcp -d '$nat_ip' --dport '$port' -j ACCEPT' >> /etc/libvirt/hooks/qemu
-                            echo '      /sbin/iptables -t nat -I PREROUTING -p tcp --dport '$port' -j DNAT --to '$nat_ip':'$port'' >> /etc/libvirt/hooks/qemu
-                        done
-
-                        last_script='    fi
-                        fi'
-                        echo "$last_script" >> /etc/libvirt/hooks/qemu
-
-                        chmod +x /etc/libvirt/hooks/qemu
-                        ;;
-                    7)
-                        # Edit port forwarding rules
-                        nano /etc/libvirt/hooks/qemu || vim /etc/libvirt/hooks/qemu
-                        ;;
-                    8)
                         # Delete a network
                         read -ep "Enter the name of the network to delete: " delete_network_name
                         virsh net-destroy "$delete_network_name"
@@ -668,8 +619,95 @@ while true; do
                 esac
             done
             ;;
+        7) 
+            # Manage Port forwarding
+            while true; do
+                echo -e "\n================== Manage Port Forwarding =================="
+                echo "s. Show port forwarding rules  1. Add port forwarding to a VM"
+                echo "2. Delete port rules of a VM   3. Edit port forwarding rule file"
+                echo "q. Back to main menu"
+                echo ""
+                read -ep "Enter your choice: " port_choice
 
-        7)
+                case $port_choice in
+                    s)  
+                        # Show port forwarding ruless
+                        iptables -t nat -L -n -v
+                        ;;
+                    1)
+                        # Add port forwarding rules to a VM behind a NAT
+                        read -ep "Enter the VM name: " vm_name
+                        read -ep "Enter the NAT interface name: " int_name
+                        read -ep "Enter the NAT ip of the VM: " nat_ip
+                        echo "Enter the starting port for the host to listen on"
+                        read -ep "Note, SSH port will be what you type minus 1: " start_port
+                        read -ep "Enter the ending port for the host to listen on: " end_port
+
+                        echo "#!/bin/bash" >> /etc/libvirt/hooks/qemu
+                        
+                        # Identifier for deleting if needed
+                        echo "#$vm_name" >> /etc/libvirt/hooks/qemu            
+                        
+                        nat_script=' 
+                        if [ "${1}" = "'$vm_name'" ]; then
+
+                            if [ "${2}" = "stopped" ] || [ "${2}" = "reconnect" ]; then'
+                        echo "$nat_script" >> /etc/libvirt/hooks/qemu
+
+                        ssh_port=$(($start_port - 1))
+                        echo '      /sbin/iptables -D FORWARD -o '$int_name' -p tcp -d '$nat_ip' --dport 22 -j ACCEPT' >> /etc/libvirt/hooks/qemu
+                        echo '      /sbin/iptables -t nat -D PREROUTING -p tcp --dport '$ssh_port' -j DNAT --to '$nat_ip':22' >> /etc/libvirt/hooks/qemu
+                        for ((port=start_port; port<=end_port; port++)); do
+
+                            echo '      /sbin/iptables -D FORWARD -o '$int_name' -p tcp -d '$nat_ip' --dport '$port' -j ACCEPT' >> /etc/libvirt/hooks/qemu
+                            echo '      /sbin/iptables -t nat -D PREROUTING -p tcp --dport '$port' -j DNAT --to '$nat_ip':'$port'' >> /etc/libvirt/hooks/qemu
+                        done
+
+                        middle_script='    fi
+                            if [ "${2}" = "start" ] || [ "${2}" = "reconnect" ]; then'
+                        echo "$middle_script" >> /etc/libvirt/hooks/qemu
+
+                        ssh_port=$(($start_port - 1))
+                        echo '      /sbin/iptables -I FORWARD -o '$int_name' -p tcp -d '$nat_ip' --dport 22 -j ACCEPT' >> /etc/libvirt/hooks/qemu
+                        echo '      /sbin/iptables -t nat -I PREROUTING -p tcp --dport '$ssh_port' -j DNAT --to '$nat_ip':22' >> /etc/libvirt/hooks/qemu
+                        for ((port=start_port; port<=end_port; port++)); do
+
+                            echo '      /sbin/iptables -I FORWARD -o '$int_name' -p tcp -d '$nat_ip' --dport '$port' -j ACCEPT' >> /etc/libvirt/hooks/qemu
+                            echo '      /sbin/iptables -t nat -I PREROUTING -p tcp --dport '$port' -j DNAT --to '$nat_ip':'$port'' >> /etc/libvirt/hooks/qemu
+                        done
+
+                        last_script='    fi
+                        fi'
+                        echo "$last_script" >> /etc/libvirt/hooks/qemu
+
+                        # End Identifier
+                        echo "###$vm_name" >> /etc/libvirt/hooks/qemu
+
+                        chmod +x /etc/libvirt/hooks/qemu
+                        ;;
+
+                    2)
+                        # Delete port forwarding rules of vm
+                        read -ep "Enter the VM name: " vm_name
+
+                        sed -i "/$vm_name/,/###$vm_name/d" /etc/libvirt/hooks/qemu
+                        ;;
+                    3)
+                        # Edit port forwarding rules
+                        nano /etc/libvirt/hooks/qemu || vim /etc/libvirt/hooks/qemu
+                        ;;
+                    q)
+                        # Back to Main Menu
+                        break
+                        ;;
+                    *)
+                        echo "Invalid choice. Please enter a valid option."
+                        ;;
+                esac
+            done
+            ;;
+
+        8)
             # System Monitor
             htop
             ;;
