@@ -10,7 +10,7 @@ bash bashvm-installer.sh
 ### Run bashvm.sh
 bash bashvm.sh
 
-## Recommended ISO
+### Recommended ISO
 Debian 12 netinst CD
 
 https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.5.0-amd64-netinst.iso
