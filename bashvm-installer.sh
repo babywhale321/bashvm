@@ -4,10 +4,30 @@
 #
 #Author: Kyle Schroeder "BabyWhale"
 
+# Detect debian
+if [ ! -f "/etc/debian_version" ]; then
+    echo "This installer seems to be running on an unsupported distribution."
+    echo "Supported distros are Debian 11 (bullseye) and Debian 12 (bookworm)."
+    exit
+fi
+
+# Detect OS version
+if ! grep -q "bookworm\|bullseye" /etc/os-release; then
+    echo "This installer seems to be running on an unsupported distribution."
+    echo "Supported distros are Debian 11 (bullseye) and Debian 12 (bookworm)."
+    exit
+fi
+
+# Detect root privleges
+if [ "$EUID" -ne 0 ]; then
+	echo "This installer needs to be run with superuser privileges."
+	exit
+fi
+
 # Check and install qemu-kvm
 dpkg --list | grep qemu-kvm >> /dev/null
 if [ ! $? == 0 ]; then
-    apt install qemu-kvm -y || echo "Installing qemu-kvm has failed. Please check the logs or console output above."
+    apt install qemu-kvm -y
 else
     echo "qemu-kvm is already installed."
 fi
@@ -15,7 +35,7 @@ fi
 # Check and install libvirt-daemon-system
 dpkg --list | grep libvirt-daemon-system >> /dev/null
 if [ ! $? == 0 ]; then
-    apt install libvirt-daemon-system -y || echo "Installing libvirt-daemon-system has failed. Please check the logs or console output above."
+    apt install libvirt-daemon-system -y
 else
     echo "libvirt-daemon-system is already installed."
 fi
@@ -23,7 +43,7 @@ fi
 # Check and install libvirt-clients
 dpkg --list | grep libvirt-clients >> /dev/null
 if [ ! $? == 0 ]; then
-    apt install libvirt-clients -y || echo "Installing libvirt-clients has failed. Please check the logs or console output above."
+    apt install libvirt-clients -y
 else
     echo "libvirt-clients is already installed."
 fi
@@ -31,7 +51,7 @@ fi
 # Check and install bridge-utils
 dpkg --list | grep bridge-utils >> /dev/null
 if [ ! $? == 0 ]; then
-    apt install bridge-utils -y || echo "Installing bridge-utils has failed. Please check the logs or console output above."
+    apt install bridge-utils -y
 else
     echo "bridge-utils is already installed."
 fi
@@ -39,7 +59,7 @@ fi
 # Check and install qemu-utils
 dpkg --list | grep qemu-utils >> /dev/null
 if [ ! $? == 0 ]; then
-    apt install qemu-utils -y || echo "Installing qemu-utils has failed. Please check the logs or console output above."
+    apt install qemu-utils -y
 else
     echo "qemu-utils is already installed."
 fi
@@ -47,7 +67,7 @@ fi
 # Check and install virt-manager
 dpkg --list | grep virt-manager >> /dev/null
 if [ ! $? == 0 ]; then
-    apt install virt-manager -y || echo "Installing virt-manager has failed. Please check the logs or console output above."
+    apt install virt-manager -y
 else
     echo "virt-manager is already installed."
 fi
@@ -55,7 +75,7 @@ fi
 # Check and install cloud-init
 dpkg --list | grep cloud-init >> /dev/null
 if [ ! $? == 0 ]; then
-    apt install cloud-init -y || echo "Installing cloud-init has failed. Please check the logs or console output above."
+    apt install cloud-init -y
 else
     echo "cloud-init is already installed."
 fi
@@ -63,7 +83,7 @@ fi
 # Check and install htop
 dpkg --list | grep htop >> /dev/null
 if [ ! $? == 0 ]; then
-    apt install htop -y || echo "Installing htop has failed. Please check the logs or console output above."
+    apt install htop -y
 else
     echo "htop is already installed."
 fi
@@ -71,7 +91,7 @@ fi
 # Check and install net-tools
 dpkg --list | grep net-tools >> /dev/null
 if [ ! $? == 0 ]; then
-    apt install net-tools -y || echo "Installing net-tools has failed. Please check the logs or console output above."
+    apt install net-tools -y
 else
     echo "net-tools is already installed."
 fi
@@ -79,7 +99,7 @@ fi
 # Check and install ufw
 dpkg --list | grep ufw >> /dev/null
 if [ ! $? == 0 ]; then
-    apt install ufw -y || echo "Installing ufw has failed. Please check the logs or console output above."
+    apt install ufw -y
 else
     echo "ufw is already installed."
 fi
@@ -87,7 +107,7 @@ fi
 # Check and install dnsmasq
 dpkg --list | grep dnsmasq >> /dev/null
 if [ ! $? == 0 ]; then
-    apt install dnsmasq -y || echo "Installing dnsmasq has failed. Please check the logs or console output above."
+    apt install dnsmasq -y
 else
     echo "dnsmasq is already installed."
 fi
