@@ -52,6 +52,14 @@ else
     echo "virt-manager is already installed."
 fi
 
+# Check and install cloud-init
+dpkg --list | grep cloud-init >> /dev/null
+if [ ! $? == 0 ]; then
+    apt install cloud-init -y || echo "Installing cloud-init has failed. Please check the logs or console output above."
+else
+    echo "cloud-init is already installed."
+fi
+
 # Check and install htop
 dpkg --list | grep htop >> /dev/null
 if [ ! $? == 0 ]; then
