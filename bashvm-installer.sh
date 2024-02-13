@@ -5,7 +5,7 @@
 #Author: Kyle Schroeder "BabyWhale"
 
 # Check and install qemu-kvm
-dpkg --list | grep qemu-kvm >> /dev/zero
+dpkg --list | grep qemu-kvm >> /dev/null
 if [ ! $? == 0 ]; then
     apt install qemu-kvm -y || echo "Installing qemu-kvm has failed. Please check the logs or console output above."
 else
@@ -13,7 +13,7 @@ else
 fi
 
 # Check and install libvirt-daemon-system
-dpkg --list | grep libvirt-daemon-system >> /dev/zero
+dpkg --list | grep libvirt-daemon-system >> /dev/null
 if [ ! $? == 0 ]; then
     apt install libvirt-daemon-system -y || echo "Installing libvirt-daemon-system has failed. Please check the logs or console output above."
 else
@@ -21,7 +21,7 @@ else
 fi
 
 # Check and install libvirt-clients
-dpkg --list | grep libvirt-clients >> /dev/zero
+dpkg --list | grep libvirt-clients >> /dev/null
 if [ ! $? == 0 ]; then
     apt install libvirt-clients -y || echo "Installing libvirt-clients has failed. Please check the logs or console output above."
 else
@@ -29,7 +29,7 @@ else
 fi
 
 # Check and install bridge-utils
-dpkg --list | grep bridge-utils >> /dev/zero
+dpkg --list | grep bridge-utils >> /dev/null
 if [ ! $? == 0 ]; then
     apt install bridge-utils -y || echo "Installing bridge-utils has failed. Please check the logs or console output above."
 else
@@ -37,7 +37,7 @@ else
 fi
 
 # Check and install qemu-utils
-dpkg --list | grep qemu-utils >> /dev/zero
+dpkg --list | grep qemu-utils >> /dev/null
 if [ ! $? == 0 ]; then
     apt install qemu-utils -y || echo "Installing qemu-utils has failed. Please check the logs or console output above."
 else
@@ -45,7 +45,7 @@ else
 fi
 
 # Check and install virt-manager
-dpkg --list | grep virt-manager >> /dev/zero
+dpkg --list | grep virt-manager >> /dev/null
 if [ ! $? == 0 ]; then
     apt install virt-manager -y || echo "Installing virt-manager has failed. Please check the logs or console output above."
 else
@@ -53,7 +53,7 @@ else
 fi
 
 # Check and install htop
-dpkg --list | grep htop >> /dev/zero
+dpkg --list | grep htop >> /dev/null
 if [ ! $? == 0 ]; then
     apt install htop -y || echo "Installing htop has failed. Please check the logs or console output above."
 else
@@ -61,7 +61,7 @@ else
 fi
 
 # Check and install net-tools
-dpkg --list | grep net-tools >> /dev/zero
+dpkg --list | grep net-tools >> /dev/null
 if [ ! $? == 0 ]; then
     apt install net-tools -y || echo "Installing net-tools has failed. Please check the logs or console output above."
 else
@@ -69,7 +69,7 @@ else
 fi
 
 # Check and install ufw
-dpkg --list | grep ufw >> /dev/zero
+dpkg --list | grep ufw >> /dev/null
 if [ ! $? == 0 ]; then
     apt install ufw -y || echo "Installing ufw has failed. Please check the logs or console output above."
 else
@@ -77,7 +77,7 @@ else
 fi
 
 # Check and install dnsmasq
-dpkg --list | grep dnsmasq >> /dev/zero
+dpkg --list | grep dnsmasq >> /dev/null
 if [ ! $? == 0 ]; then
     apt install dnsmasq -y || echo "Installing dnsmasq has failed. Please check the logs or console output above."
 else
