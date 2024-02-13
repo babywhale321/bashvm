@@ -1,4 +1,9 @@
 #!/bin/bash
+echo ""
+echo "====== Default Login ====== "
+echo "Default username: bashvm"
+echo "Default password: bashvm"
+echo ""
 
 read -ep "Enter the new VM name: " vmname
 
@@ -21,9 +26,3 @@ virsh net-autostart default
 
 # Deploy VM
 virt-install --name $vmname --memory 2048 --vcpus 2 --disk=size=20,backing_store=/var/lib/libvirt/images/debian-12-generic-amd64.qcow2 --cloud-init user-data=./bashvm-cloudinit.yaml,disable=on --network bridge=virbr0 --osinfo=debian10
-
-# Default login information
-echo "========= Login Info ========="
-echo "VM Name: $vmname"
-echo "Default username: bashvm"
-echo "Default password: bashvm"
