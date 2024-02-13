@@ -690,7 +690,7 @@ while true; do
                         # Delete port forwarding rules of vm
                         read -ep "Enter the VM name: " vm_name
 
-                        sed -i "/$vm_name/,/###$vm_name/d" /etc/libvirt/hooks/qemu
+                        sed -i "/#$vm_name/,/###$vm_name/d" /etc/libvirt/hooks/qemu
                         ;;
                     3)
                         # Edit port forwarding rules
