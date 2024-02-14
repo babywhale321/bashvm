@@ -75,9 +75,42 @@ while true; do
                         read -ep "Enter the name for the new virtual machine: " new_vm_name
                         read -ep "Enter the amount of memory in MB: " new_memory
                         read -ep "Enter the number of virtual CPUs: " new_vcpus
-                        read -ep "Enter the full path to the ISO file (e.g., /var/lib/libvirt/images/mini.iso): " iso_path
-                        read -ep "Enter the full path of the virtual machine disk (e.g., /var/lib/libvirt/qemu/vm.qcow2): " disk_path
-                        read -ep "Enter the network name to connect the virtual machine to (e.g., default): " network_name
+
+                        read -ep "Would you like to download a new debian iso in the default pool? (y/n): " iso_question
+                        if [ $iso_question == y ];then
+                            # Default ISO path
+                            iso_path="/var/lib/libvirt/images/debian-12.5.0-amd64-netinst.iso"
+                            # Check to see if the iso file is there
+                            if [ -f "$iso_path" ]; then
+                                # ISO is already present, Dont download
+                                echo "File debian-12.5.0-amd64-netinst.iso already there. Canceling re-download."
+                            else
+                                # ISO is not present, Download
+                                cd /var/lib/libvirt/images
+                                wget https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.5.0-amd64-netinst.iso
+                            fi
+                        else
+                            # full iso path needed
+                            read -ep "Enter the full path to the ISO file (e.g., /var/lib/libvirt/images/debian-12.5.0-amd64-netinst.iso): " iso_path
+                        fi
+
+                        read -ep "Would you like to create a new volume in the default pool? (y/n): " disk_question
+                        if [ $disk_question == y ];then
+                            # New disk name and capacity
+                            read -ep "Enter the name of the new storage volume (e.g., new-vm): " volume_name
+                            read -ep "Enter the size of the volume (e.g., 10G): " volume_capacity
+                            # virsh command to create new disk
+                            virsh vol-create-as --pool default --name "$volume_name.qcow2" --capacity "$volume_capacity" --format qcow2
+                            disk_path="/var/lib/libvirt/images/$volume_name.qcow2"
+                        else
+                            # full disk path needed
+                            read -ep "Enter the full path of the virtual machine disk (e.g., /var/lib/libvirt/qemu/vm.qcow2): " disk_path
+                        fi
+                        # Network select
+                        read -ep "Enter the network name to connect the virtual machine to (nothing for default): " network_name
+                        if [ -z "$network_name" ]; then
+                            network_name="default"
+                        fi
                         
                         # Generate a random MAC address
                         random_mac=$(generate_random_mac)
