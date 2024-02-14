@@ -1,13 +1,13 @@
 #!/bin/bash
 echo ""
-echo "====== Default Login ====== "
+echo "====== Default Login ======"
 echo "Default username: bashvm"
 echo "Default password: bashvm"
 echo ""
 
 read -ep "Enter the new VM name: " vmname
 
-# Copy cloudinit file
+# Copy cloudinit file to default location
 cp bashvm-cloudinit.yaml /var/lib/libvirt/images
 cd /var/lib/libvirt/images
 
@@ -22,7 +22,8 @@ fi
 
 # Enable default network
 virsh net-start default
+# Enable autostart of default network
 virsh net-autostart default
 
-# Deploy VM
+# Deploy the new VM
 virt-install --name $vmname --memory 2048 --vcpus 2 --disk=size=20,backing_store=/var/lib/libvirt/images/debian-12-generic-amd64.qcow2 --cloud-init user-data=./bashvm-cloudinit.yaml,disable=on --network bridge=virbr0 --osinfo=debian10
