@@ -18,13 +18,11 @@ bash bashvm-installer.sh
 ### Run bashvm.sh
 bash bashvm.sh
 
-### Recommended ISO
-Debian 12 netinst CD
+### Recommended OS for bashvm
+Debian 11 and 12
 
-https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.5.0-amd64-netinst.iso
-
-### Demo
-https://bashvm.com/demo.html
+### Screenshots
+https://bashvm.com/screenshots.html
 
 ### Donations:
 https://www.paypal.com/paypalme/babywhale123
