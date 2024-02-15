@@ -670,10 +670,16 @@ while true; do
                     1)
                         # Add port forwarding rules to a VM behind a NAT
                         read -ep "Enter the VM name: " vm_name
-                        read -ep "Enter the NAT interface name: " int_name
-                        read -ep "Enter the NAT ip of the VM: " nat_ip
+                        read -ep "Enter the name of the virtual bridge [virbr0]: " int_name
+
+                        if [ -z "$int_name" ]; then
+                            int_name="virbr0"
+                        fi
+
+                        read -ep "Enter the NAT ip of the VM (e.g., 192.168.122.2 ): " nat_ip
                         echo "Enter the starting port for the host to listen on"
-                        read -ep "Note, SSH port will be what you type minus 1: " start_port
+                        echo "Note, SSH port will be what you type minus 1" 
+                        read -ep "(e.g., if you type 9001 then 9000 will be for SSH): " start_port
                         read -ep "Enter the ending port for the host to listen on: " end_port
 
                         echo "#!/bin/bash" >> /etc/libvirt/hooks/qemu
@@ -717,6 +723,8 @@ while true; do
                         echo "###$vm_name" >> /etc/libvirt/hooks/qemu
 
                         chmod +x /etc/libvirt/hooks/qemu
+
+                        echo "Please restart the VM for the changes to take effect."
                         ;;
 
                     2)
