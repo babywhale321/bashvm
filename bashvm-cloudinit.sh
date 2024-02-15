@@ -25,5 +25,7 @@ virsh net-start default
 # Enable autostart of default network
 virsh net-autostart default
 
+echo "NOTE: press Ctrl + ] to exit the vm"
+
 # Deploy the new VM
 virt-install --name $vmname --memory 2048 --vcpus 2 --disk=size=20,backing_store=/var/lib/libvirt/images/debian-12-generic-amd64.qcow2 --cloud-init user-data=./bashvm-cloudinit.yaml,disable=on --network bridge=virbr0 --osinfo=debian10
