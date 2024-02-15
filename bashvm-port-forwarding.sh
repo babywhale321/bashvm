@@ -3,6 +3,7 @@
 read -ep "Enter the VM name: " vm_name
 read -ep "Enter the name of the virtual bridge [virbr0]: " int_name
 
+# Default if empty
 if [ -z "$int_name" ]; then
     int_name="virbr0"
 fi
@@ -12,26 +13,28 @@ log_file="used_ports.log"
 
 # Create log file if it doesn't exist
 if [ -f $log_file ];then
+
+# The startport will the end of the file output
 start_port=$(tail -n 1 "$log_file")
+
+# Create log file
 else
 touch $log_file
 start_port=1025
 fi
 
+# Add a range of 20 ports
 end_port=$(($start_port + 20))
-for ((port=start_port; port<=end_port; port++)); do
-echo "$port" >> "$log_file"
-done
 
+# Reserve for next block calculation
 echo $(($end_port + 2)) >> $log_file
-
 
 echo "#!/bin/bash" >> /etc/libvirt/hooks/qemu
 
 # Identifier for deleting if needed
 echo "#$vm_name" >> /etc/libvirt/hooks/qemu            
 
-# keep out of loop
+# Keep out of loop
 nat_script=' 
 if [ "${1}" = "'$vm_name'" ]; then
 
@@ -44,14 +47,14 @@ ssh_port=$(($start_port - 1))
 echo '      /sbin/iptables -D FORWARD -o '$int_name' -p tcp -d '$nat_ip' --dport 22 -j ACCEPT' >> /etc/libvirt/hooks/qemu
 echo '      /sbin/iptables -t nat -D PREROUTING -p tcp --dport '$ssh_port' -j DNAT --to '$nat_ip':22' >> /etc/libvirt/hooks/qemu
 
-# port forward rules to loop until it reaches end port
+# Port forward rules to loop until it reaches end port
 for ((port=start_port; port<=end_port; port++)); do
 
     echo '      /sbin/iptables -D FORWARD -o '$int_name' -p tcp -d '$nat_ip' --dport '$port' -j ACCEPT' >> /etc/libvirt/hooks/qemu
     echo '      /sbin/iptables -t nat -D PREROUTING -p tcp --dport '$port' -j DNAT --to '$nat_ip':'$port'' >> /etc/libvirt/hooks/qemu
 done
 
-# keep out of loop
+# Keep out of loop
 middle_script='    fi
     if [ "${2}" = "start" ] || [ "${2}" = "reconnect" ]; then'
 echo "$middle_script" >> /etc/libvirt/hooks/qemu
@@ -67,7 +70,7 @@ for ((port=start_port; port<=end_port; port++)); do
     echo '      /sbin/iptables -t nat -I PREROUTING -p tcp --dport '$port' -j DNAT --to '$nat_ip':'$port'' >> /etc/libvirt/hooks/qemu
 done
 
-# keep out of loop
+# Keep out of loop
 last_script='    fi
 fi'
 echo "$last_script" >> /etc/libvirt/hooks/qemu
