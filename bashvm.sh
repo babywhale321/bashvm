@@ -17,7 +17,7 @@ while true; do
         1)
             # Virtual Machines Menu    
             while true; do
-                    echo "==================== Manage Virtual Machine ===================="
+                    echo -e "\n==================== Manage Virtual Machine ===================="
                     echo "s. Show all virtual machines     1. Show more details of a VM"
                     echo "2. Start a VM                    3. Reboot a VM"               
                     echo "4. Shutdown a VM (graceful)      5. Shutdown a VM (force)"     
@@ -131,11 +131,12 @@ while true; do
 
                 case $storage_manage_choice in
                     s)
-                        # Show details of pools
+                        # Show all pools
                         virsh pool-list --details
                         ;;
 
                     1)
+                        #Show all volumes in a pool
                         read -ep "Enter the name of the storage pool: " pool_name
                         virsh vol-list --pool "$pool_name"
                         ;;
@@ -145,11 +146,13 @@ while true; do
                         read -ep "Enter the name of the storage pool to activate: " pool_name
                         virsh pool-start "$pool_name"
                         ;;
+                        
                     3)
                         # Deactivate a storage pool
                         read -ep "Enter the name of the storage pool to deactivate: " pool_name
                         virsh pool-destroy "$pool_name"
                         ;;
+
                     4)
                         # Create a new storage pool
                         read -ep "Enter the name of the new storage pool: " new_pool_name
@@ -159,6 +162,7 @@ while true; do
                         virsh pool-start "$new_pool_name"
                         virsh pool-autostart "$new_pool_name"
                         ;;
+
                     5)
                         # Delete a storage pool
                         read -ep "Enter the name of the storage pool to delete: " delete_pool_name
@@ -176,7 +180,6 @@ while true; do
                     
                     7)
                         # Delete a storage volume
-                        # Prompt user for details
                         read -ep "Enter the storage pool name that the volume is under (e.g., default): " pool_name
                         read -ep "Enter the name of the volume to delete (e.g., new-vm): " volume_name
 
@@ -213,7 +216,7 @@ while true; do
                         ;;
 
                     1)
-                        # Show detailnano 1.shs of a network
+                        # Show details of a network
                         read -ep "Enter the name of the network: " network_name
                         virsh net-info "$network_name"
                         ;;
