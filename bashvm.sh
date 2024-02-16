@@ -205,8 +205,7 @@ while true; do
                 echo "s. Show all networks               1. Show details of a network"
                 echo "2. Start a network                 3. Stop a network"
                 echo "4. Create a NAT network            5. Create a macvtap network"      
-                echo "6. Delete a network                7. List DHCP leases from a network"
-                echo "q. Back to main menu"
+                echo "6. Delete a network                q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " network_manage_choice
 
@@ -294,16 +293,6 @@ while true; do
                         read -ep "Enter the name of the network to delete: " delete_network_name
                         virsh net-destroy "$delete_network_name"
                         virsh net-undefine "$delete_network_name"
-                        ;;
-
-                    7)
-                        # List DHCP leases
-                        read -ep "Enter the network name [default]: " network_name
-                        if [ -z "$network_name" ]; then
-                            network_name="default"
-                        fi
-
-                        virsh net-dhcp-leases "$network_name"
                         ;;
 
                     q)
