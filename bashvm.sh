@@ -205,7 +205,8 @@ while true; do
                 echo "s. Show all networks               1. Show details of a network"
                 echo "2. Start a network                 3. Stop a network"
                 echo "4. Create a NAT network            5. Create a macvtap network"      
-                echo "6. Delete a network                q. Back to main menu"
+                echo "6. Delete a network                7. List DHCP leases from a network"
+                echo "q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " network_manage_choice
 
@@ -293,6 +294,16 @@ while true; do
                         read -ep "Enter the name of the network to delete: " delete_network_name
                         virsh net-destroy "$delete_network_name"
                         virsh net-undefine "$delete_network_name"
+                        ;;
+
+                    7)
+                        # List DHCP leases
+                        read -ep "Enter the network name [default]: " network_name
+                        if [ -z "$network_name" ]; then
+                            network_name="default"
+                        fi
+
+                        virsh net-dhcp-leases "$network_name"
                         ;;
 
                     q)
@@ -472,9 +483,9 @@ while true; do
             # Manage Port forwarding
             while true; do
                 echo -e "\n=================== Manage Port Forwarding ==================="
-                echo "s. Show port forwarding rules       1. Add port forwarding to a VM"
-                echo "2. Remove port forwarding from a VM 3. Edit port forwarding rule file"
-                echo "q. Back to main menu"
+                echo "s. Show port forwarding rules     1. List DHCP leases from a netowrk"  
+                echo "2. Add port forwarding to a VM    3. Remove port forwarding from a VM"
+                echo "4. Edit port forwarding rule file q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " port_choice
 
@@ -485,19 +496,29 @@ while true; do
                         ;;
 
                     1)
+                        # List DHCP leases
+                        read -ep "Enter the network name [default]: " network_name
+                        if [ -z "$network_name" ]; then
+                            network_name="default"
+                        fi
+
+                        virsh net-dhcp-leases "$network_name"
+                        ;;
+
+                    2)
                         # Add port forwarding rules to a VM behind a NAT
                         bash bashvm-port-forwarding.sh
                         ;;
 
 
-                    2)
+                    3)
                         # Delete port forwarding rules of vm
                         read -ep "Enter the VM name: " vm_name
 
                         sed -i "/#$vm_name/,/###$vm_name/d" /etc/libvirt/hooks/qemu
                         ;;
 
-                    3)
+                    4)
                         # Edit port forwarding rules
                         nano /etc/libvirt/hooks/qemu || vim /etc/libvirt/hooks/qemu
                         ;;
