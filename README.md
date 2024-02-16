@@ -27,5 +27,5 @@ https://bashvm.com/screenshots.html
 ### Donations:
 https://www.paypal.com/paypalme/babywhale123
 
-### Sponsers:
+### Sponsors:
 Huge thanks to https://metalvps.com for their contribution and support!
