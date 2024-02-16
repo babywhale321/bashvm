@@ -24,10 +24,10 @@ while true; do
                     echo "6. Enable autostart of a VM      7. Disable autostart of a VM"
                     echo "8. Create a new VM               9. Undefine a VM"                  
                     echo "10.Create a new VM (Automated)   11.Console into a VM"        
-                    echo "q. Back to main menu"
+                    echo "12.Change resources of a VM      q. Back to main menu"
                     echo ""
-                read -ep "Enter your choice: " vm_manage_choice
-                case $vm_manage_choice in
+                    read -ep "Enter your choice: " vm_manage_choice
+                    case $vm_manage_choice in
                     s)
                         # Show all virtual machines
                         virsh list --all
@@ -35,8 +35,10 @@ while true; do
 
                     1)
                         # Show details of a virtual machine
-                        read -ep "Enter the name of the virtual machine: " vm_name
+                        read -ep "Enter the VM name: " vm_name
                         virsh dominfo "$vm_name"
+                        virsh domfsinfo "$vm_name"
+                        virsh domblkinfo "$vm_name" --all --human
                         ;;
 
                     2)
@@ -104,6 +106,75 @@ while true; do
                         read -ep "Enter the VM name to console into: " hostname
                         virsh console $hostname
                         ;;
+
+                    12)
+                        # Change resources of a VM
+                        while true; do
+                            echo -e "\n===================== Manage Resources ====================="
+                            echo "s. Show resources of a VM     1. Add disk space to a VM"
+                            echo "2. Shrink disk space of a VM  3. Change the number of vcpu in a VM"
+                            echo "4. Change the memory of a VM  q. Back to main menu"
+                            echo ""
+                            read -ep "Enter your choice: " manage_choice
+
+                            case $manage_choice in
+                                s)
+                                    # Show resources of a VM
+                                    read -ep "Enter the VM name: " vm_name
+                                    virsh dominfo "$vm_name"
+                                    virsh domfsinfo "$vm_name"
+                                    virsh domblkinfo "$vm_name" --all --human
+                                    ;;
+
+                                1)
+                                    # Add disk space to a VM
+                                    read -ep "Enter the name of the virtual machine: " vm_name
+                                    read -ep "Enter the new disk size (e.g., 40GB): " disk_size
+                                    read -ep "Enter the pool name [default]: " pool_name
+                                    if [ -z "$pool_name" ]; then
+                                        pool_name="default"
+                                    fi
+                                    virsh vol-resize "$vm_name".qcow2 "$disk_size" --pool "$pool_name"
+                                    ;;
+
+                                2)
+                                    # Shrink disk space of a VM
+                                    read -ep "Enter the name of the virtual machine: " vm_name
+                                    read -ep "Enter the new disk size (e.g., 40GB): " disk_size
+                                    read -ep "Enter the pool name [default]: " pool_name
+                                    if [ -z "$pool_name" ]; then
+                                        pool_name="default"
+                                    fi
+                                    virsh vol-resize "$vm_name".qcow2 "$disk_size" --pool "$pool_name" --shrink
+                                    ;;
+
+                                3)
+                                    # Change vcpus
+                                    read -ep "Enter the name of the virtual machine: " vm_name
+                                    read -ep "Enter the new vcpu number (e.g., 4): " vcpu_num
+                                    virsh setvcpus --domain "$vm_name" --count "$vcpu_num" --config --maximum
+                                    virsh setvcpus --domain "$vm_name" --count "$vcpu_num" --config
+                                    ;;
+
+                                4)
+                                    # Change memory
+                                    read -ep "Enter the name of the virtual machine: " vm_name
+                                    read -ep "Enter the new memory size (e.g., 1GB): " mem_num
+                                    virsh setmaxmem --domain "$vm_name" --size "$mem_num" --current
+                                    virsh setmem --domain "$vm_name" --size "$mem_num" --current
+                                    ;;
+                                    
+                                q)
+                                    # Back to main menu
+                                    break
+                                    ;;
+                                *)
+                                    echo "Invalid choice. Please enter a valid option."
+                                    ;;
+                            esac
+                        done
+                        ;;                                        
+                       
 
                     q)
                         # Back to Menu
