@@ -543,7 +543,7 @@ while true; do
             # Manage Port forwarding
             while true; do
                 echo -e "\n=================== Manage Port Forwarding ==================="
-                echo "s. Show port forwarding rules     1. List DHCP leases from a netowrk"  
+                echo "s. Show port forwarding rules     1. List DHCP leases from a network"  
                 echo "2. Add port forwarding to a VM    3. Remove port forwarding from a VM"
                 echo "4. Edit port forwarding rule file q. Back to main menu"
                 echo ""
