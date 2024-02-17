@@ -17,16 +17,7 @@ users:
     groups: users, adm
     shell: /bin/bash
     lock_passwd: false
-    plain_text_passwd: bashvm
-    #ssh_authorized_keys:
-    #  - ""
-
-# env variables
-write_files:
-  - path: /etc/environment
-    content: |
-      MY_ENV="value"
-    append: true
+    plain_text_passwd: password
 
 # list of packages to install after the VM is up
 package_upgrade: true
@@ -34,7 +25,6 @@ package_reboot_if_required: true
 package_update: true
 packages:
   - qemu-guest-agent
-  - nano
 
 # run dhclient after the first install.
 runcmd:
