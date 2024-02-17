@@ -11,12 +11,6 @@ if [ ! -f "/etc/debian_version" ]; then
     exit
 fi
 
-# Detect root privleges
-if [ "$EUID" -ne 0 ]; then
-	echo "This installer needs to be run with superuser privileges."
-	exit
-fi
-
 # Check and install qemu-kvm
 dpkg --list | grep qemu-kvm >> /dev/null
 if [ ! $? == 0 ]; then
