@@ -273,7 +273,7 @@ while true; do
             # Networks Menu       
             while true; do
                 echo -e "\n========================== Manage Network =========================="
-                echo "s. Show all networks               1. Show details of a network"
+                echo "s. Show all networks               1. Show more details of a network"
                 echo "2. Start a network                 3. Stop a network"
                 echo "4. Create a NAT network            5. Create a macvtap network"      
                 echo "6. Delete a network                q. Back to main menu"
@@ -288,8 +288,13 @@ while true; do
 
                     1)
                         # Show details of a network
-                        read -ep "Enter the name of the network: " network_name
+                        read -ep "Enter the network name [default]: " network_name
+                        if [ -z "$network_name" ]; then
+                            network_name="default"
+                        fi
+
                         virsh net-info "$network_name"
+                        virsh net-dhcp-leases "$network_name"
                         ;;
 
                     2)
@@ -485,7 +490,7 @@ while true; do
                         ;;
                     1)
                         # Show listening ports
-                        netstat -l
+                        netstat -l | sort -r
                         ;;
                     2)
                         # Allow port range
