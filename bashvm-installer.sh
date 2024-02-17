@@ -7,14 +7,7 @@
 # Detect debian
 if [ ! -f "/etc/debian_version" ]; then
     echo "This installer seems to be running on an unsupported distribution."
-    echo "Supported distros are Debian 11 (bullseye) and Debian 12 (bookworm)."
-    exit
-fi
-
-# Detect OS version
-if ! grep -q "bookworm\|bullseye" /etc/os-release; then
-    echo "This installer seems to be running on an unsupported distribution."
-    echo "Supported distros are Debian 11 (bullseye) and Debian 12 (bookworm)."
+    echo "Supported distros are Debian 11, Debian 12 and Ubuntu 22.04."
     exit
 fi
 
