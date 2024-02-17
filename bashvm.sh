@@ -490,7 +490,7 @@ while true; do
                         ;;
                     1)
                         # Show listening ports
-                        netstat -l | sort -r
+                        netstat -l | grep "tcp\|udp"
                         ;;
                     2)
                         # Allow port range
