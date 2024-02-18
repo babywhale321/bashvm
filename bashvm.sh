@@ -602,7 +602,7 @@ while true; do
 
         8)
             # System Monitor
-            htop
+            watch -n 1 bash bashvm-monitor.sh
             ;;
         q)
             # Exit the script
