@@ -75,6 +75,14 @@ else
     echo "lm-sensors is already installed."
 fi
 
+# Check and install sysstat
+dpkg --list | grep sysstat >> /dev/null
+if [ ! $? == 0 ]; then
+    apt install sysstat -y
+else
+    echo "sysstat is already installed."
+fi
+
 # Check and install net-tools
 dpkg --list | grep net-tools >> /dev/null
 if [ ! $? == 0 ]; then
