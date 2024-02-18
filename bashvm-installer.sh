@@ -67,14 +67,6 @@ else
     echo "cloud-init is already installed."
 fi
 
-# Check and install lm-sensors
-dpkg --list | grep lm-sensors >> /dev/null
-if [ ! $? == 0 ]; then
-    apt install lm-sensors -y
-else
-    echo "lm-sensors is already installed."
-fi
-
 # Check and install sysstat
 dpkg --list | grep sysstat >> /dev/null
 if [ ! $? == 0 ]; then
@@ -106,6 +98,8 @@ if [ ! $? == 0 ]; then
 else
     echo "dnsmasq is already installed."
 fi
+
+apt install lm-sensors -y
 
 echo ""
 echo "======================================================="
