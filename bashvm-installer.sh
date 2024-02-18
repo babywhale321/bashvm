@@ -67,12 +67,12 @@ else
     echo "cloud-init is already installed."
 fi
 
-# Check and install htop
-dpkg --list | grep htop >> /dev/null
+# Check and install lm-sensors
+dpkg --list | grep lm-sensors >> /dev/null
 if [ ! $? == 0 ]; then
-    apt install htop -y
+    apt install lm-sensors -y
 else
-    echo "htop is already installed."
+    echo "lm-sensors is already installed."
 fi
 
 # Check and install net-tools
