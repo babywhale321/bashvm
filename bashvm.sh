@@ -276,7 +276,8 @@ while true; do
                 echo "s. Show all networks               1. Show more details of a network"
                 echo "2. Start a network                 3. Stop a network"
                 echo "4. Create a NAT network            5. Create a macvtap network"      
-                echo "6. Delete a network                q. Back to main menu"
+                echo "6. Delete a network                7. Add a static ip to a network"
+                echo "q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " network_manage_choice
 
@@ -369,6 +370,24 @@ while true; do
                         read -ep "Enter the name of the network to delete: " delete_network_name
                         virsh net-destroy "$delete_network_name"
                         virsh net-undefine "$delete_network_name"
+                        ;;
+
+                    7)
+                        # Add a static ip to a network
+                        read -ep "Enter the virtual machines name: " vm_name
+                        read -ep "Enter the virtual machines mac address: " vm_mac
+                        read -ep "Enter the new ip address for the virtual machine: " vm_ip
+                        read -ep "Enter the network name[default]: " vm_net
+
+                        if [ -z "$vm_net" ]; then
+                        vm_net="default"
+                        fi
+
+                        # Adds under dhcp line with new host info
+                        sed -i '/<dhcp>/a \    <host mac="'$vm_mac'" name="'$vm_name'" ip="'$vm_ip'"/>' /etc/libvirt/qemu/networks/"$vm_net".xml
+
+                        # Define new network xml
+                        virsh net-define /etc/libvirt/qemu/networks/"$vm_net".xml
                         ;;
 
                     q)
