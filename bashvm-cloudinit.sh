@@ -43,6 +43,7 @@ vm_mac=$(virsh net-dhcp-leases default | grep "$vm_name" | awk '{print $3}')
 
 if [ ! $? == 0 ]; then
 sleep 15
+vm_mac=$(virsh net-dhcp-leases default | grep "$vm_name" | awk '{print $3}')
 fi
 
 vm_net="default"
