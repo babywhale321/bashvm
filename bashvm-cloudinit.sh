@@ -36,6 +36,13 @@ fi
 # Deploy the new VM
 virt-install --name $vm_name --memory 2048 --vcpus 2 --disk=size=20,backing_store=/var/lib/libvirt/images/debian-12-generic-amd64.qcow2 --cloud-init user-data=/var/lib/libvirt/images/bashvm-cloudinit.yaml,disable=on --network bridge=virbr0 --osinfo=debian10 --noautoconsole
 
+if [ ! $? == 0 ]; then
+echo "Failed to start $vm_name"
+echo "Check to see if $vm_name already exists"
+exit
+fi
+
+
 # -----------------dhcp reservation ---------------------
 
 while true; do
@@ -81,6 +88,12 @@ vm_ip="${ip_address%.*}.$last_octet"
 echo "$vm_ip" >> "$log_file"
 
 virsh net-update $vm_net add ip-dhcp-host "<host mac='$vm_mac' name='$vm_name' ip='$vm_ip' />" --live --config
+
+if [ ! $? == 0 ]; then
+echo "Failed to set DHCP reservation in $vm_net"
+echo "Check to see if the ip or vm already exists in $vm_net"
+exit
+fi
 
 # -----------------port forwarding ---------------------
 
@@ -171,4 +184,4 @@ echo "" | tee -a vm-info/$vm_name.info.txt
 echo "====================================================" | tee -a vm-info/$vm_name.info.txt
 echo ""
 echo "Info for $vm_name has been saved to vm-info/$vm_name.info.txt"
-echo "You may need to restart networking and the vm for the changes to take effect"
+echo "You may need to restart libvirtd, networking and the vm for the changes to take effect"
