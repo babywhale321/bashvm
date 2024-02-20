@@ -173,6 +173,22 @@ echo "###$vm_name" >> /etc/libvirt/hooks/qemu
 # libvirt needs the file to be executable
 chmod +x /etc/libvirt/hooks/qemu
 
+# Restart new vm for portforwarding to work
+while true; do
+  vm_state=$(virsh dominfo $vm_name | grep State: | awk '{print $2}')
+
+  if [ $vm_state == "running" ]; then
+    virsh shutdown $vm_name >> /dev/null
+    echo "Waiting for $vm_name to shutdown.."
+    sleep 2
+  else
+    virsh start $vm_name
+    break
+  fi
+    continue
+
+done
+
 echo ""
 echo "========== Info for $vm_name ==========" | tee -a vm-info/$vm_name.info.txt
 echo "" | tee -a vm-info/$vm_name.info.txt
