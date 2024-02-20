@@ -243,7 +243,10 @@ while true; do
 
                     6)
                         # Create a storage volume
-                        read -ep "Enter the name of the storage pool to use: " pool_name
+                        read -ep "Enter the name of the storage pool to use [default]: " pool_name
+                        if [ -z "$pool_name" ]; then
+                            pool_name="default"
+                        fi
                         read -ep "Enter the name of the new storage volume (e.g., new-vm): " volume_name
                         read -ep "Enter the size of the volume (e.g., 10G): " volume_capacity
                         virsh vol-create-as --pool "$pool_name" --name "$volume_name.qcow2" --capacity "$volume_capacity" --format qcow2
@@ -251,7 +254,10 @@ while true; do
                     
                     7)
                         # Delete a storage volume
-                        read -ep "Enter the storage pool name that the volume is under (e.g., default): " pool_name
+                        read -ep "Enter the storage pool name that the volume is under [default]: " pool_name
+                        if [ -z "$pool_name" ]; then
+                            pool_name="default"
+                        fi
                         read -ep "Enter the name of the volume to delete (e.g., new-vm): " volume_name
 
                         # Delete the storage volume
@@ -300,14 +306,20 @@ while true; do
 
                     2)
                         # Start a network
-                        read -ep "Enter the name of the network to start: " network_name
+                        read -ep "Enter the name of the network to start [default]: " network_name
+                        if [ -z "$network_name" ]; then
+                            network_name="default"
+                        fi
                         virsh net-start "$network_name"
                         virsh net-autostart "$network_name"
                         ;;
 
                     3)
                         # Stop a network
-                        read -ep "Enter the name of the network to stop: " network_name
+                        read -ep "Enter the name of the network to stop [default]: " network_name
+                        if [ -z "$network_name" ]; then
+                            network_name="default"
+                        fi
                         virsh net-destroy "$network_name"
                         ;;
 
@@ -460,12 +472,18 @@ while true; do
                         ;;
                     2)
                         # edit a storage pool
-                        read -ep "Enter the storage pool name: " pool_name
+                        read -ep "Enter the storage pool name [default]: " pool_name
+                        if [ -z "$pool_name" ]; then
+                            pool_name="default"
+                        fi
                         virsh pool-edit $pool_name
                         ;;
                     3)
                         # edit a network
-                        read -ep "Enter the network name: " net_name
+                        read -ep "Enter the network name [default]: " net_name
+                        if [ -z "$net_name" ]; then
+                            net_name="default"
+                        fi
                         virsh net-edit $net_name
                         ;;
                     4)
