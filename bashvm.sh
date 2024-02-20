@@ -383,11 +383,7 @@ while true; do
                         vm_net="default"
                         fi
 
-                        # Adds under dhcp line with new host info
-                        sed -i '/<dhcp>/a \    <host mac="'$vm_mac'" name="'$vm_name'" ip="'$vm_ip'"/>' /etc/libvirt/qemu/networks/"$vm_net".xml
-
-                        # Define new network xml
-                        virsh net-define /etc/libvirt/qemu/networks/"$vm_net".xml
+                        virsh net-update $vm_net add ip-dhcp-host "<host mac='$vm_mac' name='$vm_name' ip='$vm_ip' />" --live --config
                         ;;
 
                     q)
