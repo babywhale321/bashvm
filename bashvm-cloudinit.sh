@@ -35,3 +35,140 @@ fi
 
 # Deploy the new VM
 virt-install --name $vm_name --memory 2048 --vcpus 2 --disk=size=20,backing_store=/var/lib/libvirt/images/debian-12-generic-amd64.qcow2 --cloud-init user-data=/var/lib/libvirt/images/bashvm-cloudinit.yaml,disable=on --network bridge=virbr0 --osinfo=debian10 --noautoconsole
+
+# -----------------dhcp reservation ---------------------
+
+while true; do
+  vm_mac=$(virsh domiflist "$vm_name" | grep virtio | awk '{print $5}')
+
+  if [ -z "$vm_mac" ]; then
+  echo "Waiting for vm to set a DHCP reservation. Please wait..."
+  sleep 2
+
+  else
+
+    break
+  fi
+    continue
+
+done
+
+vm_net="default"
+
+log_file="vm-info/used_ip.log"
+
+# Create log file if it doesn't exist
+if [ -f $log_file ];then
+ip_address=$(tail -n 1 "$log_file")
+else
+mkdir vm-info
+touch $log_file
+ip_address="192.168.122.1"
+fi
+
+# Value to add
+increment=1
+
+# Extract the last octet
+last_octet="${ip_address##*.}"
+
+# Increment the last octet
+((last_octet += increment))
+
+# Construct the new IP address
+vm_ip="${ip_address%.*}.$last_octet"
+
+echo "$vm_ip" >> "$log_file"
+
+virsh net-update $vm_net add ip-dhcp-host "<host mac='$vm_mac' name='$vm_name' ip='$vm_ip' />" --live --config
+
+# -----------------port forwarding ---------------------
+
+echo "Setting Port Forwarding..."
+
+int_name="virbr0"
+
+log_file="vm-info/used_ports.log"
+
+# Create log file if it doesn't exist
+if [ -f $log_file ];then
+
+# The startport will the end of the file output
+start_port=$(tail -n 1 "$log_file")
+
+# Create log file
+else
+touch $log_file
+start_port=1025
+fi
+
+# Add a range of 20 ports
+end_port=$(($start_port + 20))
+
+# Reserve for next block calculation
+echo $(($end_port + 2)) >> $log_file
+
+echo "#!/bin/bash" >> /etc/libvirt/hooks/qemu
+
+# Identifier for deleting if needed
+echo "#$vm_name" >> /etc/libvirt/hooks/qemu            
+
+# Keep out of loop
+nat_script=' 
+if [ "${1}" = "'$vm_name'" ]; then
+
+    if [ "${2}" = "stopped" ] || [ "${2}" = "reconnect" ]; then'
+
+echo "$nat_script" >> /etc/libvirt/hooks/qemu
+
+# Reserve a port for SSH
+ssh_port=$(($start_port - 1))
+echo '      /sbin/iptables -D FORWARD -o '$int_name' -p tcp -d '$vm_ip' --dport 22 -j ACCEPT' >> /etc/libvirt/hooks/qemu
+echo '      /sbin/iptables -t nat -D PREROUTING -p tcp --dport '$ssh_port' -j DNAT --to '$vm_ip':22' >> /etc/libvirt/hooks/qemu
+
+# Port forward rules to loop until it reaches end port
+for ((port=start_port; port<=end_port; port++)); do
+
+    echo '      /sbin/iptables -D FORWARD -o '$int_name' -p tcp -d '$vm_ip' --dport '$port' -j ACCEPT' >> /etc/libvirt/hooks/qemu
+    echo '      /sbin/iptables -t nat -D PREROUTING -p tcp --dport '$port' -j DNAT --to '$vm_ip':'$port'' >> /etc/libvirt/hooks/qemu
+done
+
+# Keep out of loop
+middle_script='    fi
+    if [ "${2}" = "start" ] || [ "${2}" = "reconnect" ]; then'
+echo "$middle_script" >> /etc/libvirt/hooks/qemu
+
+# Reserve for SSH
+echo '      /sbin/iptables -I FORWARD -o '$int_name' -p tcp -d '$vm_ip' --dport 22 -j ACCEPT' >> /etc/libvirt/hooks/qemu
+echo '      /sbin/iptables -t nat -I PREROUTING -p tcp --dport '$ssh_port' -j DNAT --to '$vm_ip':22' >> /etc/libvirt/hooks/qemu
+
+# port forward rules to loop until it reaches end port
+for ((port=start_port; port<=end_port; port++)); do
+
+    echo '      /sbin/iptables -I FORWARD -o '$int_name' -p tcp -d '$vm_ip' --dport '$port' -j ACCEPT' >> /etc/libvirt/hooks/qemu
+    echo '      /sbin/iptables -t nat -I PREROUTING -p tcp --dport '$port' -j DNAT --to '$vm_ip':'$port'' >> /etc/libvirt/hooks/qemu
+done
+
+# Keep out of loop
+last_script='    fi
+fi'
+echo "$last_script" >> /etc/libvirt/hooks/qemu
+
+# End Identifier
+echo "###$vm_name" >> /etc/libvirt/hooks/qemu
+
+# libvirt needs the file to be executable
+chmod +x /etc/libvirt/hooks/qemu
+
+echo ""
+echo "========== Info for $vm_name ==========" | tee -a vm-info/$vm_name.info.txt
+echo "" | tee -a vm-info/$vm_name.info.txt
+echo "ip = $vm_ip" | tee -a vm-info/$vm_name.info.txt
+echo "ssh port = $ssh_port" | tee -a vm-info/$vm_name.info.txt
+echo "$start_port to $end_port" | tee -a vm-info/$vm_name.info.txt
+echo "Is the port range of $vm_name" | tee -a vm-info/$vm_name.info.txt
+echo "" | tee -a vm-info/$vm_name.info.txt
+echo "====================================================" | tee -a vm-info/$vm_name.info.txt
+echo ""
+echo "Info for $vm_name has been saved to vm-info/$vm_name.info.txt"
+echo "You may need to restart networking and the vm for the changes to take effect"
