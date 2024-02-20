@@ -173,6 +173,14 @@ echo "###$vm_name" >> /etc/libvirt/hooks/qemu
 # libvirt needs the file to be executable
 chmod +x /etc/libvirt/hooks/qemu
 
+# Check to see if other virtual machines are running.
+vm_on=$(virsh list --all | grep -E '^\s+[0-9]+' | wc -l)
+
+# If only 1 then restart libvirtd
+if [ $vm_on == 1 ]; then
+systemctl restart libvirtd
+fi
+
 # Restart new vm for portforwarding to work
 while true; do
   vm_state=$(virsh dominfo $vm_name | grep State: | awk '{print $2}')
