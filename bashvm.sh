@@ -208,19 +208,28 @@ while true; do
 
                     1)
                         #Show all volumes in a pool
-                        read -ep "Enter the name of the storage pool: " pool_name
+                        read -ep "Enter the name of the storage pool [default]: " pool_name
+                        if [ -z "$pool_name" ]; then
+                            pool_name="default"
+                        fi
                         virsh vol-list --pool "$pool_name"
                         ;;
                     
                     2)
                         # Activate a storage pool
-                        read -ep "Enter the name of the storage pool to activate: " pool_name
+                        read -ep "Enter the name of the storage pool to activate [default]: " pool_name
+                        if [ -z "$pool_name" ]; then
+                            pool_name="default"
+                        fi
                         virsh pool-start "$pool_name"
                         ;;
                         
                     3)
                         # Deactivate a storage pool
-                        read -ep "Enter the name of the storage pool to deactivate: " pool_name
+                        read -ep "Enter the name of the storage pool to deactivate [default]: " pool_name
+                        if [ -z "$pool_name" ]; then
+                            pool_name="default"
+                        fi
                         virsh pool-destroy "$pool_name"
                         ;;
 
