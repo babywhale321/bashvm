@@ -22,7 +22,7 @@ while true; do
                     echo "2. Start a VM                    3. Reboot a VM"               
                     echo "4. Shutdown a VM (graceful)      5. Shutdown a VM (force)"     
                     echo "6. Enable autostart of a VM      7. Disable autostart of a VM"
-                    echo "8. Create a new VM               9. Undefine a VM"                  
+                    echo "8. Create a new / existing VM    9. Undefine a VM"                  
                     echo "10.Create a new VM (Automated)   11.Console into a VM"        
                     echo "12.Change resources of a VM      q. Back to main menu"
                     echo ""
