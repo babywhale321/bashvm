@@ -50,7 +50,7 @@ while true; do
 
   if [ -z "$vm_mac" ]; then
   echo "Waiting for vm to set a DHCP reservation. Please wait..."
-  sleep 2
+  sleep 4
 
   else
 
