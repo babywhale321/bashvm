@@ -1,14 +1,20 @@
+#!/bin/bash
+#
+#bashvm is a console tool to manage your virtual machines.
+#
+#Author: Kyle Schroeder "BabyWhale"
+
 # Function to generate a random MAC address
 generate_random_mac() {
     printf '52:54:%02x:%02x:%02x:%02x\n' $((RANDOM%256)) $((RANDOM%256)) $((RANDOM%256)) $((RANDOM%256))
 }
 
 # Prompt user for VM details
-read -ep "Enter the name for the new virtual machine: " new_vm_name
+read -ep "Enter the name for the new / existing virtual machine: " new_vm_name
 read -ep "Enter the amount of memory in MB: " new_memory
 read -ep "Enter the number of virtual CPUs: " new_vcpus
 
-read -ep "Would you like to download a new debian iso in the default pool? (y/n): " iso_question
+read -ep "Would you like to download or use the debian 12 iso in the default pool? (y/n): " iso_question
 if [ $iso_question == y ];then
     # Default ISO path
     iso_path="/var/lib/libvirt/images/debian-12.5.0-amd64-netinst.iso"
@@ -23,7 +29,9 @@ if [ $iso_question == y ];then
     fi
 else
     # full iso path needed
-    read -ep "Enter the full path to the ISO file (e.g., /var/lib/libvirt/images/debian-12.5.0-amd64-netinst.iso): " iso_path
+    echo "Enter the full path to the ISO file (e.g., /var/lib/libvirt/images/debian-12.5.0-amd64-netinst.iso)"
+    echo "Note: If you dont want to add an ISO then you can just ignore this option and press enter" 
+    read -ep ": " iso_path
 fi
 
 read -ep "Would you like to create a new volume in the default pool? (y/n): " disk_question
