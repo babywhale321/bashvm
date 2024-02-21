@@ -188,7 +188,7 @@ while true; do
   if [ $vm_state == "running" ]; then
     virsh shutdown $vm_name >> /dev/null
     echo "Waiting for $vm_name to shutdown.."
-    sleep 2
+    sleep 4
   else
     virsh start $vm_name
     break
