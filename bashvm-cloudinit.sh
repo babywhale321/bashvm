@@ -15,10 +15,12 @@ cp bashvm-cloudinit.yaml /var/lib/libvirt/images
 cp bashvm-cloudinit.yaml.backup bashvm-cloudinit.yaml
 rm bashvm-cloudinit.yaml.backup
 
+echo ""
+echo "Starting download of debian 12 cloud image..."
 # Check to see if the qcow2 file is there
 if [ -f "/var/lib/libvirt/images/debian-12-generic-amd64.qcow2" ]; then
     # Dont download
-    echo "File debian-12-generic-amd64.qcow2 already there. Canceling re-download."
+    echo "File debian-12-generic-amd64.qcow2 already there. Canceling re-download..."
 else
     # Download
     wget https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2
@@ -32,6 +34,7 @@ virsh net-start default
 # Enable autostart of default network
 virsh net-autostart default
 fi
+
 
 # Deploy the new VM
 virt-install --name $vm_name --memory 2048 --vcpus 2 --disk=size=20,backing_store=/var/lib/libvirt/images/debian-12-generic-amd64.qcow2 --cloud-init user-data=/var/lib/libvirt/images/bashvm-cloudinit.yaml,disable=on --network bridge=virbr0 --osinfo=debian10 --noautoconsole
@@ -50,7 +53,7 @@ while true; do
 
   if [ -z "$vm_mac" ]; then
   echo "Waiting for vm to set a DHCP reservation. Please wait..."
-  sleep 4
+  sleep 5
 
   else
 
@@ -86,6 +89,8 @@ last_octet="${ip_address##*.}"
 vm_ip="${ip_address%.*}.$last_octet"
 
 echo "$vm_ip" >> "$log_file"
+
+echo "Setting DHCP reservation..."
 
 virsh net-update $vm_net add ip-dhcp-host "<host mac='$vm_mac' name='$vm_name' ip='$vm_ip' />" --live --config
 
@@ -181,14 +186,16 @@ if [ $vm_on == 1 ]; then
 systemctl restart libvirtd
 fi
 
+echo "Restarting vm..."
+
 # Restart new vm for portforwarding to work
 while true; do
   vm_state=$(virsh dominfo $vm_name | grep State: | awk '{print $2}')
 
   if [ $vm_state == "running" ]; then
     virsh shutdown $vm_name >> /dev/null
-    echo "Waiting for $vm_name to shutdown.."
-    sleep 4
+    echo "Waiting for $vm_name to shutdown..."
+    sleep 5
   else
     virsh start $vm_name
     break
