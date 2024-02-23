@@ -291,7 +291,7 @@ while true; do
                 echo "s. Show all networks               1. Show more details of a network"
                 echo "2. Start a network                 3. Stop a network"
                 echo "4. Create a NAT network            5. Create a macvtap network"      
-                echo "6. Delete a network                7. Add a static ip to a network"
+                echo "6. Delete a network                7. Add a dhcpv4 reservation to a network"
                 echo "q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " network_manage_choice
@@ -394,7 +394,7 @@ while true; do
                         ;;
 
                     7)
-                        # Add a static ip to a network
+                        # Add a dhcpv4 reservation to a network
                         read -ep "Enter the virtual machines name: " vm_name
                         read -ep "Enter the virtual machines mac address: " vm_mac
                         read -ep "Enter the new ip address for the virtual machine: " vm_ip
