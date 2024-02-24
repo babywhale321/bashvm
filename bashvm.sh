@@ -288,12 +288,12 @@ while true; do
             # Networks Menu       
             while true; do
                 echo -e "\n========================== Manage Network =========================="
-                echo "s. Show all networks                      1. Show more details of a network"
-                echo "2. Start a network                        3. Stop a network"
-                echo "4. Create a NAT network                   5. Create a macvtap network"      
-                echo "6. Delete a network                       7. Add a dhcpv4 reservation to a network"
-                echo "8. Add dhcpv6 to default network (auto)   9. Add dhcpv6 to default network (manual)"
-                echo "q. Back to main menu"
+                echo " s. Show all networks                      1. Show more details of a network"
+                echo " 2. Start a network                        3. Stop a network"
+                echo " 4. Create a NAT network                   5. Create a macvtap network"      
+                echo " 6. Delete a network                       7. Add a dhcpv4 reservation to a network"
+                echo " 8. Add dhcpv6 to default network (auto)   9. Add dhcpv6 to default network (manual)"
+                echo "10. Add a dhcpv6 reservation to a network  q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " network_manage_choice
 
@@ -405,7 +405,17 @@ while true; do
                         vm_net="default"
                         fi
 
+                        echo "Setting DHCP reservation..."
+
                         virsh net-update $vm_net add ip-dhcp-host "<host mac='$vm_mac' name='$vm_name' ip='$vm_ip' />" --live --config
+                        
+                        if [ ! $? == 0 ]; then
+                            echo "Failed to set DHCP reservation in $vm_net"
+                            echo "Check to see if the ip or vm already exists in $vm_net"
+                            exit
+                        fi
+
+                        echo "You may need to restart the vm for the changes to take effect"
                         ;;
 
                     8)  
@@ -538,7 +548,30 @@ while true; do
                         # enable and restart ndppd
                         systemctl enable ndppd
                         systemctl restart ndppd
-                        ;;                     
+                        ;;
+
+                    10)
+                        # Add a dhcpv6 reservation to a network
+                        read -ep "Enter the vm name you are assigning a IPv6 address to: " vm_name
+                        read -ep "Enter the desired IPv6 address to assign the vm (e.g., xxxx::3): " net_address
+                        read -ep "Enter the network name [default]: " net_name
+
+                        if [ -z "$net_name" ]; then
+                            net_name="default"
+                        fi
+
+                        echo "Setting DHCP reservation..."
+
+                        virsh net-update $net_name add-last ip-dhcp-host '<host name="'$vm_name'" ip="'$net_address'"/>' --live --config --parent-index 1
+
+                        if [ ! $? == 0 ]; then
+                        echo "Failed to set DHCP reservation in $net_name"
+                        echo "Check to see if the ip or vm already exists in $net_name"
+                        exit
+                        fi
+
+                        echo "You may need to restart the vm for the changes to take effect"
+                        ;;                   
 
                     q)
                         # Back to Menu
