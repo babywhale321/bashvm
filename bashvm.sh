@@ -411,9 +411,9 @@ while true; do
                         
                         if [ ! $? == 0 ]; then
                             echo "Failed to set DHCP reservation in $vm_net"
+                        else
+                            echo "You may need to restart the vm for the changes to take effect"
                         fi
-
-                        echo "You may need to restart the vm for the changes to take effect"
                         ;;
 
                     8)  
@@ -561,12 +561,12 @@ while true; do
                         echo "Setting DHCP reservation..."
 
                         virsh net-update $net_name add-last ip-dhcp-host '<host name="'$vm_name'" ip="'$net_address'"/>' --live --config --parent-index 1
-
+                        
                         if [ ! $? == 0 ]; then
-                        echo "Failed to set DHCP reservation in $net_name"
+                            echo "Failed to set DHCP reservation in $net_name"
+                        else
+                            echo "You may need to restart the vm for the changes to take effect"
                         fi
-
-                        echo "You may need to restart the vm for the changes to take effect"
                         ;;                   
 
                     q)
