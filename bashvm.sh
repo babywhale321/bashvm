@@ -623,6 +623,7 @@ while true; do
                         read -ep "Enter the VM name: " vm_name
 
                         sed -i "/#$vm_name/,/###$vm_name/d" /etc/libvirt/hooks/qemu
+                        echo "Port forwarding rules for $vm_name has been deleted."
                         ;;
 
                     4)
