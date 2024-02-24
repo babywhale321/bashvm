@@ -411,8 +411,6 @@ while true; do
                         
                         if [ ! $? == 0 ]; then
                             echo "Failed to set DHCP reservation in $vm_net"
-                            echo "Check to see if the ip or vm already exists in $vm_net"
-                            exit
                         fi
 
                         echo "You may need to restart the vm for the changes to take effect"
@@ -566,8 +564,6 @@ while true; do
 
                         if [ ! $? == 0 ]; then
                         echo "Failed to set DHCP reservation in $net_name"
-                        echo "Check to see if the ip or vm already exists in $net_name"
-                        exit
                         fi
 
                         echo "You may need to restart the vm for the changes to take effect"
