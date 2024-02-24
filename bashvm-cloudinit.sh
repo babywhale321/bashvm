@@ -129,7 +129,7 @@ echo $(($end_port + 2)) >> $log_file
 echo "#!/bin/bash" >> /etc/libvirt/hooks/qemu
 
 # Identifier for deleting if needed
-echo "#$vm_name" >> /etc/libvirt/hooks/qemu            
+echo "#$vm_name#" >> /etc/libvirt/hooks/qemu            
 
 # Keep out of loop
 nat_script=' 
@@ -173,7 +173,7 @@ fi'
 echo "$last_script" >> /etc/libvirt/hooks/qemu
 
 # End Identifier
-echo "###$vm_name" >> /etc/libvirt/hooks/qemu
+echo "###$vm_name###" >> /etc/libvirt/hooks/qemu
 
 # libvirt needs the file to be executable
 chmod +x /etc/libvirt/hooks/qemu
