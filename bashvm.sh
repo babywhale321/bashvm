@@ -288,12 +288,12 @@ while true; do
             # Networks Menu       
             while true; do
                 echo -e "\n========================== Manage Network =========================="
-                echo " s. Show all networks                      1. Show more details of a network"
-                echo " 2. Start a network                        3. Stop a network"
-                echo " 4. Create a NAT network                   5. Create a macvtap network"      
-                echo " 6. Delete a network                       7. Add a dhcpv4 reservation to a network"
-                echo " 8. Add dhcpv6 to default network (auto)   9. Add dhcpv6 to default network (manual)"
-                echo "10. Add a dhcpv6 reservation to a network  q. Back to main menu"
+                echo " s. Show all networks                     1. Show more details of a network"
+                echo " 2. Start a network                       3. Stop a network"
+                echo " 4. Create a NAT network                  5. Create a macvtap network"      
+                echo " 6. Delete a network                      7. Add a dhcpv4 reservation to a network"
+                echo " 8. Add dhcpv6 to a network (auto)        9. Add dhcpv6 to a network (manual)"
+                echo "10. Add a dhcpv6 reservation to a network q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " network_manage_choice
 
@@ -420,6 +420,11 @@ while true; do
                         # Add dhcpv6 to a network (auto)
                         read -ep "Enter the main interface name that already has a IPv6 address (e.g., eth0): " int_name
                         read -ep "Enter a IPv6 prefix that is a higher number then your main interface ( e.g., if 64 then 80 ): " ip_prefix 
+                        read -ep "Enter the network name [default]: " net_name
+                        
+                        if [ -z "$net_name" ]; then
+                            net_name="default"
+                        fi
 
                         # Detect the ipv6 address
                         ipv6_address=$(ifconfig | grep inet6 | grep global | awk '{print $2}')
@@ -466,18 +471,18 @@ while true; do
                         </ip>
                         </network>"
 
-                        # Remove the last 2 ending tags in default.xml
-                        sed -i "s/<\/ip>//g" /etc/libvirt/qemu/networks/default.xml
-                        sed -i "s/<\/network>//g" /etc/libvirt/qemu/networks/default.xml
+                        # Remove the last 2 ending tags in $net_name.xml
+                        sed -i "s/<\/ip>//g" /etc/libvirt/qemu/networks/$net_name.xml
+                        sed -i "s/<\/network>//g" /etc/libvirt/qemu/networks/$net_name.xml
 
                         # Add dhcpv6 info and closing tags
-                        echo "$vm_info" >> /etc/libvirt/qemu/networks/default.xml
+                        echo "$vm_info" >> /etc/libvirt/qemu/networks/$net_name.xml
 
-                        # Stop, define, start then autostart default network
-                        virsh net-destroy default
-                        virsh net-define /etc/libvirt/qemu/networks/default.xml
-                        virsh net-start default
-                        virsh net-autostart default
+                        # Stop, define, start then autostart $net_name network
+                        virsh net-destroy $net_name
+                        virsh net-define /etc/libvirt/qemu/networks/$net_name.xml
+                        virsh net-start $net_name
+                        virsh net-autostart $net_name
 
                         # ndppd config file
                         ndppd_file="route-ttl 30000
@@ -505,7 +510,11 @@ while true; do
                         read -ep "Enter the starting range ( e.g., xxxx::2 ): " ip_start
                         read -ep "Enter the ending range ( e.g., xxxx::300 ): " ip_end
                         read -ep "Enter the main interface name (e.g., eth0): " int_name
-
+                        read -ep "Enter the network name [default]: " net_name
+                        
+                        if [ -z "$net_name" ]; then
+                            net_name="default"
+                        fi
 
                         # dhcpv6 info
                         vm_info="  </ip>
@@ -516,18 +525,18 @@ while true; do
                         </ip>
                         </network>"
 
-                        # Remove the last 2 ending tags in default.xml
-                        sed -i "s/<\/ip>//g" /etc/libvirt/qemu/networks/default.xml
-                        sed -i "s/<\/network>//g" /etc/libvirt/qemu/networks/default.xml
+                        # Remove the last 2 ending tags in $net_name.xml
+                        sed -i "s/<\/ip>//g" /etc/libvirt/qemu/networks/$net_name.xml
+                        sed -i "s/<\/network>//g" /etc/libvirt/qemu/networks/$net_name.xml
 
                         # Add dhcpv6 info and closing tags
-                        echo "$vm_info" >> /etc/libvirt/qemu/networks/default.xml
+                        echo "$vm_info" >> /etc/libvirt/qemu/networks/$net_name.xml
 
-                        # Stop, define, start then autostart default network
-                        virsh net-destroy default
-                        virsh net-define /etc/libvirt/qemu/networks/default.xml
-                        virsh net-start default
-                        virsh net-autostart default
+                        # Stop, define, start then autostart $net_name network
+                        virsh net-destroy $net_name
+                        virsh net-define /etc/libvirt/qemu/networks/$net_name.xml
+                        virsh net-start $net_name
+                        virsh net-autostart $net_name
 
                         # ndppd config file
                         ndppd_file="route-ttl 30000
