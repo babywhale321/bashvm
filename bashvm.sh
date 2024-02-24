@@ -288,11 +288,11 @@ while true; do
             # Networks Menu       
             while true; do
                 echo -e "\n========================== Manage Network =========================="
-                echo "s. Show all networks               1. Show more details of a network"
-                echo "2. Start a network                 3. Stop a network"
-                echo "4. Create a NAT network            5. Create a macvtap network"      
-                echo "6. Delete a network                7. Add a dhcpv4 reservation to a network"
-                echo "8. Add dhcpv6 to a network (auto)  9. Add dhcpv6 to a network (manual)"
+                echo "s. Show all networks                      1. Show more details of a network"
+                echo "2. Start a network                        3. Stop a network"
+                echo "4. Create a NAT network                   5. Create a macvtap network"      
+                echo "6. Delete a network                       7. Add a dhcpv4 reservation to a network"
+                echo "8. Add dhcpv6 to default network (auto)   9. Add dhcpv6 to default network (manual)"
                 echo "q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " network_manage_choice
