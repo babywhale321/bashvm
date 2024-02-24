@@ -101,6 +101,8 @@ fi
 
 apt install lm-sensors -y
 
+apt install ndppd -y
+
 echo ""
 echo "======================================================="
 echo "If no errors above then you can run bashvm with"
