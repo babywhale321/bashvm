@@ -9,7 +9,7 @@ if [ -z "$int_name" ]; then
 fi
 
 read -ep "Enter the ip of the VM (e.g., 192.168.122.2 ): " nat_ip
-log_file="vm-info/used_ports.log"
+log_file="/var/log/bashvm/used_ports.log"
 
 # Create log file if it doesn't exist
 if [ -f $log_file ];then
@@ -19,7 +19,7 @@ start_port=$(tail -n 1 "$log_file")
 
 # Create log file
 else
-mkdir vm-info
+mkdir /var/log/bashvm
 touch $log_file
 start_port=1025
 fi
@@ -91,14 +91,12 @@ systemctl restart libvirtd
 fi
 
 echo ""
-echo "========== Port Forward Info for $vm_name ==========" | tee -a vm-info/$vm_name.portinfo.txt
-echo "" | tee -a vm-info/$vm_name.portinfo.txt
-echo "ssh port = $ssh_port" | tee -a vm-info/$vm_name.portinfo.txt
-echo "$start_port to $end_port" | tee -a vm-info/$vm_name.portinfo.txt
-echo "Is the port range of $vm_name" | tee -a vm-info/$vm_name.portinfo.txt
-echo "" | tee -a vm-info/$vm_name.portinfo.txt
-echo "====================================================" | tee -a vm-info/$vm_name.portinfo.txt
+echo "========== Info for $vm_name ==========" | tee -a /var/log/bashvm/$vm_name.info.txt
+echo "" | tee -a /var/log/bashvm/$vm_name.info.txt
+echo "SSH port: $ssh_port" | tee -a /var/log/bashvm/$vm_name.info.txt
+echo "Ports: $start_port to $end_port" | tee -a /var/log/bashvm/$vm_name.info.txt
+echo "" | tee -a /var/log/bashvm/$vm_name.info.txt
+echo "====================================================" | tee -a /var/log/bashvm/$vm_name.info.txt
 echo ""
-echo "Port info for $vm_name has been saved to vm-info/$vm_name.portinfo.txt"
-echo "Please restart the VM for the changes to take effect." 
-echo "You might also need to reboot the system."
+echo "Info for $vm_name has been saved to /var/log/bashvm/$vm_name.info.txt"
+echo "You may need to restart libvirtd, networking and the vm for the changes to take effect"

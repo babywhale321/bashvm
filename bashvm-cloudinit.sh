@@ -39,6 +39,10 @@ fi
 # Deploy the new VM
 virt-install --name $vm_name --memory 2048 --vcpus 2 --disk=size=20,backing_store=/var/lib/libvirt/images/debian-12-generic-amd64.qcow2 --cloud-init user-data=/var/lib/libvirt/images/bashvm-cloudinit.yaml,disable=on --network bridge=virbr0 --osinfo=debian10 --noautoconsole
 
+# Cleanup
+rm /var/lib/libvirt/images/bashvm-cloudinit.yaml
+
+
 if [ ! $? == 0 ]; then
 echo "Failed to start $vm_name"
 echo "Check to see if $vm_name already exists"
@@ -65,13 +69,13 @@ done
 
 vm_net="default"
 
-log_file="vm-info/used_ip.log"
+log_file="/var/log/bashvm/used_ip.log"
 
 # Create log file if it doesn't exist
 if [ -f $log_file ];then
 ip_address=$(tail -n 1 "$log_file")
 else
-mkdir vm-info
+mkdir /var/log/bashvm
 touch $log_file
 ip_address="192.168.122.1"
 fi
@@ -106,7 +110,7 @@ echo "Setting Port Forwarding..."
 
 int_name="virbr0"
 
-log_file="vm-info/used_ports.log"
+log_file="/var/log/bashvm/used_ports.log"
 
 # Create log file if it doesn't exist
 if [ -f $log_file ];then
@@ -205,14 +209,15 @@ while true; do
 done
 
 echo ""
-echo "========== Info for $vm_name ==========" | tee -a vm-info/$vm_name.info.txt
-echo "" | tee -a vm-info/$vm_name.info.txt
-echo "ip = $vm_ip" | tee -a vm-info/$vm_name.info.txt
-echo "ssh port = $ssh_port" | tee -a vm-info/$vm_name.info.txt
-echo "$start_port to $end_port" | tee -a vm-info/$vm_name.info.txt
-echo "Is the port range of $vm_name" | tee -a vm-info/$vm_name.info.txt
-echo "" | tee -a vm-info/$vm_name.info.txt
-echo "====================================================" | tee -a vm-info/$vm_name.info.txt
+echo "========== Info for $vm_name ==========" | tee -a /var/log/bashvm/$vm_name.info.txt
+echo "" | tee -a /var/log/bashvm/$vm_name.info.txt
+echo "IPv4: $vm_ip" | tee -a /var/log/bashvm/$vm_name.info.txt
+echo "SSH port: $ssh_port" | tee -a /var/log/bashvm/$vm_name.info.txt
+echo "Ports: $start_port to $end_port" | tee -a /var/log/bashvm/$vm_name.info.txt
+echo "Username: $user_name" | tee -a /var/log/bashvm/$vm_name.info.txt
+echo "Password: $user_pass" | tee -a /var/log/bashvm/$vm_name.info.txt
+echo "" | tee -a /var/log/bashvm/$vm_name.info.txt
+echo "====================================================" | tee -a /var/log/bashvm/$vm_name.info.txt
 echo ""
-echo "Info for $vm_name has been saved to vm-info/$vm_name.info.txt"
+echo "Info for $vm_name has been saved to /var/log/bashvm/$vm_name.info.txt"
 echo "You may need to restart libvirtd, networking and the vm for the changes to take effect"
