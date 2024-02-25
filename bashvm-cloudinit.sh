@@ -39,15 +39,14 @@ fi
 # Deploy the new VM
 virt-install --name $vm_name --memory 2048 --vcpus 2 --disk=size=20,backing_store=/var/lib/libvirt/images/debian-12-generic-amd64.qcow2 --cloud-init user-data=/var/lib/libvirt/images/bashvm-cloudinit.yaml,disable=on --network bridge=virbr0 --osinfo=debian10 --noautoconsole
 
-# Cleanup
-rm /var/lib/libvirt/images/bashvm-cloudinit.yaml
-
-
 if [ ! $? == 0 ]; then
 echo "Failed to start $vm_name"
 echo "Check to see if $vm_name already exists"
 exit
 fi
+
+# Cleanup
+rm /var/lib/libvirt/images/bashvm-cloudinit.yaml
 
 
 # -----------------dhcp reservation ---------------------
