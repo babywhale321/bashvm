@@ -426,6 +426,14 @@ while true; do
                             net_name="default"
                         fi
 
+                        cat /etc/libvirt/qemu/networks/$net_name.xml | grep "ipv6" >> /dev/null
+
+                        if [ $? == 0 ];then
+                            echo "There is already a dhcpv6 configuration in $net_name"
+                            echo "Please remove the dhcpv6 information from $net_name before running this again."
+                            exit
+                        fi
+
                         # Detect the ipv6 address
                         ipv6_address=$(ifconfig | grep inet6 | grep global | awk '{print $2}')
 
@@ -514,6 +522,14 @@ while true; do
                         
                         if [ -z "$net_name" ]; then
                             net_name="default"
+                        fi
+
+                        cat /etc/libvirt/qemu/networks/$net_name.xml | grep "ipv6" >> /dev/null
+
+                        if [ $? == 0 ];then
+                            echo "There is already a dhcpv6 configuration in $net_name"
+                            echo "Please remove the dhcpv6 information from $net_name before running this again."
+                            exit
                         fi
 
                         # dhcpv6 info
