@@ -431,7 +431,7 @@ while true; do
                         if [ $? == 0 ];then
                             echo "There is already a dhcpv6 configuration in $net_name"
                             echo "Please remove the dhcpv6 information from $net_name before running this again."
-                            exit
+                            break
                         fi
 
                         # Detect the ipv6 address
@@ -529,7 +529,7 @@ while true; do
                         if [ $? == 0 ];then
                             echo "There is already a dhcpv6 configuration in $net_name"
                             echo "Please remove the dhcpv6 information from $net_name before running this again."
-                            exit
+                            break
                         fi
 
                         # dhcpv6 info
