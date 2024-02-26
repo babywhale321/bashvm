@@ -52,12 +52,10 @@ if [ -z "$network_name" ]; then
     network_name="default"
 fi
 
-read -ep "Would you like to generate a new mac address for this vm? (y/n): " mac_question
-if [ $mac_question == y ];then
+read -ep "Enter the mac address for this vm (nothing for auto generate): " mac_address
+if [ -z "$mac_address" ];then
     # Generate a random MAC address
     mac_address=$(generate_mac_address)
-else
-    read -ep "Enter the mac address for this vm (e.g., xx:xx:xx:xx:xx:xx): " mac_address
 fi
 
 # Generate a UUID
