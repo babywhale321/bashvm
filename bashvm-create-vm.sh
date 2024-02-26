@@ -5,7 +5,7 @@
 #Author: Kyle Schroeder "BabyWhale"
 
 # Function to generate a random MAC address
-generate_random_mac() {
+generate_mac_address() {
     printf '52:54:%02x:%02x:%02x:%02x\n' $((RANDOM%256)) $((RANDOM%256)) $((RANDOM%256)) $((RANDOM%256))
 }
 
@@ -52,8 +52,13 @@ if [ -z "$network_name" ]; then
     network_name="default"
 fi
 
-# Generate a random MAC address
-random_mac=$(generate_random_mac)
+read -ep "Would you like to generate a new mac address for this vm? (y/n): " mac_question
+if [ $mac_question == y ];then
+    # Generate a random MAC address
+    mac_address=$(generate_mac_address)
+else
+    read -ep "Enter the mac address for this vm (e.g., xx:xx:xx:xx:xx:xx): " mac_address
+fi
 
 # Generate a UUID
 uuid=$(cat /proc/sys/kernel/random/uuid)
@@ -151,7 +156,7 @@ vm_xml="<domain type='kvm'>
     <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x6'/>
     </controller>
     <interface type='network'>
-    <mac address='$random_mac'/>
+    <mac address='$mac_address'/>
     <source network='$network_name'/>
     <model type='virtio'/>
     <address type='pci' domain='0x0000' bus='0x01' slot='0x00' function='0x0'/>
