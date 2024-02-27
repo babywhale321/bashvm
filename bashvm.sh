@@ -832,7 +832,10 @@ while true; do
 
         8)
             # System Monitor
-            watch -n 1 bash bashvm-monitor.sh
+            read -ep "Enter the name of the virtual machine: " vm_name
+            cp bashvm-monitor.sh bashvm-monitor.sh.vm
+            sed -i "s/bashvm/$vm_name/g" bashvm-monitor.sh.vm
+            watch -n 0.1 bash bashvm-monitor.sh.vm
             ;;
         q)
             # Exit the script

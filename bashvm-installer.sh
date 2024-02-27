@@ -101,6 +101,8 @@ fi
 
 apt install lm-sensors -y
 
+apt install ifstat -y
+
 apt install ndppd -y
 
 echo ""
