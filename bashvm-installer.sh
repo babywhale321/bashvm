@@ -67,14 +67,6 @@ else
     echo "cloud-init is already installed."
 fi
 
-# Check and install sysstat
-dpkg --list | grep sysstat >> /dev/null
-if [ ! $? == 0 ]; then
-    apt install sysstat -y
-else
-    echo "sysstat is already installed."
-fi
-
 # Check and install net-tools
 dpkg --list | grep net-tools >> /dev/null
 if [ ! $? == 0 ]; then
@@ -99,11 +91,7 @@ else
     echo "dnsmasq is already installed."
 fi
 
-apt install lm-sensors -y
-
-apt install ifstat -y
-
-apt install bc -y
+apt install htop -y
 
 apt install ndppd -y
 
