@@ -18,13 +18,13 @@ while true; do
             # Virtual Machines Menu    
             while true; do
                     echo -e "\n==================== Manage Virtual Machine ===================="
-                    echo "s. Show all virtual machines     1. Show more details of a VM"
-                    echo "2. Start a VM                    3. Reboot a VM"               
-                    echo "4. Shutdown a VM (graceful)      5. Shutdown a VM (force)"     
-                    echo "6. Enable autostart of a VM      7. Disable autostart of a VM"
-                    echo "8. Create a new / existing VM    9. Undefine a VM"                  
-                    echo "10.Create a new VM (Automated)   11.Console into a VM"        
-                    echo "12.Change resources of a VM      q. Back to main menu"
+                    echo "s.  Show all virtual machines     1.  Show more details of a VM"
+                    echo "2.  Start a VM                    3.  Reboot a VM"               
+                    echo "4.  Shutdown a VM (graceful)      5.  Shutdown a VM (force)"     
+                    echo "6.  Enable autostart of a VM      7.  Disable autostart of a VM"
+                    echo "8.  Create a new / existing VM    9.  Undefine a VM"                  
+                    echo "10. Create a new VM (Automated)   11. Console into a VM"        
+                    echo "12. Change resources of a VM      q.  Back to main menu"
                     echo ""
                     read -ep "Enter your choice: " vm_manage_choice
                     case $vm_manage_choice in
@@ -288,12 +288,12 @@ while true; do
             # Networks Menu       
             while true; do
                 echo -e "\n========================== Manage Network =========================="
-                echo " s. Show all networks                     1. Show more details of a network"
-                echo " 2. Start a network                       3. Stop a network"
-                echo " 4. Create a NAT network                  5. Create a macvtap network"      
-                echo " 6. Delete a network                      7. Add a dhcpv4 reservation to a network"
-                echo " 8. Add dhcpv6 to a network (auto)        9. Add dhcpv6 to a network (manual)"
-                echo "10. Add a dhcpv6 reservation to a network q. Back to main menu"
+                echo " s. Show all networks                      1. Show more details of a network"
+                echo " 2. Start a network                        3. Stop a network"
+                echo " 4. Create a NAT network                   5. Create a macvtap network"      
+                echo " 6. Delete a network                       7. Add a dhcpv4 reservation to a network"
+                echo " 8. Add dhcpv6 to a network (auto)         9. Add dhcpv6 to a network (manual)"
+                echo "10. Add a dhcpv6 reservation to a network  q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " network_manage_choice
 
@@ -777,9 +777,9 @@ while true; do
             # Manage Port forwarding
             while true; do
                 echo -e "\n=================== Manage Port Forwarding ==================="
-                echo "s. Show port forwarding rules     1. List DHCP leases from a network"  
-                echo "2. Add port forwarding to a VM    3. Remove port forwarding from a VM"
-                echo "4. Edit port forwarding rule file q. Back to main menu"
+                echo "s. Show port forwarding rules      1. List DHCP leases from a network"  
+                echo "2. Add port forwarding to a VM     3. Remove port forwarding from a VM"
+                echo "4. Edit port forwarding rule file  q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " port_choice
 
