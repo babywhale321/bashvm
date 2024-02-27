@@ -9,7 +9,7 @@ while true; do
     echo -e "\n========================== Main Menu =========================="
     echo "1. Virtual Machines   2. Storage Pools    3. Networks"
     echo "4. Snapshots          5. Edit Properties  6. Firewall Settings"
-    echo "7. Port Forwarding    8. System Monitor   q. Exit"
+    echo "7. Port Forwarding    8. VM Monitor       q. Exit"
     echo ""
     # Prompt user for input
     read -ep "Enter your choice: " main_choice
@@ -831,7 +831,7 @@ while true; do
             ;;
 
         8)
-            # System Monitor
+            # VM Monitor
             read -ep "Enter the name of the virtual machine: " vm_name
             cp bashvm-monitor.sh bashvm-monitor.sh.vm
             sed -i "s/bashvm/$vm_name/g" bashvm-monitor.sh.vm
