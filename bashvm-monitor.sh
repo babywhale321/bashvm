@@ -41,9 +41,9 @@ echo "Memory Usage: $memory_usage%"
 
 echo ""
 # Set the total allocated disk space
-disk_total=$(virsh guestinfo $domain | grep fs | grep "total" | cut -d: -f2)
+disk_total=$(virsh guestinfo $domain | grep fs.0 | grep "total" | cut -d: -f2)
 # Set the used disk space
-disk_used=$(virsh guestinfo $domain | grep fs | grep "used" | cut -d: -f2)
+disk_used=$(virsh guestinfo $domain | grep fs.0 | grep "used" | cut -d: -f2)
 # Calculate the percentage value of the used disk space
 disk_ava=$(echo "scale=2; ($disk_total / $disk_used )" | bc)
 echo "Disk Usage: $disk_ava%"
