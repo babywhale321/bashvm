@@ -189,24 +189,6 @@ if [ $vm_on == 1 ]; then
 systemctl restart libvirtd
 fi
 
-echo "Restarting vm..."
-
-# Restart new vm for portforwarding to work
-while true; do
-  vm_state=$(virsh dominfo $vm_name | grep State: | awk '{print $2}')
-
-  if [ $vm_state == "running" ]; then
-    virsh shutdown $vm_name >> /dev/null
-    echo "Waiting for $vm_name to shutdown..."
-    sleep 5
-  else
-    virsh start $vm_name
-    break
-  fi
-    continue
-
-done
-
 echo ""
 echo "========== Info for $vm_name ==========" | tee -a /var/log/bashvm/$vm_name.info.txt
 echo "" | tee -a /var/log/bashvm/$vm_name.info.txt
