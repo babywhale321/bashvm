@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-#bashvm ("INSTALLER")
+# bashvm.com
 #
-#Author: Kyle Schroeder "BabyWhale"
+# Author: Kyle Schroeder "BabyWhale"
 
 # Detect debian
 if [ ! -f "/etc/debian_version" ]; then

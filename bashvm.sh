@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-#bashvm is a console tool to manage your virtual machines.
+# bashvm.com
 #
-#Author: Kyle Schroeder "BabyWhale"
+# Author: Kyle Schroeder "BabyWhale"
 
 while true; do
     # Display the main menu

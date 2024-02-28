@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-#bashvm is a console tool to manage your virtual machines.
+# bashvm.com
 #
-#Author: Kyle Schroeder "BabyWhale"
+# Author: Kyle Schroeder "BabyWhale"
 
 # Function to generate a random MAC address
 generate_mac_address() {
