@@ -11,77 +11,48 @@ if [ ! -f "/etc/debian_version" ]; then
     exit
 fi
 
-# Check and install qemu-kvm
-dpkg --list | grep qemu-kvm >> /dev/null
-if [ ! $? == 0 ]; then
-    apt install qemu-kvm -y
-else
-    echo "qemu-kvm is already installed."
-fi
+# Required packages to download
+# Function to check the exit status and exit if failed
+check_status() {
+    if [ $1 -ne 0 ]; then
+        echo "Error: $2 failed to install."
+        exit 1
+    fi
+}
 
-# Check and install libvirt-daemon-system
-dpkg --list | grep libvirt-daemon-system >> /dev/null
-if [ ! $? == 0 ]; then
-    apt install libvirt-daemon-system -y
-else
-    echo "libvirt-daemon-system is already installed."
-fi
+# Install packages
+apt install qemu-kvm -y
+check_status $? "qemu-kvm"
 
-# Check and install libvirt-clients
-dpkg --list | grep libvirt-clients >> /dev/null
-if [ ! $? == 0 ]; then
-    apt install libvirt-clients -y
-else
-    echo "libvirt-clients is already installed."
-fi
+apt install libvirt-daemon-system -y
+check_status $? "libvirt-daemon-system"
 
-# Check and install bridge-utils
-dpkg --list | grep bridge-utils >> /dev/null
-if [ ! $? == 0 ]; then
-    apt install bridge-utils -y
-else
-    echo "bridge-utils is already installed."
-fi
+apt install libvirt-clients -y
+check_status $? "libvirt-clients"
 
-# Check and install qemu-utils
-dpkg --list | grep qemu-utils >> /dev/null
-if [ ! $? == 0 ]; then
-    apt install qemu-utils -y
-else
-    echo "qemu-utils is already installed."
-fi
+apt install bridge-utils -y
+check_status $? "bridge-utils"
 
-# Check and install virt-manager
-dpkg --list | grep virt-manager >> /dev/null
-if [ ! $? == 0 ]; then
-    apt install virt-manager -y
-else
-    echo "virt-manager is already installed."
-fi
+apt install qemu-utils -y
+check_status $? "qemu-utils"
 
-# Check and install cloud-init
-dpkg --list | grep cloud-init >> /dev/null
-if [ ! $? == 0 ]; then
-    apt install cloud-init -y
-else
-    echo "cloud-init is already installed."
-fi
+apt install virt-manager -y
+check_status $? "virt-manager"
 
-# Check and install net-tools
-dpkg --list | grep net-tools >> /dev/null
-if [ ! $? == 0 ]; then
-    apt install net-tools -y
-else
-    echo "net-tools is already installed."
-fi
+apt install cloud-init -y
+check_status $? "cloud-init"
 
-# Check and install ufw
-dpkg --list | grep ufw >> /dev/null
-if [ ! $? == 0 ]; then
-    apt install ufw -y
-else
-    echo "ufw is already installed."
-fi
+apt install net-tools -y
+check_status $? "net-tools"
+
+apt install ufw -y
+check_status $? "ufw"
+
+apt install htop -y
+check_status $? "htop"
+
+apt install ndppd -y
+check_status $? "ndppd"
 
 # Check and install dnsmasq
 dpkg --list | grep dnsmasq >> /dev/null
@@ -90,10 +61,6 @@ if [ ! $? == 0 ]; then
 else
     echo "dnsmasq is already installed."
 fi
-
-apt install htop -y
-
-apt install ndppd -y
 
 echo ""
 echo "======================================================="
