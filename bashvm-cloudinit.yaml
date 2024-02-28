@@ -16,12 +16,12 @@ ssh_pwauth: true
 
 # users
 users:
-  - name: username
+  - name: default-user
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: users, adm
     shell: /bin/bash
     lock_passwd: false
-    plain_text_passwd: password
+    plain_text_passwd: default-pass
 
 # list of packages to install after the VM is up
 package_upgrade: true
