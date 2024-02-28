@@ -24,6 +24,9 @@ Debian 11, 12, Ubuntu 22.04
 ### Screenshots
 https://bashvm.com/screenshots.html
 
+### Guide
+https://bashvm.com/guide.html
+
 ### Donations:
 https://www.paypal.com/paypalme/babywhale123
 
