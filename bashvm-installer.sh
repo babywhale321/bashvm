@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# bashvm.com
+#bashvm.com
 #
-# Author: Kyle Schroeder "BabyWhale"
+#Author: Kyle Schroeder
 
 # Detect debian
 if [ ! -f "/etc/debian_version" ]; then

@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# bashvm.com
+#bashvm.com
 #
-# Author: Kyle Schroeder "BabyWhale"
+#Author: Kyle Schroeder
 
 read -ep "Enter the VM name: " vm_name
 read -ep "Enter the name of the virtual bridge [virbr0]: " int_name

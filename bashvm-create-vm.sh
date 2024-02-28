@@ -1,8 +1,9 @@
 #!/bin/bash
 #
-# bashvm.com
+#bashvm.com
 #
-# Author: Kyle Schroeder "BabyWhale"
+#Author: Kyle Schroeder
+
 
 # Function to generate a random MAC address
 generate_mac_address() {

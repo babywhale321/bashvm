@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# bashvm.com
+#bashvm.com
 #
-# Author: Kyle Schroeder "BabyWhale"
+#Author: Kyle Schroeder
 
 while true; do
     # Display the main menu
