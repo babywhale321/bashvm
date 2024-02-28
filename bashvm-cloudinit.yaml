@@ -1,6 +1,4 @@
-#bashvm.com
-#
-#Author: Kyle Schroeder
+#cloud-config
 
 # hostname will be replaced with bashvm-cloudinit.sh script
 hostname: default-vm

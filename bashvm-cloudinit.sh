@@ -1,8 +1,4 @@
 #!/bin/bash
-#
-#bashvm.com
-#
-#Author: Kyle Schroeder
 
 read -ep "Enter the hostname of the new VM: " vm_name
 read -ep "Enter the username for the new VM: " user_name
