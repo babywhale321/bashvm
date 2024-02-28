@@ -5,7 +5,7 @@
 # Author: Kyle Schroeder "BabyWhale"
 
 # hostname will be replaced with bashvm-cloudinit.sh script
-hostname: #default-vm#
+hostname: default-vm
 locale: en_US.UTF-8
 
 # disable ssh access as root.
@@ -16,12 +16,12 @@ ssh_pwauth: true
 
 # users
 users:
-  - name: #bashvm#
+  - name: username
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: users, adm
     shell: /bin/bash
     lock_passwd: false
-    plain_text_passwd: #password#
+    plain_text_passwd: password
 
 # list of packages to install after the VM is up
 package_upgrade: true
