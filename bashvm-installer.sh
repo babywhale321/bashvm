@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#bashvm is a console tool to manage your virtual machines. ("INSTALLER")
+#bashvm ("INSTALLER")
 #
 #Author: Kyle Schroeder "BabyWhale"
 
@@ -11,77 +11,29 @@ if [ ! -f "/etc/debian_version" ]; then
     exit
 fi
 
-# Check and install qemu-kvm
-dpkg --list | grep qemu-kvm >> /dev/null
-if [ ! $? == 0 ]; then
-    apt install qemu-kvm -y
-else
-    echo "qemu-kvm is already installed."
-fi
+# Required packages to download
 
-# Check and install libvirt-daemon-system
-dpkg --list | grep libvirt-daemon-system >> /dev/null
-if [ ! $? == 0 ]; then
-    apt install libvirt-daemon-system -y
-else
-    echo "libvirt-daemon-system is already installed."
-fi
+apt install qemu-kvm -y
 
-# Check and install libvirt-clients
-dpkg --list | grep libvirt-clients >> /dev/null
-if [ ! $? == 0 ]; then
-    apt install libvirt-clients -y
-else
-    echo "libvirt-clients is already installed."
-fi
+apt install libvirt-daemon-system -y
 
-# Check and install bridge-utils
-dpkg --list | grep bridge-utils >> /dev/null
-if [ ! $? == 0 ]; then
-    apt install bridge-utils -y
-else
-    echo "bridge-utils is already installed."
-fi
+apt install libvirt-clients -y
 
-# Check and install qemu-utils
-dpkg --list | grep qemu-utils >> /dev/null
-if [ ! $? == 0 ]; then
-    apt install qemu-utils -y
-else
-    echo "qemu-utils is already installed."
-fi
+apt install bridge-utils -y
 
-# Check and install virt-manager
-dpkg --list | grep virt-manager >> /dev/null
-if [ ! $? == 0 ]; then
-    apt install virt-manager -y
-else
-    echo "virt-manager is already installed."
-fi
+apt install qemu-utils -y
 
-# Check and install cloud-init
-dpkg --list | grep cloud-init >> /dev/null
-if [ ! $? == 0 ]; then
-    apt install cloud-init -y
-else
-    echo "cloud-init is already installed."
-fi
+apt install virt-manager -y
 
-# Check and install net-tools
-dpkg --list | grep net-tools >> /dev/null
-if [ ! $? == 0 ]; then
-    apt install net-tools -y
-else
-    echo "net-tools is already installed."
-fi
+apt install cloud-init -y
 
-# Check and install ufw
-dpkg --list | grep ufw >> /dev/null
-if [ ! $? == 0 ]; then
-    apt install ufw -y
-else
-    echo "ufw is already installed."
-fi
+apt install net-tools -y
+
+apt install ufw -y
+
+apt install htop -y
+
+apt install ndppd -y
 
 # Check and install dnsmasq
 dpkg --list | grep dnsmasq >> /dev/null
@@ -90,10 +42,6 @@ if [ ! $? == 0 ]; then
 else
     echo "dnsmasq is already installed."
 fi
-
-apt install htop -y
-
-apt install ndppd -y
 
 echo ""
 echo "======================================================="
