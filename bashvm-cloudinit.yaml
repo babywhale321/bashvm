@@ -1,5 +1,3 @@
-#!/bin/bash
-#
 #bashvm.com
 #
 #Author: Kyle Schroeder
@@ -16,12 +14,12 @@ ssh_pwauth: true
 
 # users
 users:
-  - name: default-user
+  - name: bashvm
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: users, adm
     shell: /bin/bash
     lock_passwd: false
-    plain_text_passwd: default-pass
+    plain_text_passwd: password
 
 # list of packages to install after the VM is up
 package_upgrade: true
