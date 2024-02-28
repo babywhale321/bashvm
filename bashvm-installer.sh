@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#bashvm is a console tool to manage your virtual machines. ("INSTALLER")
+#bashvm.com
 #
 #Author: Kyle Schroeder "BabyWhale"
 

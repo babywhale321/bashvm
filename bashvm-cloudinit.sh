@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+#bashvm.com
+#
+#Author: Kyle Schroeder "BabyWhale"
 
 read -ep "Enter the hostname of the new VM: " vm_name
 read -ep "Enter the username for the new VM: " user_name
@@ -7,8 +11,8 @@ read -ep "Enter the password for the new VM: " user_pass
 cp bashvm-cloudinit.yaml bashvm-cloudinit.yaml.backup
 
 sed -i "s/default-vm/$vm_name/g" bashvm-cloudinit.yaml
-sed -i "s/bashvm/$user_name/g" bashvm-cloudinit.yaml
-sed -i "s/password/$user_pass/g" bashvm-cloudinit.yaml
+sed -i "s/default-user/$user_name/g" bashvm-cloudinit.yaml
+sed -i "s/default-pass/$user_pass/g" bashvm-cloudinit.yaml
 
 # Copy cloudinit file to default location
 cp bashvm-cloudinit.yaml /var/lib/libvirt/images
