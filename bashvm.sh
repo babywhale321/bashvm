@@ -91,7 +91,7 @@ while true; do
                     
                     10)
                         # Create a VM (Automated)                                                       
-                        echo "This will create a debian12 VM with (2 vcores, 2GB ram, 20GB disk)"
+                        echo "This will create a debian12 VM"
                         echo "Press Enter to confirm this is what you want or q to exit"
                         read -ep ": " auto_choice 
                         if [[ ! "$auto_choice" == q ]];then
