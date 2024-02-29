@@ -14,7 +14,7 @@ read -ep "Enter the name for the new / existing virtual machine: " new_vm_name
 read -ep "Enter the amount of memory in MB: " new_memory
 read -ep "Enter the number of virtual CPUs: " new_vcpus
 
-read -ep "Would you like to download or use the debian 12 iso in the default pool? (y/n): " iso_question
+read -ep "Would you like to download or use a debian 12 iso in the default pool? (y/n): " iso_question
 if [ $iso_question == y ];then
     # Default ISO path
     iso_path="/var/lib/libvirt/images/debian-12.5.0-amd64-netinst.iso"
