@@ -44,7 +44,7 @@ if [ $disk_question == y ];then
     disk_path="/var/lib/libvirt/images/$volume_name.qcow2"
 else
     # full disk path needed
-    read -ep "Enter the full path of the virtual machine disk (e.g., /var/lib/libvirt/qemu/vm.qcow2): " disk_path
+    read -ep "Enter the full path of the virtual machine disk (e.g., /var/lib/libvirt/images/vm.qcow2): " disk_path
 fi
 # Network select
 read -ep "Enter the network name to connect the virtual machine to (nothing for default): " network_name
