@@ -22,16 +22,19 @@ if [ $iso_question == y ];then
     if [ -z "$pool_name" ]; then
         pool_name="default"
     fi
-    iso_path=$(virsh vol-list $pool_name | grep "debian-12.5.0-amd64-netinst.iso" | awk '{print $2}')
-
+    pool_path=$(virsh pool-dumpxml $pool_name | grep '<path>' | cut -d'>' -f2 | cut -d'<' -f1)
+    iso_img=$(ls $pool_path/ | grep "debian-12.5.0-amd64-netinst.iso")
+    iso_path="$pool_path/$iso_img"
     # Check to see if the iso file is there
     if [ -f "$iso_path" ]; then
         # ISO is already present, Dont download
         echo "File debian-12.5.0-amd64-netinst.iso already there. Canceling re-download."
     else
         # ISO is not present, Download
+        cd $pool_path
         wget https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.5.0-amd64-netinst.iso
-        mv debian-12.5.0-amd64-netinst.iso $iso_path
+        iso_img="debian-12.5.0-amd64-netinst.iso"
+        iso_path="$pool_path/$iso_img"
     fi
 else
     # full iso path needed
