@@ -4,9 +4,12 @@
 #
 #Author: Kyle Schroeder "BabyWhale"
 
-read -ep "Enter the hostname of the new VM: " vm_name
-read -ep "Enter the username for the new VM: " user_name
-read -ep "Enter the password for the new VM: " user_pass
+read -ep "Enter the hostname of the VM (e.g., test-vm): " vm_name
+read -ep "Enter the amount of memory in MB (e.g., 1024): " vm_memory
+read -ep "Enter the number of virtual CPUs (e.g., 2): " vm_vcpus
+read -ep "Enter the amount of disk space in GB (e.g., 50): " vm_disk
+read -ep "Enter the username for the new VM (e.g., joe): " user_name
+read -ep "Enter the password for the new VM (e.g., password): " user_pass
 
 cp bashvm-cloudinit.yaml bashvm-cloudinit.yaml.backup
 
@@ -39,9 +42,8 @@ virsh net-start default
 virsh net-autostart default
 fi
 
-
 # Deploy the new VM
-virt-install --name $vm_name --memory 2048 --vcpus 2 --disk=size=20,backing_store=/var/lib/libvirt/images/debian-12-generic-amd64.qcow2 --cloud-init user-data=/var/lib/libvirt/images/bashvm-cloudinit.yaml,disable=on --network bridge=virbr0 --osinfo=debian10 --noautoconsole
+virt-install --name $vm_name --memory $vm_memory --vcpus $vm_vcpus --disk=size=$vm_disk,backing_store=/var/lib/libvirt/images/debian-12-generic-amd64.qcow2 --cloud-init user-data=/var/lib/libvirt/images/bashvm-cloudinit.yaml,disable=on --network bridge=virbr0 --osinfo=debian10 --noautoconsole
 
 if [ ! $? == 0 ]; then
 echo "Failed to start $vm_name"
@@ -51,7 +53,6 @@ fi
 
 # Cleanup
 rm /var/lib/libvirt/images/bashvm-cloudinit.yaml
-
 
 # -----------------dhcp reservation ---------------------
 
