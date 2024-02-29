@@ -11,21 +11,27 @@ generate_mac_address() {
 
 # Prompt user for VM details
 read -ep "Enter the name for the new / existing virtual machine: " new_vm_name
-read -ep "Enter the amount of memory in MB: " new_memory
-read -ep "Enter the number of virtual CPUs: " new_vcpus
+read -ep "Enter the amount of memory in MB (e.g., 1024): " new_memory
+read -ep "Enter the number of virtual CPUs (e.g., 2): " new_vcpus
 
-read -ep "Would you like to download or use a debian 12 iso in the default pool? (y/n): " iso_question
+read -ep "Would you like to download or use a debian 12 iso? (y/n): " iso_question
 if [ $iso_question == y ];then
-    # Default ISO path
-    iso_path="/var/lib/libvirt/images/debian-12.5.0-amd64-netinst.iso"
+    
+    read -ep "Enter the storage pool name [default]: " pool_name
+
+    if [ -z "$pool_name" ]; then
+        pool_name="default"
+    fi
+    iso_path=$(virsh vol-list $pool_name | grep "debian-12.5.0-amd64-netinst.iso" | awk '{print $2}')
+
     # Check to see if the iso file is there
     if [ -f "$iso_path" ]; then
         # ISO is already present, Dont download
         echo "File debian-12.5.0-amd64-netinst.iso already there. Canceling re-download."
     else
         # ISO is not present, Download
-        cd /var/lib/libvirt/images
         wget https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.5.0-amd64-netinst.iso
+        mv debian-12.5.0-amd64-netinst.iso $iso_path
     fi
 else
     # full iso path needed
@@ -34,20 +40,24 @@ else
     read -ep ": " iso_path
 fi
 
-read -ep "Would you like to create a new volume in the default pool? (y/n): " disk_question
+read -ep "Would you like to create a new volume? (y/n): " disk_question
 if [ $disk_question == y ];then
-    # New disk name and capacity
+    # disk name, capacity and pool
     read -ep "Enter the name of the new storage volume (e.g., new-vm): " volume_name
-    read -ep "Enter the size of the volume (e.g., 10G): " volume_capacity
+    read -ep "Enter the size of the volume (e.g., 10GB): " volume_capacity
+    read -ep "Enter the storage pool name [default]: " pool_name
+    if [ -z "$pool_name" ]; then
+        pool_name="default"
+    fi
     # virsh command to create new disk
-    virsh vol-create-as --pool default --name "$volume_name.qcow2" --capacity "$volume_capacity" --format qcow2
-    disk_path="/var/lib/libvirt/images/$volume_name.qcow2"
+    virsh vol-create-as --pool $pool_name --name "$volume_name.qcow2" --capacity "$volume_capacity" --format qcow2
+    disk_path=$(virsh vol-path --pool $pool_name --vol "$volume_name.qcow2")
 else
     # full disk path needed
     read -ep "Enter the full path of the virtual machine disk (e.g., /var/lib/libvirt/images/vm.qcow2): " disk_path
 fi
 # Network select
-read -ep "Enter the network name to connect the virtual machine to (nothing for default): " network_name
+read -ep "Enter the network name to connect the virtual machine to [default]: " network_name
 if [ -z "$network_name" ]; then
     network_name="default"
 fi
