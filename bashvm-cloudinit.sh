@@ -226,4 +226,5 @@ echo "" | tee -a /var/log/bashvm/$vm_name.info.txt
 echo "====================================================" | tee -a /var/log/bashvm/$vm_name.info.txt
 echo ""
 echo "Info for $vm_name has been saved to /var/log/bashvm/$vm_name.info.txt"
-echo "You may need to restart libvirtd, networking and the vm for the changes to take effect"
+echo "Please note that there will be a vnc port automatically assigned to this vm."
+echo "This is optional if needed and the ports will start at 5900 and onward."
