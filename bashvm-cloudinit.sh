@@ -10,6 +10,25 @@ read -ep "Enter the number of virtual CPUs (e.g., 2): " vm_vcpus
 read -ep "Enter the amount of disk space in GB (e.g., 50): " vm_disk
 read -ep "Enter the username for the new VM (e.g., joe): " user_name
 read -ep "Enter the password for the new VM (e.g., password): " user_pass
+echo "1 = debian12, 2 = ubuntu22.04, 3 = almalinux9"
+read -ep "Enter the OS you would like (e.g., 1): " qcow2_question
+
+if [ $qcow2_question == 1 ];then
+    qcow2_image="debian-12-generic-amd64.qcow2"
+    qcow2_download="https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2"
+
+elif [ $qcow2_question == 2 ];then
+    qcow2_image="ubuntu-22.04-minimal-cloudimg-amd64.img"
+    qcow2_download="https://cloud-images.ubuntu.com/minimal/releases/jammy/release/ubuntu-22.04-minimal-cloudimg-amd64.img"
+
+elif [ $qcow2_question == 3 ];then
+    qcow2_image="AlmaLinux-9-GenericCloud-latest.x86_64.qcow2"
+    qcow2_download="https://repo.almalinux.org/almalinux/9/cloud/x86_64/images/AlmaLinux-9-GenericCloud-latest.x86_64.qcow2"
+
+else
+    echo "Error: Please select a valid response."
+    exit
+fi
 
 cp bashvm-cloudinit.yaml bashvm-cloudinit.yaml.backup
 
@@ -23,15 +42,16 @@ cp bashvm-cloudinit.yaml.backup bashvm-cloudinit.yaml
 rm bashvm-cloudinit.yaml.backup
 
 echo ""
-echo "Starting download of debian 12 cloud image..."
+echo "Starting download of cloud image..."
+
 # Check to see if the qcow2 file is there
-if [ -f "/var/lib/libvirt/images/debian-12-generic-amd64.qcow2" ]; then
+if [ -f "/var/lib/libvirt/images/$qcow2_image" ]; then
     # Dont download
-    echo "File debian-12-generic-amd64.qcow2 already there. Canceling re-download..."
+    echo "File $qcow2_image already there. Canceling re-download..."
 else
     # Download
-    wget https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2
-    mv debian-12-generic-amd64.qcow2 /var/lib/libvirt/images/debian-12-generic-amd64.qcow2
+    wget $qcow2_download
+    mv $qcow2_image /var/lib/libvirt/images/$qcow2_image
 fi
 
 virsh net-info default | grep "Active:" | grep "yes" >> /dev/null
@@ -43,7 +63,7 @@ virsh net-autostart default
 fi
 
 # Deploy the new VM
-virt-install --name $vm_name --memory $vm_memory --vcpus $vm_vcpus --disk=size=$vm_disk,backing_store=/var/lib/libvirt/images/debian-12-generic-amd64.qcow2 --cloud-init user-data=/var/lib/libvirt/images/bashvm-cloudinit.yaml,disable=on --network bridge=virbr0 --osinfo=debian10 --noautoconsole
+virt-install --name $vm_name --memory $vm_memory --vcpus $vm_vcpus --disk=size=$vm_disk,backing_store=/var/lib/libvirt/images/$qcow2_image --cloud-init user-data=/var/lib/libvirt/images/bashvm-cloudinit.yaml,disable=on --network bridge=virbr0 --osinfo=debian10 --noautoconsole
 
 if [ ! $? == 0 ]; then
 echo "Failed to start $vm_name"
