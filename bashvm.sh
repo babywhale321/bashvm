@@ -91,7 +91,7 @@ while true; do
                     
                     10)
                         # Create a VM (Automated)                                                       
-                        echo "This will create a debian12 VM"
+                        echo "This will create a vm in the default pool with the default network."
                         echo "Press Enter to confirm this is what you want or q to exit"
                         read -ep ": " auto_choice 
                         if [[ ! "$auto_choice" == q ]];then
