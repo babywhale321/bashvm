@@ -233,3 +233,6 @@ echo "$vm_xml" > "$vm_xml_file"
 
 # Create the new virtual machine
 virsh define "$vm_xml_file"
+
+echo "Please note that there will be a vnc port automatically assigned to this vm."
+echo "This is optional if needed and the ports will start at 5900 and onward."
