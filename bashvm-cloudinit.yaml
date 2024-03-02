@@ -20,15 +20,15 @@ users:
     plain_text_passwd: default-pass
 
 # list of packages to install after the VM is up
-package_upgrade: true
-package_reboot_if_required: true
-package_update: true
+#package_upgrade: true
+#package_reboot_if_required: true
+#package_update: true
 packages:
   - qemu-guest-agent
 
 # run dhclient after the first install.
-#runcmd:
-#  - dhclient
+runcmd:
+  - shutdown -P 0
 
 # output to /var/log/cloud-init-output.log
 final_message: "The system is up, after $UPTIME seconds"
