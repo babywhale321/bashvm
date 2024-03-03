@@ -1,6 +1,6 @@
 #cloud-config
 
-# hostname will be replaced with bashvm-cloudinit.sh script
+# hostname
 hostname: default-vm
 locale: en_US.UTF-8
 
@@ -20,13 +20,10 @@ users:
     plain_text_passwd: default-pass
 
 # list of packages to install after the VM is up
-#package_upgrade: true
-#package_reboot_if_required: true
-#package_update: true
 packages:
   - qemu-guest-agent
 
-# run dhclient after the first install.
+# shutdown system for port forwarding to work
 runcmd:
   - shutdown -P 0
 
