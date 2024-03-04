@@ -7,9 +7,10 @@
 while true; do
     # Display the main menu
     echo -e "\n========================== Main Menu =========================="
-    echo "1. Virtual Machines   2. Storage Pools    3. Networks"
-    echo "4. Snapshots          5. Edit Properties  6. Firewall Settings"
-    echo "7. Port Forwarding    8. System Monitor   q. Exit"
+    echo "1. Virtual Machines  2. Storage Pools         3. Networks"
+    echo "4. Snapshots         5. Edit Properties       6. Firewall Settings"
+    echo "7. Port Forwarding   8. VNC / Console Access  9. System Monitor"   
+    echo "q. Exit"
     echo ""
     # Prompt user for input
     read -ep "Enter your choice: " main_choice
@@ -694,9 +695,107 @@ while true; do
             ;;
 
         8)
+            # VNC / Console Access
+                        while true; do
+                echo -e "\n====================== VNC / Console Access ======================"
+                echo "s. Show vnc port of a vm  1. List listening ports"
+                echo "2. Add VNC port           3. Remove VNC port"        
+                echo "4. Console into a vm      q. Back to main menu"
+                echo ""
+                read -ep "Enter your choice: " vnc_manage_choice
+
+                case $vnc_manage_choice in
+                    s)  
+                        read -ep "Enter the name of the virtual machine: " vm_name
+                        virsh domdisplay "$vm_name" --all
+                        ;;
+
+                    1)
+                        # Show listening ports
+                        netstat -l | grep "tcp\|udp"
+                        ;;
+
+                    2)
+                        # Add vnc access
+                        read -ep "Enter the name of the virtual machine: " vm_name
+                        add_vnc=" <channel type='unix'>
+                            <target type='virtio' name='org.qemu.guest_agent.0'/>
+                            <address type='virtio-serial' controller='0' bus='0' port='1'/>
+                            </channel>
+                            <input type='tablet' bus='usb'>
+                            <address type='usb' bus='0' port='1'/>
+                            </input>
+                            <input type='mouse' bus='ps2'/>
+                            <input type='keyboard' bus='ps2'/>
+                            <graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0'>
+                            <listen type='address' address='0.0.0.0'/>
+                            </graphics>
+                            <sound model='ich9'>
+                            <address type='pci' domain='0x0000' bus='0x00' slot='0x1b' function='0x0'/>
+                            </sound>
+                            <audio id='1' type='none'/>
+                            <video>
+                            <model type='qxl' ram='65536' vram='65536' vgamem='16384' heads='1' primary='yes'/>
+                            <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x0'/>
+                            </video>
+                            <memballoon model='virtio'>
+                            <address type='pci' domain='0x0000' bus='0x05' slot='0x00' function='0x0'/>
+                            </memballoon>
+                            <rng model='virtio'>
+                            <backend model='random'>/dev/urandom</backend>
+                            <address type='pci' domain='0x0000' bus='0x06' slot='0x00' function='0x0'/>
+                            </rng>
+                        </devices>
+                        </domain>"
+
+                        virsh dumpxml "$vm_name" | sed -n '/console/q;p' > "$vm_name".xml
+                        echo "$add_vnc" >> "$vm_name".xml
+                        virsh define "$vm_name".xml
+                        rm "$vm_name".xml
+                        echo "Please shutdown then start the vm for the changes to take effect"
+                        ;;
+                    3)
+                        # Remove VNC Port
+                        read -ep "Enter the name of the virtual machine: " vm_name
+                        remove_vnc="
+                            <memballoon model='virtio'>
+                            <address type='pci' domain='0x0000' bus='0x05' slot='0x00' function='0x0'/>
+                            </memballoon>
+                            <rng model='virtio'>
+                            <backend model='random'>/dev/urandom</backend>
+                            <address type='pci' domain='0x0000' bus='0x06' slot='0x00' function='0x0'/>
+                            </rng>
+                        </devices>
+                        </domain>"
+
+                        virsh dumpxml $vm_name | sed -n '/console/q;p' > "$vm_name".xml
+                        echo "$remove_vnc" >> "$vm_name".xml
+                        virsh define "$vm_name".xml
+                        rm "$vm_name".xml
+                        echo "Please shutdown then start the vm for the changes to take effect"
+                        ;;
+
+                    4)
+                        # Console into a VM
+                        read -ep "Enter the VM name to console into: " hostname
+                        virsh console $hostname
+                        ;;
+                        
+                    q)
+                        # Back to Main Menu
+                        break
+                        ;;
+                    *)
+                        echo "Invalid choice. Please enter a valid option."
+                        ;;
+                esac
+            done
+            ;;
+        9)
             # System Monitor
             htop
             ;;
+            
         q)
             # Exit the script
             echo "Exiting."
