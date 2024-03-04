@@ -30,16 +30,41 @@ else
     exit
 fi
 
-cp bashvm-cloudinit.yaml bashvm-cloudinit.yaml.backup
+echo "#cloud-config
 
-sed -i "s/default-vm/$vm_name/g" bashvm-cloudinit.yaml
-sed -i "s/default-user/$user_name/g" bashvm-cloudinit.yaml
-sed -i "s/default-pass/$user_pass/g" bashvm-cloudinit.yaml
+# hostname
+hostname: '$vm_name'
+locale: en_US.UTF-8
+
+# disable ssh access as root.
+disable_root: true
+
+# ssh with password enabled
+ssh_pwauth: true
+
+# users
+users:
+  - name: '$user_name'
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, adm
+    shell: /bin/bash
+    lock_passwd: false
+    plain_text_passwd: '$user_pass'
+
+# list of packages to install after the VM is up
+packages:
+  - qemu-guest-agent
+
+# shutdown system for port forwarding to work
+runcmd:
+  - shutdown -P 0
+
+# output to /var/log/cloud-init-output.log
+final_message: "The system is up, after $UPTIME seconds"
+" > bashvm-cloudinit.yaml
 
 # Copy cloudinit file to default location
-cp bashvm-cloudinit.yaml /var/lib/libvirt/images
-cp bashvm-cloudinit.yaml.backup bashvm-cloudinit.yaml
-rm bashvm-cloudinit.yaml.backup
+mv bashvm-cloudinit.yaml /var/lib/libvirt/images
 
 echo ""
 echo "Starting download of cloud image..."
