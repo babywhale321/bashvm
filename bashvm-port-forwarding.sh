@@ -51,12 +51,15 @@ echo "$nat_script" >> /etc/libvirt/hooks/qemu
 ssh_port=$(($start_port - 1))
 echo '      /sbin/iptables -D FORWARD -o '$int_name' -p tcp -d '$nat_ip' --dport 22 -j ACCEPT' >> /etc/libvirt/hooks/qemu
 echo '      /sbin/iptables -t nat -D PREROUTING -p tcp --dport '$ssh_port' -j DNAT --to '$nat_ip':22' >> /etc/libvirt/hooks/qemu
-
+echo '      /sbin/iptables -D FORWARD -o '$int_name' -p udp -d '$nat_ip' --dport 22 -j ACCEPT' >> /etc/libvirt/hooks/qemu
+echo '      /sbin/iptables -t nat -D PREROUTING -p udp --dport '$ssh_port' -j DNAT --to '$nat_ip':22' >> /etc/libvirt/hooks/qemu
 # Port forward rules to loop until it reaches end port
 for ((port=start_port; port<=end_port; port++)); do
 
     echo '      /sbin/iptables -D FORWARD -o '$int_name' -p tcp -d '$nat_ip' --dport '$port' -j ACCEPT' >> /etc/libvirt/hooks/qemu
     echo '      /sbin/iptables -t nat -D PREROUTING -p tcp --dport '$port' -j DNAT --to '$nat_ip':'$port'' >> /etc/libvirt/hooks/qemu
+    echo '      /sbin/iptables -D FORWARD -o '$int_name' -p udp -d '$nat_ip' --dport '$port' -j ACCEPT' >> /etc/libvirt/hooks/qemu
+    echo '      /sbin/iptables -t nat -D PREROUTING -p udp --dport '$port' -j DNAT --to '$nat_ip':'$port'' >> /etc/libvirt/hooks/qemu
 done
 
 # Keep out of loop
@@ -67,12 +70,15 @@ echo "$middle_script" >> /etc/libvirt/hooks/qemu
 # Reserve for SSH
 echo '      /sbin/iptables -I FORWARD -o '$int_name' -p tcp -d '$nat_ip' --dport 22 -j ACCEPT' >> /etc/libvirt/hooks/qemu
 echo '      /sbin/iptables -t nat -I PREROUTING -p tcp --dport '$ssh_port' -j DNAT --to '$nat_ip':22' >> /etc/libvirt/hooks/qemu
-
+echo '      /sbin/iptables -I FORWARD -o '$int_name' -p udp -d '$nat_ip' --dport 22 -j ACCEPT' >> /etc/libvirt/hooks/qemu
+echo '      /sbin/iptables -t nat -I PREROUTING -p udp --dport '$ssh_port' -j DNAT --to '$nat_ip':22' >> /etc/libvirt/hooks/qemu
 # port forward rules to loop until it reaches end port
 for ((port=start_port; port<=end_port; port++)); do
 
     echo '      /sbin/iptables -I FORWARD -o '$int_name' -p tcp -d '$nat_ip' --dport '$port' -j ACCEPT' >> /etc/libvirt/hooks/qemu
     echo '      /sbin/iptables -t nat -I PREROUTING -p tcp --dport '$port' -j DNAT --to '$nat_ip':'$port'' >> /etc/libvirt/hooks/qemu
+    echo '      /sbin/iptables -I FORWARD -o '$int_name' -p udp -d '$nat_ip' --dport '$port' -j ACCEPT' >> /etc/libvirt/hooks/qemu
+    echo '      /sbin/iptables -t nat -I PREROUTING -p udp --dport '$port' -j DNAT --to '$nat_ip':'$port'' >> /etc/libvirt/hooks/qemu    
 done
 
 # Keep out of loop
