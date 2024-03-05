@@ -782,7 +782,26 @@ while true; do
                     3)
                         # Remove VNC Port
                         read -ep "Enter the name of the virtual machine: " vm_name
-                        remove_vnc="
+                        remove_vnc=" <channel type='unix'>
+                            <target type='virtio' name='org.qemu.guest_agent.0'/>
+                            <address type='virtio-serial' controller='0' bus='0' port='1'/>
+                            </channel>
+                            <input type='tablet' bus='usb'>
+                            <address type='usb' bus='0' port='1'/>
+                            </input>
+                            <input type='mouse' bus='ps2'/>
+                            <input type='keyboard' bus='ps2'/>
+                            <graphics type='vnc' port='-1' autoport='yes'>
+                            <listen type='address'/>
+                            </graphics>
+                            <sound model='ich9'>
+                            <address type='pci' domain='0x0000' bus='0x00' slot='0x1b' function='0x0'/>
+                            </sound>
+                            <audio id='1' type='none'/>
+                            <video>
+                            <model type='qxl' ram='65536' vram='65536' vgamem='16384' heads='1' primary='yes'/>
+                            <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x0'/>
+                            </video>
                             <memballoon model='virtio'>
                             <address type='pci' domain='0x0000' bus='0x05' slot='0x00' function='0x0'/>
                             </memballoon>
