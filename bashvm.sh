@@ -613,6 +613,7 @@ while true; do
                         read -ep "Enter starting port: " port_start
                         read -ep "Enter ending port: " port_end
                         ufw allow $port_start:$port_end/tcp
+                        ufw allow $port_start:$port_end/udp
                         ufw reload
                         ;;
                     3)
@@ -620,6 +621,7 @@ while true; do
                         read -ep "Enter starting port: " port_start
                         read -ep "Enter ending port: " port_end
                         ufw deny $port_start:$port_end/tcp
+                        ufw deny $port_start:$port_end/udp
                         ufw reload
                         ;;
                     4)
