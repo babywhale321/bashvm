@@ -10,7 +10,9 @@ read -ep "Enter the number of virtual CPUs (e.g., 2): " vm_vcpus
 read -ep "Enter the amount of disk space in GB (e.g., 50): " vm_disk
 read -ep "Enter the username for the new VM (e.g., joe): " user_name
 read -ep "Enter the password for the new VM (e.g., password): " user_pass
-echo "1 = debian12, 2 = ubuntu22.04, 3 = almalinux9"
+echo "1 = debian12"
+echo "2 = ubuntu22.04"
+echo "3 = almalinux9"
 read -ep "Enter the OS you would like (e.g., 1): " qcow2_question
 
 if [ $qcow2_question == 1 ];then
@@ -123,14 +125,25 @@ log_file="/var/log/bashvm/used_ip.log"
 # Create log file if it doesn't exist
 if [ -f $log_file ];then
 ip_address=$(tail -n 1 "$log_file")
+# Value to add
+increment=1
 else
 mkdir /var/log/bashvm
 touch $log_file
 ip_address="192.168.122.1"
-fi
-
 # Value to add
 increment=1
+fi
+
+# Check to see if there is an unused ip
+unused_ip=$(tail -n 1 /var/log/bashvm/unused_ip.log)
+if [ ! -z $unused_ip ];then
+#unused ip will become the ip
+ip_address=$unused_ip
+increment=0
+# Remove unused ip from unused log file
+sed -i '/'$unused_ip'/d' /var/log/bashvm/unused_ip.log
+fi
 
 # Extract the last octet
 last_octet="${ip_address##*.}"
@@ -142,6 +155,12 @@ last_octet="${ip_address##*.}"
 vm_ip="${ip_address%.*}.$last_octet"
 
 echo "$vm_ip" >> "$log_file"
+
+# Sort the IP address in the log file
+sort -t . -k 1,1n -k 2,2n -k 3,3n -k 4,4n "$log_file" > "$log_file.sort"
+
+# Rename sorted log file
+mv "$log_file.sort" "$log_file"
 
 echo "Setting DHCP reservation..."
 

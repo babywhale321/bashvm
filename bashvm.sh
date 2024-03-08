@@ -19,13 +19,14 @@ while true; do
             # Virtual Machines Menu    
             while true; do
                     echo -e "\n==================== Manage Virtual Machine ===================="
-                    echo "s.  Show all virtual machines     1.  Show more details of a VM"
-                    echo "2.  Start a VM                    3.  Reboot a VM"               
-                    echo "4.  Shutdown a VM (graceful)      5.  Shutdown a VM (force)"     
-                    echo "6.  Enable autostart of a VM      7.  Disable autostart of a VM"
-                    echo "8.  Create a new / existing VM    9.  Undefine a VM"                  
-                    echo "10. Create a new VM (Automated)   11. Console into a VM"        
-                    echo "12. Change resources of a VM      q.  Back to main menu"
+                    echo " s.  Show all virtual machines     1. Show more details of a VM"
+                    echo " 2.  Start a VM                    3. Reboot a VM"               
+                    echo " 4.  Shutdown a VM (graceful)      5. Shutdown a VM (force)"     
+                    echo " 6.  Enable autostart of a VM      7. Disable autostart of a VM"
+                    echo " 8.  Create a new / existing VM    9. Undefine a VM"                  
+                    echo "10.  Create a new VM (Automated)  11. Console into a VM"        
+                    echo "12.  Change resources of a VM     13. Delete a VM"
+                    echo " q.  Back to main menu"
                     echo ""
                     read -ep "Enter your choice: " vm_manage_choice
                     case $vm_manage_choice in
@@ -86,20 +87,21 @@ while true; do
                     9)
                         # Undefine a virtual machine
                         read -ep "Enter the name of the virtual machine to undefine: " vm_name
+                        
+                        vm_state=$(virsh list --all | grep "$vm_name" | awk '{print $3}')
+                        
+                        if [ "$vm_state" == "running" ];then
+                            echo "Please shutdown the vm before running this again"
+                            break
+                        fi
+                        
                         virsh destroy "$vm_name"
                         virsh undefine "$vm_name"
                         ;;
                     
                     10)
-                        # Create a VM (Automated)                                                       
-                        echo "This will create a vm in the default pool with the default network."
-                        echo "Press Enter to confirm this is what you want or q to exit"
-                        read -ep ": " auto_choice 
-                        if [[ ! "$auto_choice" == q ]];then
-                            bash bashvm-cloudinit.sh
-                        else
-                            echo "Aborted"
-                        fi
+                        # Create a VM (Automated)
+                        bash bashvm-cloudinit.sh
                         ;;
                     
                     11)
@@ -174,7 +176,43 @@ while true; do
                                     ;;
                             esac
                         done
-                        ;;                                        
+                        ;;
+                    13)
+
+                        echo "Note: this will delete dhcpv4 reservation, disks and forwarded ports of a vm."
+                        read -ep "Enter the virtual machine you would like to delete: " vm_name
+                        read -ep "Enter the network name where the vm is attached to [default]: " net_name
+                        if [ -z "$net_name" ]; then
+                            net_name="default"
+                        fi
+                        
+                        vm_state=$(virsh list --all | grep "$vm_name" | awk '{print $3}')
+                        if [ "$vm_state" == "running" ];then
+                            echo "Please shutdown the vm before running this again"
+                            break
+                        fi
+
+                        # Network
+                        echo ""
+                        echo "Removing DHCP reservation..."
+                        vm_mac=$(virsh net-dumpxml "$net_name" | grep "$vm_name" | head -n 1 | awk '{print $2}' | cut -d"'" -f2)
+                        vm_ip=$(virsh net-dumpxml "$net_name" | grep "$vm_name" | head -n 1 | awk '{print $4}' | cut -d"'" -f2)
+                        virsh net-update "$net_name" delete ip-dhcp-host "<host mac='$vm_mac' name='$vm_name' ip='$vm_ip' />" --live --config
+                        echo "$vm_ip" >> /var/log/bashvm/unused_ip.log
+                        sed -i '/'$vm_ip'/d' /var/log/bashvm/used_ip.log
+
+                        # Disk
+                        echo ""
+                        echo "Removing Disk..."
+                        virsh undefine "$vm_name" --remove-all-storage
+                        
+
+                        # Ports
+                        echo "Removing Ports..."
+                        sed -i "/#$vm_name#/,/###$vm_name###/d" /etc/libvirt/hooks/qemu
+                        echo ""
+                        echo "$vm_name has been deleted"
+                        ;;                                     
                        
 
                     q)
@@ -428,15 +466,15 @@ while true; do
 
                         echo "Removing DHCP reservation..."                        
 
-                        vm_mac=$(virsh net-dumpxml "$net_name" | grep "$vm_name" | head -n 1 | awk '{print $2}')
-                        vm_name=$(virsh net-dumpxml "$net_name" | grep "$vm_name" | head -n 1 | awk '{print $3}')
-                        vm_ip=$(virsh net-dumpxml "$net_name" | grep "$vm_name" | head -n 1 | awk '{print $4}')
+                        vm_mac=$(virsh net-dumpxml "$net_name" | grep "$vm_name" | head -n 1 | awk '{print $2}'| cut -d"'" -f2)
+                        vm_ip=$(virsh net-dumpxml "$net_name" | grep "$vm_name" | head -n 1 | awk '{print $4}'| cut -d"'" -f2)
 
-                        virsh net-update "$net_name" delete ip-dhcp-host "<host $vm_mac $vm_name $vm_ip" --live --config
+                        virsh net-update "$net_name" delete ip-dhcp-host "<host mac='$vm_mac' name='$vm_name' ip='$vm_ip' />" --live --config
                         
                         if [ ! $? == 0 ]; then
                             echo "Failed to remove DHCP reservation from $net_name"
                         else
+                            echo "$vm_ip" >> /var/log/bashvm/unused_ip.log
                             echo "You may need to start / stop the vm for the changes to take effect"
                         fi
                         ;;
