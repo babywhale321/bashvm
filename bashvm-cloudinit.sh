@@ -136,13 +136,16 @@ increment=1
 fi
 
 # Check to see if there is an unused ip
+unused_ip_log="/var/log/bashvm/unused_ip.log"
+if [ -f $unused_ip_log ];then
 unused_ip=$(tail -n 1 /var/log/bashvm/unused_ip.log)
-if [ ! -z $unused_ip ];then
-#unused ip will become the ip
-ip_address=$unused_ip
-increment=0
-# Remove unused ip from unused log file
-sed -i '/'$unused_ip'/d' /var/log/bashvm/unused_ip.log
+    if [ ! -z $unused_ip ];then
+        #unused ip will become the ip
+        ip_address=$unused_ip
+        increment=0
+        # Remove unused ip from unused log file
+        sed -i '/'$unused_ip'/d' /var/log/bashvm/unused_ip.log
+    fi
 fi
 
 # Extract the last octet
