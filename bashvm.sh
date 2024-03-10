@@ -198,6 +198,11 @@ while true; do
                         vm_mac=$(virsh net-dumpxml "$net_name" | grep "$vm_name" | head -n 1 | awk '{print $2}' | cut -d"'" -f2)
                         vm_ip=$(virsh net-dumpxml "$net_name" | grep "$vm_name" | head -n 1 | awk '{print $4}' | cut -d"'" -f2)
                         virsh net-update "$net_name" delete ip-dhcp-host "<host mac='$vm_mac' name='$vm_name' ip='$vm_ip' />" --live --config
+                        if [ ! $? == 0 ]; then
+                        echo "Failed to remove DHCP reservation."
+                        break
+                        fi
+
                         echo "$vm_ip" >> /var/log/bashvm/unused_ip.log
                         sed -i '/'$vm_ip'/d' /var/log/bashvm/used_ip.log
 
@@ -205,7 +210,10 @@ while true; do
                         echo ""
                         echo "Removing Disk..."
                         virsh undefine "$vm_name" --remove-all-storage
-                        
+                        if [ ! $? == 0 ]; then
+                        echo "Failed to remove disk."
+                        break
+                        fi
 
                         # Ports
                         echo "Removing Ports..."
@@ -761,24 +769,20 @@ while true; do
             # VNC / Console Access
                         while true; do
                 echo -e "\n====================== VNC / Console Access ======================"
-                echo "s. Show vnc port of a vm  1. List listening ports"
-                echo "2. Add VNC port           3. Remove VNC port"        
-                echo "4. Console into a vm      q. Back to main menu"
+                echo "s. Show listening ports  1. Add VNC port"
+                echo "2. Remove VNC port       3. Console into a vm "        
+                echo "q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " vnc_manage_choice
 
                 case $vnc_manage_choice in
-                    s)  
-                        read -ep "Enter the name of the virtual machine: " vm_name
-                        virsh domdisplay "$vm_name" --all
-                        ;;
 
-                    1)
+                    s)
                         # Show listening ports
                         netstat -l | grep "tcp\|udp"
                         ;;
 
-                    2)
+                    1)
                         # Add vnc access
                         read -ep "Enter the name of the virtual machine: " vm_name
                         add_vnc=" <channel type='unix'>
@@ -817,7 +821,7 @@ while true; do
                         rm "$vm_name".xml
                         echo "Please shutdown then start the vm for the changes to take effect"
                         ;;
-                    3)
+                    2)
                         # Remove VNC Port
                         read -ep "Enter the name of the virtual machine: " vm_name
                         remove_vnc=" <channel type='unix'>
@@ -857,7 +861,7 @@ while true; do
                         echo "Please shutdown then start the vm for the changes to take effect"
                         ;;
 
-                    4)
+                    3)
                         # Console into a VM
                         read -ep "Enter the VM name to console into: " hostname
                         virsh console $hostname
