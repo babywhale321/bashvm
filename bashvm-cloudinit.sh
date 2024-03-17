@@ -129,7 +129,9 @@ ip_address=$(tail -n 1 "$log_file")
 increment=1
 else
 mkdir /var/log/bashvm
+chmod 600 -R /var/log/bashvm
 touch $log_file
+chmod 600 $log_file
 ip_address="192.168.122.1"
 # Value to add
 increment=1
@@ -192,6 +194,7 @@ start_port=$(tail -n 1 "$log_file")
 # Create log file
 else
 touch $log_file
+chmod 600 $log_file
 start_port=1025
 fi
 
@@ -278,6 +281,7 @@ echo "Password: $user_pass" | tee -a /var/log/bashvm/$vm_name.info.txt
 echo "" | tee -a /var/log/bashvm/$vm_name.info.txt
 echo "====================================================" | tee -a /var/log/bashvm/$vm_name.info.txt
 echo ""
+chmod 600 /var/log/bashvm/$vm_name.info.txt
 echo "Info for $vm_name has been saved to /var/log/bashvm/$vm_name.info.txt"
 echo "Please note that there will be a vnc port automatically assigned to this vm."
 echo "This is optional if needed and the ports will start at 5900 and onward."

@@ -24,7 +24,9 @@ start_port=$(tail -n 1 "$log_file")
 # Create log file
 else
 mkdir /var/log/bashvm
+chmod 600 -R /var/log/bashvm
 touch $log_file
+chmod 600 $log_file
 start_port=1025
 fi
 
@@ -108,5 +110,6 @@ echo "Ports: $start_port to $end_port" | tee -a /var/log/bashvm/$vm_name.info.tx
 echo "" | tee -a /var/log/bashvm/$vm_name.info.txt
 echo "====================================================" | tee -a /var/log/bashvm/$vm_name.info.txt
 echo ""
+chmod 600 /var/log/bashvm/$vm_name.info.txt
 echo "Info for $vm_name has been saved to /var/log/bashvm/$vm_name.info.txt"
 echo "You may need to restart libvirtd, networking and the vm for the changes to take effect"

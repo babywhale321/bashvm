@@ -39,8 +39,8 @@ while true; do
                         # Show details of a virtual machine
                         read -ep "Enter the VM name: " vm_name
                         virsh dominfo "$vm_name"
-                        virsh domfsinfo "$vm_name"
                         virsh domblkinfo "$vm_name" --all --human
+                        cat /var/log/bashvm/"$vm_name".info.txt | tail -n 9
                         ;;
 
                     2)
