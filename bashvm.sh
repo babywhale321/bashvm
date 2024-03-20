@@ -18,15 +18,12 @@ while true; do
         1)
             # Virtual Machines Menu    
             while true; do
-                    echo -e "\n==================== Manage Virtual Machine ===================="
-                    echo " s.  Show all virtual machines     1. Show more details of a VM"
-                    echo " 2.  Start a VM                    3. Reboot a VM"               
-                    echo " 4.  Shutdown a VM (graceful)      5. Shutdown a VM (force)"     
-                    echo " 6.  Enable autostart of a VM      7. Disable autostart of a VM"
-                    echo " 8.  Create a new / existing VM    9. Undefine a VM"                  
-                    echo "10.  Create a new VM (Automated)  11. Console into a VM"        
-                    echo "12.  Change resources of a VM     13. Delete a VM"
-                    echo " q.  Back to main menu"
+                    echo -e "\n============================== Manage Virtual Machine =============================="
+                    echo " s. Show all virtual machines  1. Show more details of a VM     2. Start a VM" 
+                    echo " 3. Reboot a VM                4. Shutdown a VM (graceful)      5. Shutdown a VM (force)"     
+                    echo " 6. Enable autostart of a VM   7. Disable autostart of a VM     8. Create a new / existing VM"
+                    echo " 9. Undefine a VM             10. Create a new VM (Automated)  11. Console into a VM"        
+                    echo "12. Change resources of a VM  13. Delete a Automated VM         q. Back to main menu"
                     echo ""
                     read -ep "Enter your choice: " vm_manage_choice
                     case $vm_manage_choice in
@@ -113,10 +110,9 @@ while true; do
                     12)
                         # Change resources of a VM
                         while true; do
-                            echo -e "\n===================== Manage Resources ====================="
-                            echo "s. Show resources of a VM     1. Add disk space to a VM"
-                            echo "2. Shrink disk space of a VM  3. Change the number of vcpu in a VM"
-                            echo "4. Change the memory of a VM  q. Back to main menu"
+                            echo -e "\n=================================== Manage Resources ==================================="
+                            echo "s. Show resources of a VM             1. Add disk space to a VM     2. Shrink disk space of a VM"
+                            echo "3. Change the number of vcpu in a VM  4. Change the memory of a VM  q. Back to main menu"
                             echo ""
                             read -ep "Enter your choice: " manage_choice
 
@@ -238,12 +234,10 @@ while true; do
         2)
             # Storage Pools Menu
             while true; do
-                echo -e "\n====================== Manage Storage Pool ======================"
-                echo "s. Show all storage pools         1. Show all volumes in a pool"
-                echo "2. Activate a storage pool        3. Deactivate a storage pool"
-                echo "4. Create a storage pool          5. Delete a storage pool"
-                echo "6. Create a storage volume        7. Delete a storage volume"
-                echo "q. Back to main menu"
+                echo -e "\n============================== Manage Storage Pool =============================="
+                echo "s. Show all storage pools     1. Show all volumes in a pool  2. Activate a storage pool"
+                echo "3. Deactivate a storage pool  4. Create a storage pool       5. Delete a storage pool"
+                echo "6. Create a storage volume    7. Delete a storage volume     q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " storage_manage_choice
 
@@ -334,14 +328,12 @@ while true; do
         3)
             # Networks Menu       
             while true; do
-                echo -e "\n========================== Manage Network =========================="
-                echo " s. Show all networks                  1. Show more details of a network"
-                echo " 2. Start a network                    3. Stop a network"
-                echo " 4. Create a NAT network               5. Create a macvtap network"      
-                echo " 6. Delete a network                   7. Add a dhcpv4 reservation to a network"
-                echo " 8. Remove a dhcpv4 reservation        9. Add dhcpv6 to a network (auto)"
-                echo "10. Add dhcpv6 to a network (manual)  11. Add a dhcpv6 reservation to a network"
-                echo "12. Edit a network                     q. Back to main menu"
+                echo -e "\n============================================= Manage Network ============================================="
+                echo " s. Show all networks                1. Show more details of a network       2. Start a network"
+                echo " 3. Stop a network                   4. Create a NAT network                 5. Create a macvtap network"      
+                echo " 6. Delete a network                 7. Add a IPv4 reservation to a network  8. Remove a IPv4 reservation"
+                echo " 9. Add dhcpv6 to a network (auto)  10. Add dhcpv6 to a network (manual)    11. Add a IPv6 reservation to a network"
+                echo "12. Edit a network                   q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " network_manage_choice
 
@@ -541,10 +533,9 @@ while true; do
         4)
             # Managing a snapshot
             while true; do
-                echo -e "\n================== Manage Snapshot =================="
-                echo "s. Show all snapshots of a VM   1. Create a snapshot"
-                echo "2. Delete a snapshot            3. Revert to a snapshot"
-                echo "q. Back to main menu"
+                echo -e "\n========================= Manage Snapshot ========================="
+                echo "s. Show all snapshots of a VM  1. Create a snapshot  2. Delete a snapshot"
+                echo "3. Revert to a snapshot        q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " snapshot_manage_choice
 
@@ -587,9 +578,9 @@ while true; do
             # Edit Properties
             while true; do
                 echo -e "\n====================== Edit Properties ======================"
-                echo "1. Edit a VM            2. Edit a storage pool"
-                echo "3. Edit a network       4. Edit a snapshot"
-                echo "q. Back to main menu"
+                echo "1. Edit a VM        2. Edit a storage pool  3. Edit a network"
+                echo "4. Edit a snapshot  q. Back to main menu"
+                echo ""
                 echo ""
                 read -ep "Enter your choice: " xml_manage_choice
 
@@ -636,12 +627,11 @@ while true; do
 
             # Firewall Settings
             while true; do
-                echo -e "\n================== Firewall Settings =================="
-                echo "s. Show ufw status         1. Show listening ports"
-                echo "2. Allow port range        3. Deny port range"
-                echo "4. Allow single port       5. Deny single port"
-                echo "6. Delete a rule           7. Enable and reload ufw"
-                echo "8. Disable and reset ufw   q. Back to main menu"
+                echo -e "\n===================== Firewall Settings ====================="
+                echo "s. Show ufw status  1. Show listening ports   2. Allow port range"
+                echo "3. Deny port range  4. Allow single port      5. Deny single port"
+                echo "6. Delete a rule    7. Enable and reload ufw  8. Disable and reset ufw"
+                echo "q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " firewall_choice
 
@@ -711,10 +701,9 @@ while true; do
         7) 
             # Manage Port forwarding
             while true; do
-                echo -e "\n=================== Manage Port Forwarding ==================="
-                echo "s. Show port forwarding rules      1. List DHCP leases from a network"  
-                echo "2. Add port forwarding to a VM     3. Remove port forwarding from a VM"
-                echo "4. Edit port forwarding rule file  q. Back to main menu"
+                echo -e "\n==================================== Manage Port Forwarding ===================================="
+                echo "s. Show port forwarding rules        1. List DHCP leases from a network  2. Add port forwarding to a VM"  
+                echo "3. Remove port forwarding from a VM  4. Edit port forwarding rule file   q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " port_choice
 
@@ -768,10 +757,9 @@ while true; do
         8)
             # VNC / Console Access
                         while true; do
-                echo -e "\n====================== VNC / Console Access ======================"
-                echo "s. Show listening ports  1. Add VNC port"
-                echo "2. Remove VNC port       3. Console into a vm "        
-                echo "q. Back to main menu"
+                echo -e "\n==================== VNC / Console Access ===================="
+                echo "s. Show listening ports  1. Add VNC port        2. Remove VNC port"        
+                echo "3. Console into a vm     q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " vnc_manage_choice
 
