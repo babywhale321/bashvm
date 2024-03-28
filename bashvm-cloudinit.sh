@@ -18,15 +18,17 @@ read -ep "Enter the OS you would like (e.g., 1): " qcow2_question
 if [ $qcow2_question == 1 ];then
     qcow2_image="debian-12-generic-amd64.qcow2"
     qcow2_download="https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2"
-
+    os_info="debian11"
+    
 elif [ $qcow2_question == 2 ];then
     qcow2_image="ubuntu-22.04-minimal-cloudimg-amd64.img"
     qcow2_download="https://cloud-images.ubuntu.com/minimal/releases/jammy/release/ubuntu-22.04-minimal-cloudimg-amd64.img"
+    os_info="ubuntu22.04"
 
 elif [ $qcow2_question == 3 ];then
     qcow2_image="AlmaLinux-9-GenericCloud-latest.x86_64.qcow2"
     qcow2_download="https://repo.almalinux.org/almalinux/9/cloud/x86_64/images/AlmaLinux-9-GenericCloud-latest.x86_64.qcow2"
-
+    os_info="almalinux9"
 else
     echo "Error: Please select a valid response."
     exit
@@ -90,7 +92,7 @@ virsh net-autostart default
 fi
 
 # Deploy the new VM
-virt-install --name $vm_name --memory $vm_memory --vcpus $vm_vcpus --disk=size=$vm_disk,backing_store=/var/lib/libvirt/images/$qcow2_image --cloud-init user-data=/var/lib/libvirt/images/bashvm-cloudinit.yaml,disable=on --network bridge=virbr0 --osinfo=debian10 --noautoconsole
+virt-install --name $vm_name --memory $vm_memory --vcpus $vm_vcpus --disk=size=$vm_disk,backing_store=/var/lib/libvirt/images/$qcow2_image --cloud-init user-data=/var/lib/libvirt/images/bashvm-cloudinit.yaml,disable=on --network bridge=virbr0 --osinfo=$os_info --noautoconsole
 
 if [ ! $? == 0 ]; then
 echo "Failed to start $vm_name"
