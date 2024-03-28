@@ -19,7 +19,7 @@ bash bashvm-installer.sh
 bash bashvm.sh
 
 ### Recommended OS for bashvm
-Debian 11, 12, Ubuntu 22.04
+Debian 12, Ubuntu 22.04
 
 ### Screenshots
 https://bashvm.com/screenshots.html
