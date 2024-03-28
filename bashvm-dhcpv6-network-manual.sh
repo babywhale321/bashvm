@@ -23,6 +23,13 @@ if [ $? == 0 ];then
     exit
 fi
 
+ip address show dev "$int_name" | grep inet6 | grep global >> /dev/null
+
+if [ ! $? == 0 ];then
+    echo "There is no IPv6 address detected on the main interface"
+    exit
+fi
+
 # dhcpv6 info
 vm_info="  </ip>
 <ip family='ipv6' address='$ip_gateway' prefix='$ip_prefix'>

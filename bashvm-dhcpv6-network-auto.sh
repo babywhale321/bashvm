@@ -20,6 +20,13 @@ if [ $? == 0 ];then
     exit
 fi
 
+ip address show dev "$int_name" | grep inet6 | grep global >> /dev/null
+
+if [ ! $? == 0 ];then
+    echo "There is no IPv6 address detected on the main interface"
+    exit
+fi
+
 # Detect the ipv6 address
 ipv6_address=$(ifconfig | grep inet6 | grep global | awk '{print $2}')
 
