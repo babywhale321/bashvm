@@ -175,7 +175,7 @@ while true; do
                         ;;
                     13)
 
-                        echo "Note: this will delete dhcpv4 reservation, disks and forwarded ports of a vm."
+                        echo "Note: this will delete dhcpv4 reservation, snapshots, disks and forwarded ports of a vm."
                         read -ep "Enter the virtual machine you would like to delete: " vm_name
                         read -ep "Enter the network name where the vm is attached to [default]: " net_name
                         if [ -z "$net_name" ]; then
@@ -205,7 +205,7 @@ while true; do
                         # Disk
                         echo ""
                         echo "Removing Disk..."
-                        virsh undefine "$vm_name" --remove-all-storage
+                        virsh undefine "$vm_name" --remove-all-storage --snapshots-metadata
                         if [ ! $? == 0 ]; then
                         echo "Failed to remove disk."
                         break
