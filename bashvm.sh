@@ -112,7 +112,8 @@ while true; do
                         while true; do
                             echo -e "\n=================================== Manage Resources ==================================="
                             echo "s. Show resources of a VM             1. Add disk space to a VM     2. Shrink disk space of a VM"
-                            echo "3. Change the number of vcpu in a VM  4. Change the memory of a VM  q. Back to main menu"
+                            echo "3. Change the number of vcpu in a VM  4. Change the memory of a VM  5. Attach a disk to a VM"
+                            echo "6. Detach a disk from a VM            q. Back to main menu"
                             echo ""
                             read -ep "Enter your choice: " manage_choice
 
@@ -162,7 +163,23 @@ while true; do
                                     virsh setmaxmem --domain "$vm_name" --size "$mem_num" --current
                                     virsh setmem --domain "$vm_name" --size "$mem_num" --current
                                     ;;
-                                    
+                                
+                                5) 
+                                    # Attach a disk to a vm
+                                    read -ep "Enter the name of the virtual machine: " vm_name
+                                    read -ep "Enter the new target device: (e.g., vdb): " vm_target
+                                    read -ep "Enter the qcow2 virtual disk name: (e.g., /var/lib/libvirt/images/vm1.qcow2): " vm_qcow2
+                                    virsh attach-disk "$vm_name" "$vm_qcow2" "$vm_target" --current --subdriver qcow2
+                                    ;;
+
+                                6)
+
+                                    # Detach a disk from a vm
+                                    read -ep "Enter the name of the virtual machine: " vm_name
+                                    read -ep "Enter the qcow2 virtual disk name: (e.g., /var/lib/libvirt/images/vm1.qcow2): " vm_qcow2
+                                    virsh detach-disk "$vm_name" "$vm_qcow2" --current
+                                    ;;
+
                                 q)
                                     # Back to main menu
                                     break
