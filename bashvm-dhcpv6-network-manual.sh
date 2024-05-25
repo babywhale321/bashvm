@@ -70,4 +70,5 @@ echo "$ndppd_file" > /etc/ndppd.conf
 systemctl enable ndppd
 systemctl restart ndppd
 
+echo ""
 echo "If no errors above then dhcpv6 has been added to "$net_name""
