@@ -15,11 +15,11 @@ if [ -z "$net_name" ]; then
     net_name="default"
 fi
 
-cat /etc/libvirt/qemu/networks/$net_name.xml | grep "ipv6" >> /dev/null
+cat /etc/libvirt/qemu/networks/"$net_name".xml | grep "ipv6" >> /dev/null
 
 if [ $? == 0 ];then
-    echo "There is already a dhcpv6 configuration in $net_name"
-    echo "Please remove the dhcpv6 information from $net_name before running this again."
+    echo "There is already a dhcpv6 configuration in "$net_name""
+    echo "Please remove the dhcpv6 information from "$net_name" before running this again."
     exit
 fi
 
@@ -40,17 +40,17 @@ vm_info="  </ip>
 </network>"
 
 # Remove the last 2 ending tags in $net_name.xml
-sed -i "s/<\/ip>//g" /etc/libvirt/qemu/networks/$net_name.xml
-sed -i "s/<\/network>//g" /etc/libvirt/qemu/networks/$net_name.xml
+sed -i "s/<\/ip>//g" /etc/libvirt/qemu/networks/"$net_name".xml
+sed -i "s/<\/network>//g" /etc/libvirt/qemu/networks/"$net_name".xml
 
 # Add dhcpv6 info and closing tags
-echo "$vm_info" >> /etc/libvirt/qemu/networks/$net_name.xml
+echo "$vm_info" >> /etc/libvirt/qemu/networks/"$net_name".xml
 
 # Stop, define, start then autostart $net_name network
-virsh net-destroy $net_name
-virsh net-define /etc/libvirt/qemu/networks/$net_name.xml
-virsh net-start $net_name
-virsh net-autostart $net_name
+virsh net-destroy "$net_name" > /dev/null 2>&1
+virsh net-define /etc/libvirt/qemu/networks/"$net_name".xml
+virsh net-start "$net_name"
+virsh net-autostart "$net_name"
 
 # ndppd config file
 ndppd_file="route-ttl 30000
@@ -69,3 +69,5 @@ echo "$ndppd_file" > /etc/ndppd.conf
 # enable and restart ndppd
 systemctl enable ndppd
 systemctl restart ndppd
+
+echo "If no errors above then dhcpv6 has been added to "$net_name""
