@@ -92,7 +92,7 @@ while true; do
                             break
                         fi
                         
-                        virsh destroy "$vm_name"
+                        virsh destroy "$vm_name" > /dev/null 2>&1
                         virsh undefine "$vm_name"
                         ;;
                     
@@ -153,7 +153,17 @@ while true; do
                                     read -ep "Enter the name of the virtual machine: " vm_name
                                     read -ep "Enter the new vcpu number (e.g., 4): " vcpu_num
                                     virsh setvcpus --domain "$vm_name" --count "$vcpu_num" --config --maximum
-                                    virsh setvcpus --domain "$vm_name" --count "$vcpu_num" --config
+                                    if [ ! $? == 0 ];then
+                                    echo "Failed to set new vcpu maximum"
+                                    break
+                                    fi
+
+                                    virsh setvcpus --domain "$vm_name" --count "$vcpu_num" --config      
+                                    if [ ! $? == 0 ];then
+                                    echo "Failed to set new vcpu count"
+                                    break
+                                    fi
+                                    echo "New vcpu count has been set successfully"
                                     ;;
 
                                 4)
@@ -161,7 +171,16 @@ while true; do
                                     read -ep "Enter the name of the virtual machine: " vm_name
                                     read -ep "Enter the new memory size (e.g., 1GB): " mem_num
                                     virsh setmaxmem --domain "$vm_name" --size "$mem_num" --current
+                                    if [ ! $? == 0 ];then
+                                    echo "Failed to set new memory maximum"
+                                    break
+                                    fi
                                     virsh setmem --domain "$vm_name" --size "$mem_num" --current
+                                    if [ ! $? == 0 ];then
+                                    echo "Failed to set new memory size"
+                                    break
+                                    fi
+                                    echo "New memory size has been set successfully"
                                     ;;
                                 
                                 5) 
