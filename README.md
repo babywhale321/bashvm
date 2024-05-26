@@ -1,6 +1,6 @@
 # bashvm
 
-bashvm is a console based virtual machine manager.
+bashvm is a console based virtual machine manager
 
 ## How to use
 
