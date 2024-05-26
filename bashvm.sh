@@ -598,6 +598,11 @@ while true; do
                         read -ep "Enter the name of the virtual machine: " vm_name
                         read -ep "Enter the name of the snapshot to revert to: " snapshot_name
                         virsh snapshot-revert "$vm_name" "$snapshot_name"
+                        if [ ! $? == 0 ]; then
+                        echo "Failed to revert snapshot "$snapshot_name""
+                        break
+                        fi
+                        echo "Domain snapshot "$snapshot_name" reverted"
                         ;;
                     q)
                         # Back to main menu
