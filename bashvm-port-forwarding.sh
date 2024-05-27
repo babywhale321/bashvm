@@ -112,4 +112,4 @@ echo "====================================================" | tee -a /var/log/ba
 echo ""
 chmod 600 /var/log/bashvm/$vm_name.info.txt
 echo "Info for $vm_name has been saved to /var/log/bashvm/$vm_name.info.txt"
-echo "You may need to restart libvirtd, networking and the vm for the changes to take effect"
+echo "You will need to stop then start the vm for the changes to take effect"
