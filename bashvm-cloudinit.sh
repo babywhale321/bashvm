@@ -186,10 +186,10 @@ echo "Setting Port Forwarding..."
 int_name="virbr0"
 
 log_file="/var/log/bashvm/used_ports.log"
+unused_port_log="/var/log/bashvm/unused_ports.log"
 
 # Create log file if it doesn't exist
 if [ -f $log_file ];then
-
 # The startport will the end of the file output
 start_port=$(tail -n 1 "$log_file")
 
@@ -200,11 +200,29 @@ chmod 600 $log_file
 start_port=1025
 fi
 
+# Check to see if there is an unused port
+if [ -f $unused_port_log ];then
+unused_port=$(tail -n 1 /var/log/bashvm/unused_ports.log)
+
+    if [ ! -z $unused_port ];then
+        
+        #unused port will become the port
+        start_port=$(($unused_port - 22))
+        # Remove unused port from unused log file
+        sed -i '/'$unused_port'/d' /var/log/bashvm/unused_ports.log
+    fi
+    
+fi
+
 # Add a range of 20 ports
 end_port=$(($start_port + 20))
 
 # Reserve for next block calculation
 echo $(($end_port + 2)) >> $log_file
+
+# Sort then rename
+sort -n "$log_file" > "$log_file".sort
+mv "$log_file.sort" "$log_file"
 
 echo "#!/bin/bash" >> /etc/libvirt/hooks/qemu
 

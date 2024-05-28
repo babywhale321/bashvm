@@ -249,6 +249,18 @@ while true; do
 
                         # Ports
                         echo "Removing Ports..."
+
+                        # Port log entry removal
+                        unused_port=$(cat /var/log/bashvm/"$vm_name".info.txt | grep Ports | tail -n 1 | awk '{print $4}')
+                        unused_port=$(($unused_port + 2))
+                        sed -i '/'$unused_port'/d' /var/log/bashvm/used_ports.log
+                        echo "$unused_port" >> /var/log/bashvm/unused_ports.log
+                        
+                        # Sort then rename
+                        sort -n "/var/log/bashvm/used_ports.log" > "/var/log/bashvm/used_ports.log.sort"
+                        mv "/var/log/bashvm/used_ports.log.sort" "/var/log/bashvm/used_ports.log"
+
+                        # Port forwarding removal
                         sed -i "/#$vm_name#/,/###$vm_name###/d" /etc/libvirt/hooks/qemu
                         echo ""
                         echo "$vm_name has been deleted"
