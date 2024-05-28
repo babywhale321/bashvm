@@ -15,15 +15,15 @@ read -ep "Enter the amount of memory in MB (e.g., 1024): " new_memory
 read -ep "Enter the number of virtual CPUs (e.g., 2): " new_vcpus
 
 read -ep "Would you like to download or use a debian 12 iso? (y/n): " iso_question
-if [ $iso_question == y ];then
+if [ "$iso_question" == y ];then
     
     read -ep "Enter the storage pool name [default]: " pool_name
 
     if [ -z "$pool_name" ]; then
         pool_name="default"
     fi
-    pool_path=$(virsh pool-dumpxml $pool_name | grep '<path>' | cut -d'>' -f2 | cut -d'<' -f1)
-    iso_img=$(ls $pool_path/ | grep "debian-12.5.0-amd64-netinst.iso")
+    pool_path=$(virsh pool-dumpxml "$pool_name" | grep '<path>' | cut -d'>' -f2 | cut -d'<' -f1)
+    iso_img=$(ls "$pool_path"/ | grep "debian-12.5.0-amd64-netinst.iso")
     iso_path="$pool_path/$iso_img"
     # Check to see if the iso file is there
     if [ -f "$iso_path" ]; then
@@ -31,7 +31,7 @@ if [ $iso_question == y ];then
         echo "File debian-12.5.0-amd64-netinst.iso already there. Canceling re-download."
     else
         # ISO is not present, Download
-        cd $pool_path
+        cd "$pool_path"
         wget https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.5.0-amd64-netinst.iso
         iso_img="debian-12.5.0-amd64-netinst.iso"
         iso_path="$pool_path/$iso_img"
@@ -44,7 +44,7 @@ else
 fi
 
 read -ep "Would you like to create a new volume? (y/n): " disk_question
-if [ $disk_question == y ];then
+if [ "$disk_question" == y ];then
     # disk name, capacity and pool
     read -ep "Enter the name of the new storage volume (e.g., new-vm): " volume_name
     read -ep "Enter the size of the volume (e.g., 10GB): " volume_capacity
@@ -53,8 +53,8 @@ if [ $disk_question == y ];then
         pool_name="default"
     fi
     # virsh command to create new disk
-    virsh vol-create-as --pool $pool_name --name "$volume_name.qcow2" --capacity "$volume_capacity" --format qcow2
-    disk_path=$(virsh vol-path --pool $pool_name --vol "$volume_name.qcow2")
+    virsh vol-create-as --pool "$pool_name" --name "$volume_name.qcow2" --capacity "$volume_capacity" --format qcow2
+    disk_path=$(virsh vol-path --pool "$pool_name" --vol "$volume_name.qcow2")
 else
     # full disk path needed
     read -ep "Enter the full path of the virtual machine disk (e.g., /var/lib/libvirt/images/vm.qcow2): " disk_path
