@@ -14,7 +14,7 @@ fi
 # Required packages to download
 # Function to check the exit status and exit if failed
 check_status() {
-    if [ $1 -ne 0 ]; then
+    if [ "$1" -ne 0 ]; then
         echo "Error: $2 failed to install."
         exit 1
     fi
