@@ -104,7 +104,7 @@ while true; do
                     11)
                         # Console into a VM
                         read -ep "Enter the VM name to console into: " hostname
-                        virsh console $hostname
+                        virsh console "$hostname"
                         ;;
 
                     12)
@@ -236,7 +236,7 @@ while true; do
                         fi
 
                         echo "$vm_ip" >> /var/log/bashvm/unused_ip.log
-                        sed -i '/'$vm_ip'/d' /var/log/bashvm/used_ip.log
+                        sed -i '/'"$vm_ip"'/d' /var/log/bashvm/used_ip.log
 
                         # Disk
                         echo ""
@@ -508,7 +508,7 @@ while true; do
 
                         echo "Setting DHCP reservation..."
 
-                        virsh net-update $vm_net add ip-dhcp-host "<host mac='$vm_mac' name='$vm_name' ip='$vm_ip' />" --live --config
+                        virsh net-update "$vm_net" add ip-dhcp-host "<host mac='$vm_mac' name='$vm_name' ip='$vm_ip' />" --live --config
                         
                         if [ ! $? == 0 ]; then
                             echo "Failed to set DHCP reservation in $vm_net"
@@ -562,7 +562,7 @@ while true; do
 
                         echo "Setting DHCP reservation..."
 
-                        virsh net-update $net_name add-last ip-dhcp-host '<host name="'$vm_name'" ip="'$net_address'"/>' --live --config --parent-index 1
+                        virsh net-update "$net_name" add-last ip-dhcp-host "<host name='$vm_name' ip='$net_address'/>" --live --config --parent-index 1
                         
                         if [ ! $? == 0 ]; then
                             echo "Failed to set DHCP reservation in $net_name"
@@ -577,7 +577,7 @@ while true; do
                         if [ -z "$net_name" ]; then
                             net_name="default"
                         fi
-                        virsh net-edit $net_name
+                        virsh net-edit "$net_name"
                         ;;
 
                     q)
@@ -624,10 +624,10 @@ while true; do
                         read -ep "Enter the name of the snapshot to revert to: " snapshot_name
                         virsh snapshot-revert "$vm_name" "$snapshot_name"
                         if [ ! $? == 0 ]; then
-                        echo "Failed to revert snapshot "$snapshot_name""
+                        echo "Failed to revert snapshot ""$snapshot_name"""
                         break
                         fi
-                        echo "Domain snapshot "$snapshot_name" reverted"
+                        echo "Domain snapshot ""$snapshot_name"" reverted"
                         ;;
                     q)
                         # Back to main menu
@@ -654,7 +654,7 @@ while true; do
                     1)  
                         # edit a vm
                         read -ep "Enter the VM name: " vm_name
-                        virsh edit $vm_name
+                        virsh edit "$vm_name"
                         ;;
                     2)
                         # edit a storage pool
@@ -662,7 +662,7 @@ while true; do
                         if [ -z "$pool_name" ]; then
                             pool_name="default"
                         fi
-                        virsh pool-edit $pool_name
+                        virsh pool-edit "$pool_name"
                         ;;
                     3)
                         # edit a network
@@ -670,13 +670,13 @@ while true; do
                         if [ -z "$net_name" ]; then
                             net_name="default"
                         fi
-                        virsh net-edit $net_name
+                        virsh net-edit "$net_name"
                         ;;
                     4)
                         # edit a snapshot
                         read -ep "Enter the VM name: " vm_name
                         read -ep "Enter the snapshot name: " snap_name
-                        virsh snapshot-edit --snapshotname $snap_name --domain $vm_name
+                        virsh snapshot-edit --snapshotname "$snap_name" --domain "$vm_name"
                         ;;
                     q)
                         # Back to Main Menu
@@ -714,34 +714,34 @@ while true; do
                         # Allow port range
                         read -ep "Enter starting port: " port_start
                         read -ep "Enter ending port: " port_end
-                        ufw allow $port_start:$port_end/tcp
-                        ufw allow $port_start:$port_end/udp
+                        ufw allow "$port_start":"$port_end"/tcp
+                        ufw allow "$port_start":"$port_end"/udp
                         ufw reload
                         ;;
                     3)
                         # Deny Port range
                         read -ep "Enter starting port: " port_start
                         read -ep "Enter ending port: " port_end
-                        ufw deny $port_start:$port_end/tcp
-                        ufw deny $port_start:$port_end/udp
+                        ufw deny "$port_start":"$port_end"/tcp
+                        ufw deny "$port_start":"$port_end"/udp
                         ufw reload
                         ;;
                     4)
                         # Allow single port
                         read -ep "Enter the port number: " port
-                        ufw allow $port
+                        ufw allow "$port"
                         ufw reload
                         ;;
                     5)
                         # Deny single port
                         read -ep "Enter the port number: " port
-                        ufw deny $port
+                        ufw deny "$port"
                         ufw reload
                         ;;
                     6)
                         # Delete a rule
                         read -ep "Enter the rule number to delete: " rule_number
-                        ufw delete $rule_number
+                        ufw delete "$rule_number"
                         ufw reload
                         ;;
                     7)
@@ -908,7 +908,7 @@ while true; do
                         </devices>
                         </domain>"
 
-                        virsh dumpxml $vm_name | sed -n '/console/q;p' > "$vm_name".xml
+                        virsh dumpxml "$vm_name" | sed -n '/console/q;p' > "$vm_name".xml
                         echo "$remove_vnc" >> "$vm_name".xml
                         virsh define "$vm_name".xml
                         rm "$vm_name".xml
@@ -918,7 +918,7 @@ while true; do
                     3)
                         # Console into a VM
                         read -ep "Enter the VM name to console into: " hostname
-                        virsh console $hostname
+                        virsh console "$hostname"
                         ;;
                         
                     q)
