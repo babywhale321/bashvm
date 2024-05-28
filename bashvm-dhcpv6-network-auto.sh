@@ -15,8 +15,8 @@ fi
 cat /etc/libvirt/qemu/networks/"$net_name".xml | grep "ipv6" >> /dev/null
 
 if [ $? == 0 ];then
-    echo "There is already a dhcpv6 configuration in "$net_name""
-    echo "Please remove the dhcpv6 information from "$net_name" before running this again."
+    echo "There is already a dhcpv6 configuration in ""$net_name"""
+    echo "Please remove the dhcpv6 information from ""$net_name"" before running this again."
     exit
 fi
 
@@ -104,4 +104,4 @@ systemctl enable ndppd
 systemctl restart ndppd
 
 echo ""
-echo "If no errors above then dhcpv6 has been added to "$net_name""
+echo "If no errors above then dhcpv6 has been added to ""$net_name"""
