@@ -285,7 +285,8 @@ while true; do
                 echo -e "\n============================== Manage Storage Pool =============================="
                 echo "s. Show all storage pools     1. Show all volumes in a pool  2. Activate a storage pool"
                 echo "3. Deactivate a storage pool  4. Create a storage pool       5. Delete a storage pool"
-                echo "6. Create a storage volume    7. Delete a storage volume     q. Back to main menu"
+                echo "6. Create a storage volume    7. Delete a storage volume     8. Clone a storage volume"
+                echo "q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " storage_manage_choice
 
@@ -361,7 +362,19 @@ while true; do
                         # Delete the storage volume
                         virsh vol-delete --pool "$pool_name" "$volume_name.qcow2"
                         ;;
+                    
+                    8)
+                        # Clone a storage volume
+                        read -ep "Enter the name of the volume to clone (e.g., test-vm): " vm_name
+                        read -ep "Enter the new volume name (e.g., new-test-vm): " new_vm_name
+                        read -ep "Enter the storage pool name that the volume is under [default]: " pool_name
+                        if [ -z "$pool_name" ]; then
+                            pool_name="default"
+                        fi                        
 
+                        virsh vol-clone "$vm_name.qcow2" "$new_vm_name.qcow2" --pool "$pool_name"
+                        ;;
+                    
                     q)
                         # Back to Menu
                         break
