@@ -15,17 +15,17 @@ echo "2 = ubuntu22.04"
 echo "3 = almalinux9"
 read -ep "Enter the OS you would like (e.g., 1): " qcow2_question
 
-if [ $qcow2_question == 1 ];then
+if [ "$qcow2_question" == 1 ];then
     qcow2_image="debian-12-generic-amd64.qcow2"
     qcow2_download="https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2"
     os_info="debian11"
     
-elif [ $qcow2_question == 2 ];then
+elif [ "$qcow2_question" == 2 ];then
     qcow2_image="ubuntu-22.04-minimal-cloudimg-amd64.img"
     qcow2_download="https://cloud-images.ubuntu.com/minimal/releases/jammy/release/ubuntu-22.04-minimal-cloudimg-amd64.img"
     os_info="ubuntu22.04"
 
-elif [ $qcow2_question == 3 ];then
+elif [ "$qcow2_question" == 3 ];then
     qcow2_image="AlmaLinux-9-GenericCloud-latest.x86_64.qcow2"
     qcow2_download="https://repo.almalinux.org/almalinux/9/cloud/x86_64/images/AlmaLinux-9-GenericCloud-latest.x86_64.qcow2"
     os_info="almalinux9"
@@ -64,7 +64,7 @@ runcmd:
   - shutdown -P 0
 
 # output to /var/log/cloud-init-output.log
-final_message: "The system is up, after $UPTIME seconds"
+final_message: "The system is up, after "$UPTIME" seconds"
 " > bashvm-cloudinit.yaml
 
 # Copy cloudinit file to default location
@@ -92,7 +92,7 @@ virsh net-autostart default
 fi
 
 # Deploy the new VM
-virt-install --name $vm_name --memory $vm_memory --vcpus $vm_vcpus --disk=size=$vm_disk,backing_store=/var/lib/libvirt/images/$qcow2_image --cloud-init user-data=/var/lib/libvirt/images/bashvm-cloudinit.yaml,disable=on --network bridge=virbr0 --osinfo=$os_info --noautoconsole
+virt-install --name "$vm_name" --memory "$vm_memory" --vcpus "$vm_vcpus" --disk=size="$vm_disk",backing_store=/var/lib/libvirt/images/$qcow2_image --cloud-init user-data=/var/lib/libvirt/images/bashvm-cloudinit.yaml,disable=on --network bridge=virbr0 --osinfo=$os_info --noautoconsole
 
 if [ ! $? == 0 ]; then
 echo "Failed to start $vm_name"
@@ -143,12 +143,12 @@ fi
 unused_ip_log="/var/log/bashvm/unused_ip.log"
 if [ -f $unused_ip_log ];then
 unused_ip=$(tail -n 1 /var/log/bashvm/unused_ip.log)
-    if [ ! -z $unused_ip ];then
+    if [ ! -z "$unused_ip" ];then
         #unused ip will become the ip
         ip_address=$unused_ip
         increment=0
         # Remove unused ip from unused log file
-        sed -i '/'$unused_ip'/d' /var/log/bashvm/unused_ip.log
+        sed -i '/'"$unused_ip"'/d' /var/log/bashvm/unused_ip.log
     fi
 fi
 
@@ -204,12 +204,12 @@ fi
 if [ -f $unused_port_log ];then
 unused_port=$(tail -n 1 /var/log/bashvm/unused_ports.log)
 
-    if [ ! -z $unused_port ];then
+    if [ ! -z "$unused_port" ];then
         
         #unused port will become the port
         start_port=$(($unused_port - 22))
         # Remove unused port from unused log file
-        sed -i '/'$unused_port'/d' /var/log/bashvm/unused_ports.log
+        sed -i '/'"$unused_port"'/d' /var/log/bashvm/unused_ports.log
     fi
     
 fi
@@ -239,17 +239,17 @@ echo "$nat_script" >> /etc/libvirt/hooks/qemu
 
 # Reserve a port for SSH
 ssh_port=$(($start_port - 1))
-echo '      /sbin/iptables -D FORWARD -o '$int_name' -p tcp -d '$vm_ip' --dport 22 -j ACCEPT' >> /etc/libvirt/hooks/qemu
-echo '      /sbin/iptables -t nat -D PREROUTING -p tcp --dport '$ssh_port' -j DNAT --to '$vm_ip':22' >> /etc/libvirt/hooks/qemu
-echo '      /sbin/iptables -D FORWARD -o '$int_name' -p udp -d '$vm_ip' --dport 22 -j ACCEPT' >> /etc/libvirt/hooks/qemu
-echo '      /sbin/iptables -t nat -D PREROUTING -p udp --dport '$ssh_port' -j DNAT --to '$vm_ip':22' >> /etc/libvirt/hooks/qemu
+echo '      /sbin/iptables -D FORWARD -o '$int_name' -p tcp -d '"$vm_ip"' --dport 22 -j ACCEPT' >> /etc/libvirt/hooks/qemu
+echo '      /sbin/iptables -t nat -D PREROUTING -p tcp --dport '$ssh_port' -j DNAT --to '"$vm_ip"':22' >> /etc/libvirt/hooks/qemu
+echo '      /sbin/iptables -D FORWARD -o '$int_name' -p udp -d '"$vm_ip"' --dport 22 -j ACCEPT' >> /etc/libvirt/hooks/qemu
+echo '      /sbin/iptables -t nat -D PREROUTING -p udp --dport '$ssh_port' -j DNAT --to '"$vm_ip"':22' >> /etc/libvirt/hooks/qemu
 # Port forward rules to loop until it reaches end port
 for ((port=start_port; port<=end_port; port++)); do
 
-    echo '      /sbin/iptables -D FORWARD -o '$int_name' -p tcp -d '$vm_ip' --dport '$port' -j ACCEPT' >> /etc/libvirt/hooks/qemu
-    echo '      /sbin/iptables -t nat -D PREROUTING -p tcp --dport '$port' -j DNAT --to '$vm_ip':'$port'' >> /etc/libvirt/hooks/qemu
-    echo '      /sbin/iptables -D FORWARD -o '$int_name' -p udp -d '$vm_ip' --dport '$port' -j ACCEPT' >> /etc/libvirt/hooks/qemu
-    echo '      /sbin/iptables -t nat -D PREROUTING -p udp --dport '$port' -j DNAT --to '$vm_ip':'$port'' >> /etc/libvirt/hooks/qemu
+    echo '      /sbin/iptables -D FORWARD -o '$int_name' -p tcp -d '"$vm_ip"' --dport '$port' -j ACCEPT' >> /etc/libvirt/hooks/qemu
+    echo '      /sbin/iptables -t nat -D PREROUTING -p tcp --dport '$port' -j DNAT --to '"$vm_ip"':'$port'' >> /etc/libvirt/hooks/qemu
+    echo '      /sbin/iptables -D FORWARD -o '$int_name' -p udp -d '"$vm_ip"' --dport '$port' -j ACCEPT' >> /etc/libvirt/hooks/qemu
+    echo '      /sbin/iptables -t nat -D PREROUTING -p udp --dport '$port' -j DNAT --to '"$vm_ip"':'$port'' >> /etc/libvirt/hooks/qemu
 done
 
 # Keep out of loop
@@ -258,17 +258,17 @@ middle_script='    fi
 echo "$middle_script" >> /etc/libvirt/hooks/qemu
 
 # Reserve for SSH
-echo '      /sbin/iptables -I FORWARD -o '$int_name' -p tcp -d '$vm_ip' --dport 22 -j ACCEPT' >> /etc/libvirt/hooks/qemu
-echo '      /sbin/iptables -t nat -I PREROUTING -p tcp --dport '$ssh_port' -j DNAT --to '$vm_ip':22' >> /etc/libvirt/hooks/qemu
-echo '      /sbin/iptables -I FORWARD -o '$int_name' -p udp -d '$vm_ip' --dport 22 -j ACCEPT' >> /etc/libvirt/hooks/qemu
-echo '      /sbin/iptables -t nat -I PREROUTING -p udp --dport '$ssh_port' -j DNAT --to '$vm_ip':22' >> /etc/libvirt/hooks/qemu
+echo '      /sbin/iptables -I FORWARD -o '$int_name' -p tcp -d '"$vm_ip"' --dport 22 -j ACCEPT' >> /etc/libvirt/hooks/qemu
+echo '      /sbin/iptables -t nat -I PREROUTING -p tcp --dport '$ssh_port' -j DNAT --to '"$vm_ip"':22' >> /etc/libvirt/hooks/qemu
+echo '      /sbin/iptables -I FORWARD -o '$int_name' -p udp -d '"$vm_ip"' --dport 22 -j ACCEPT' >> /etc/libvirt/hooks/qemu
+echo '      /sbin/iptables -t nat -I PREROUTING -p udp --dport '$ssh_port' -j DNAT --to '"$vm_ip"':22' >> /etc/libvirt/hooks/qemu
 # port forward rules to loop until it reaches end port
 for ((port=start_port; port<=end_port; port++)); do
 
-    echo '      /sbin/iptables -I FORWARD -o '$int_name' -p tcp -d '$vm_ip' --dport '$port' -j ACCEPT' >> /etc/libvirt/hooks/qemu
-    echo '      /sbin/iptables -t nat -I PREROUTING -p tcp --dport '$port' -j DNAT --to '$vm_ip':'$port'' >> /etc/libvirt/hooks/qemu
-    echo '      /sbin/iptables -I FORWARD -o '$int_name' -p udp -d '$vm_ip' --dport '$port' -j ACCEPT' >> /etc/libvirt/hooks/qemu
-    echo '      /sbin/iptables -t nat -I PREROUTING -p udp --dport '$port' -j DNAT --to '$vm_ip':'$port'' >> /etc/libvirt/hooks/qemu
+    echo '      /sbin/iptables -I FORWARD -o '$int_name' -p tcp -d '"$vm_ip"' --dport '$port' -j ACCEPT' >> /etc/libvirt/hooks/qemu
+    echo '      /sbin/iptables -t nat -I PREROUTING -p tcp --dport '$port' -j DNAT --to '"$vm_ip"':'$port'' >> /etc/libvirt/hooks/qemu
+    echo '      /sbin/iptables -I FORWARD -o '$int_name' -p udp -d '"$vm_ip"' --dport '$port' -j ACCEPT' >> /etc/libvirt/hooks/qemu
+    echo '      /sbin/iptables -t nat -I PREROUTING -p udp --dport '$port' -j DNAT --to '"$vm_ip"':'$port'' >> /etc/libvirt/hooks/qemu
 done
 
 # Keep out of loop
@@ -286,22 +286,22 @@ chmod +x /etc/libvirt/hooks/qemu
 vm_on=$(virsh list --all | grep -E '^\s+[0-9]+' | wc -l)
 
 # If only 1 then restart libvirtd
-if [ $vm_on == 1 ]; then
+if [ "$vm_on" == 1 ]; then
 systemctl restart libvirtd
 fi
 
 echo ""
-echo "========== Info for $vm_name ==========" | tee -a /var/log/bashvm/$vm_name.info.txt
-echo "" | tee -a /var/log/bashvm/$vm_name.info.txt
-echo "IPv4: $vm_ip" | tee -a /var/log/bashvm/$vm_name.info.txt
-echo "SSH port: $ssh_port" | tee -a /var/log/bashvm/$vm_name.info.txt
-echo "Ports: $start_port to $end_port" | tee -a /var/log/bashvm/$vm_name.info.txt
-echo "Username: $user_name" | tee -a /var/log/bashvm/$vm_name.info.txt
-echo "Password: $user_pass" | tee -a /var/log/bashvm/$vm_name.info.txt
-echo "" | tee -a /var/log/bashvm/$vm_name.info.txt
-echo "====================================================" | tee -a /var/log/bashvm/$vm_name.info.txt
+echo "========== Info for $vm_name ==========" | tee -a /var/log/bashvm/"$vm_name".info.txt
+echo "" | tee -a /var/log/bashvm/"$vm_name".info.txt
+echo "IPv4: $vm_ip" | tee -a /var/log/bashvm/"$vm_name".info.txt
+echo "SSH port: $ssh_port" | tee -a /var/log/bashvm/"$vm_name".info.txt
+echo "Ports: $start_port to $end_port" | tee -a /var/log/bashvm/"$vm_name".info.txt
+echo "Username: $user_name" | tee -a /var/log/bashvm/"$vm_name".info.txt
+echo "Password: $user_pass" | tee -a /var/log/bashvm/"$vm_name".info.txt
+echo "" | tee -a /var/log/bashvm/"$vm_name".info.txt
+echo "====================================================" | tee -a /var/log/bashvm/"$vm_name".info.txt
 echo ""
-chmod 600 /var/log/bashvm/$vm_name.info.txt
+chmod 600 /var/log/bashvm/"$vm_name".info.txt
 echo "Info for $vm_name has been saved to /var/log/bashvm/$vm_name.info.txt"
 echo "Please note that there will be a vnc port automatically assigned to this vm."
 echo "This is optional if needed and the ports will start at 5900 and onward."
