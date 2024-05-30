@@ -7,7 +7,7 @@ bashvm is a console based virtual machine manager
 ### One-liner Command
 `wget -qO- https://bashvm.com/bashvm.tar.gz | tar xz && cd bashvm && bash bashvm-installer.sh && bash bashvm.sh`
 
-### Cloning bashvm
+### Getting Started
 
 `apt install git -y`
 
@@ -15,10 +15,8 @@ bashvm is a console based virtual machine manager
 
 `cd bashvm/`
 
-### Install required packages
 `bash bashvm-installer.sh`
 
-### Run bashvm.sh
 `bash bashvm.sh`
 
 ### Recommended OS for bashvm
