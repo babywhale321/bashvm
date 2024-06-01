@@ -111,8 +111,7 @@ vm_xml="<domain type='kvm'>
     <disk type='file' device='disk'>
     <driver name='qemu' type='qcow2' cache='none' io='native'/>
     <source file='$disk_path'/>
-    <target dev='vda' bus='virtio'/>
-    <address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x0'/>
+    <target dev='sdb' bus='sata'/>
     </disk>
     <disk type='file' device='cdrom'>
     <driver name='qemu' type='raw'/>
@@ -169,7 +168,7 @@ vm_xml="<domain type='kvm'>
     <interface type='network'>
     <mac address='$mac_address'/>
     <source network='$network_name'/>
-    <model type='virtio'/>
+    <model type='e1000'/>
     <address type='pci' domain='0x0000' bus='0x01' slot='0x00' function='0x0'/>
     </interface>
     <serial type='pty'>
