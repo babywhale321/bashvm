@@ -525,7 +525,9 @@ while true; do
                         if [ ! $? == 0 ]; then
                             echo "Failed to set DHCP reservation in $vm_net"
                         else
+                            echo "$vm_ip" >> /var/log/bashvm/used_ip.log
                             echo "You may need to start / stop the vm for the changes to take effect"
+
                         fi
                         ;;
                     8)
