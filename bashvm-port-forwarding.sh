@@ -13,47 +13,8 @@ if [ -z "$int_name" ]; then
 fi
 
 read -ep "Enter the ip of the VM (e.g., 192.168.122.2 ): " nat_ip
-
-log_file="/var/log/bashvm/used_ports.log"
-unused_port_log="/var/log/bashvm/unused_ports.log"
-
-# Create log file if it doesn't exist
-if [ -f $log_file ];then
-# The startport will the end of the file output
-start_port=$(tail -n 1 "$log_file")
-
-# Create log file
-else
-mkdir /var/log/bashvm
-chmod 600 -R /var/log/bashvm
-touch $log_file
-chmod 600 $log_file
-start_port=1025
-fi
-
-# Check to see if there is an unused port
-if [ -f $unused_port_log ];then
-unused_port=$(tail -n 1 /var/log/bashvm/unused_ports.log)
-
-    if [ ! -z "$unused_port" ];then
-        
-        #unused port will become the port
-        start_port=$(($unused_port - 22))
-        # Remove unused port from unused log file
-        sed -i '/'"$unused_port"'/d' /var/log/bashvm/unused_ports.log
-    fi
-    
-fi
-
-# Add a range of 20 ports
-end_port=$(($start_port + 20))
-
-# Reserve for next block calculation
-echo $(($end_port + 2)) >> $log_file
-
-# Sort then rename
-sort -n "$log_file" > "$log_file".sort
-mv "$log_file.sort" "$log_file"
+read -ep "Enter the start port range (e.g., 1024): " start_port
+read -ep "Enter the ending port (e.g., 1048): " end_port
 
 echo "#!/bin/bash" >> /etc/libvirt/hooks/qemu
 
@@ -69,11 +30,12 @@ if [ "${1}" = "'$vm_name'" ]; then
 echo "$nat_script" >> /etc/libvirt/hooks/qemu
 
 # Reserve a port for SSH
-ssh_port=$(($start_port - 1))
+ssh_port="$start_port"
 echo '      /sbin/iptables -D FORWARD -o '"$int_name"' -p tcp -d '"$nat_ip"' --dport 22 -j ACCEPT' >> /etc/libvirt/hooks/qemu
 echo '      /sbin/iptables -t nat -D PREROUTING -p tcp --dport '$ssh_port' -j DNAT --to '"$nat_ip"':22' >> /etc/libvirt/hooks/qemu
 echo '      /sbin/iptables -D FORWARD -o '"$int_name"' -p udp -d '"$nat_ip"' --dport 22 -j ACCEPT' >> /etc/libvirt/hooks/qemu
 echo '      /sbin/iptables -t nat -D PREROUTING -p udp --dport '$ssh_port' -j DNAT --to '"$nat_ip"':22' >> /etc/libvirt/hooks/qemu
+start_port=$(($ssh_port + 1))
 # Port forward rules to loop until it reaches end port
 for ((port=start_port; port<=end_port; port++)); do
 
