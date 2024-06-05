@@ -525,7 +525,6 @@ while true; do
                         if [ ! $? == 0 ]; then
                             echo "Failed to set DHCP reservation in $vm_net"
                         else
-                            echo "$vm_ip" >> /var/log/bashvm/used_ip.log
                             echo "You may need to start / stop the vm for the changes to take effect"
 
                         fi
@@ -549,8 +548,6 @@ while true; do
                         if [ ! $? == 0 ]; then
                             echo "Failed to remove DHCP reservation from $net_name"
                         else
-                            echo "$vm_ip" >> /var/log/bashvm/unused_ip.log
-                            sed -i '/'"$vm_ip"'/d' /var/log/bashvm/used_ip.log
                             echo "You may need to start / stop the vm for the changes to take effect"
                         fi
                         ;;
@@ -813,17 +810,7 @@ while true; do
                     3)
                         # Delete port forwarding rules of vm
                         read -ep "Enter the VM name: " vm_name
-
-                        # Port log entry removal
-                        unused_port=$(cat /var/log/bashvm/"$vm_name".info.txt | grep Ports | tail -n 1 | awk '{print $4}')
-                        unused_port=$(($unused_port + 2))
-                        sed -i '/'$unused_port'/d' /var/log/bashvm/used_ports.log
-                        echo "$unused_port" >> /var/log/bashvm/unused_ports.log
                         
-                        # Sort then rename
-                        sort -n "/var/log/bashvm/used_ports.log" > "/var/log/bashvm/used_ports.log.sort"
-                        mv "/var/log/bashvm/used_ports.log.sort" "/var/log/bashvm/used_ports.log"
-
                         # Port forwarding removal
                         sed -i "/#$vm_name#/,/###$vm_name###/d" /etc/libvirt/hooks/qemu
                         echo ""
