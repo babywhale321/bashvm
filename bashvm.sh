@@ -837,8 +837,8 @@ while true; do
         8)
             # VNC / Console Access
                         while true; do
-                echo -e "\n==================== VNC / Console Access ===================="
-                echo "s. Show listening ports  1. Add VNC port        2. Remove VNC port"        
+                echo -e "\n======================== VNC / Console Access ========================"
+                echo "s. Show listening ports  1. Add VNC port with password  2. Remove VNC port"        
                 echo "3. Console into a vm     q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " vnc_manage_choice
@@ -851,8 +851,10 @@ while true; do
                         ;;
 
                     1)
-                        # Add vnc access
-                        read -ep "Enter the name of the virtual machine: " vm_name
+                        # Add vnc access with password
+                        read -ep "Enter the name of the virtual machine (e.g., vm1): " vm_name
+                        read -ep "Enter a VNC password to use (e.g., pass123): " vnc_pass
+
                         add_vnc=" <channel type='unix'>
                             <target type='virtio' name='org.qemu.guest_agent.0'/>
                             <address type='virtio-serial' controller='0' bus='0' port='1'/>
@@ -862,7 +864,7 @@ while true; do
                             </input>
                             <input type='mouse' bus='ps2'/>
                             <input type='keyboard' bus='ps2'/>
-                            <graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0'>
+                            <graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0' passwd='"$vnc_pass"'>
                             <listen type='address' address='0.0.0.0'/>
                             </graphics>
                             <sound model='ich9'>
