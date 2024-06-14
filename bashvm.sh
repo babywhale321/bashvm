@@ -6,11 +6,11 @@
 
 while true; do
     # Display the main menu
-    echo -e "\n========================== Main Menu =========================="
-    echo "1. Virtual Machines  2. Storage Pools         3. Networks"
-    echo "4. Snapshots         5. Edit Properties       6. Firewall Settings"
-    echo "7. Port Forwarding   8. VNC / Console Access  9. System Monitor"   
-    echo "q. Exit"
+    echo -e "\n============================ Main Menu ============================"
+    echo " 1. Virtual Machines  2. Storage Pools         3. Networks"
+    echo " 4. Snapshots         5. Edit Properties       6. Firewall Settings"
+    echo " 7. Port Forwarding   8. VNC / Console Access  9. System Monitor"   
+    echo "10. VM Monitor        q. Exit"
     echo ""
     # Prompt user for input
     read -ep "Enter your choice: " main_choice
@@ -951,6 +951,100 @@ while true; do
             # System Monitor
             btop
             ;;
+        10)
+            # Manage Port forwarding
+            while true; do
+                echo -e "\n==================================== VM Monitor ===================================="
+                echo "s. Show all virtual machines  1. VCPU usage of a VM     2. Memory usage of a VM"  
+                echo "3. Disk usage of a VM         4. Network usage of a VM  5. All usage metrics of a VM"
+                echo "q. Back to main menu"
+                echo ""
+                read -ep "Enter your choice: " port_choice
+
+                case $port_choice in
+                    s)  
+                        # Show all virtual machines
+                        virsh list --all
+                        ;;
+
+                    1)
+                        read -ep "Enter the name of the VM: " domain
+                        # Setting the vcpu core count
+                        cpu_count=$(virsh dominfo $domain | grep "CPU(s)" | awk '{print $2}')
+                        # Counting starts at 0 so take away 1
+                        cpu_count=$(( $cpu_count - 1 ))
+
+                        # Loop through each core to output the usage
+                        for ((i = 0; i <= $cpu_count; i++)); do
+                            # Begin init time of vcpu
+                            cpu_time_1=$(virsh domstats $domain | grep "vcpu.$i.time" | cut -d= -f2)
+                            # Sleep
+                            sleep 1
+                            # End of init time of vcpu
+                            cpu_time_2=$(virsh domstats $domain | grep "vcpu.$i.time" | cut -d= -f2)
+                            # Delta is to be equal of time between recordings
+                            delta_t=1
+                            # convert delta_t to nanoseconds
+                            delta_t_ns=$(echo "$delta_t * 1000000000" | bc)
+                            # Calculate the scaling factor
+                            scaling_factor=$(echo "scale=10; 100 / $delta_t_ns" | bc)
+                            # Calculate the individual core usage
+                            cpu_usage=$(echo "scale=2; (($cpu_time_2 - $cpu_time_1) * $scaling_factor)" | bc)
+                            echo "CPU $i Usage: $cpu_usage%"
+                        done
+                        ;;
+                    2)
+                        read -ep "Enter the name of the VM: " domain
+                        # Set the memory reported by the guest as being actively used
+                        mem_rss=$(virsh domstats $domain | grep "balloon.rss" | cut -d= -f2)
+                        # Set the memory reported by the guest as being available
+                        mem_ava=$(virsh domstats $domain | grep "balloon.available" | cut -d= -f2)
+                        # Calculate the usage percentage
+                        memory_usage=$(echo "scale=2; ($mem_rss / ($mem_rss + $mem_ava)) * 100" | bc)
+                        echo "Memory Usage: $memory_usage%"
+                    ;;
+
+                    3)  
+                        #Disk usage
+                        read -ep "Enter the name of the VM: " domain
+                        disk=$(virsh domblklist $domain | grep v | awk '{print $1}')
+                        # Set the total allocated disk space
+                        disk_total=$(virsh guestinfo $domain | grep fs.0 | grep "total" | cut -d: -f2)
+                        # Set the used disk space
+                        disk_used=$(virsh guestinfo $domain | grep fs.0 | grep "used" | cut -d: -f2)
+                        # Calculate the percentage value of the used disk space
+                        disk_usage=$(echo "scale=2; ($disk_used / $disk_total) * 100" | bc)
+                        echo "Disk Usage: $disk_usage%"
+
+                    ;;
+
+                    4)
+                        read -ep "Enter the name of the VM: " domain
+                        # Show the virtual interface assigned to the vm and output the usage
+                        interface=$(virsh domiflist $domain | grep v | awk '{print $1}')
+                        ifstat -i $interface 1 1
+
+                    ;;
+
+                    5)
+                        #show all metrics
+                        bash monitor.sh
+
+                    ;;
+
+
+                    q)
+                        # Back to Main Menu
+                        break
+                        ;;
+
+                    *)
+                        echo "Invalid choice. Please enter a valid option."
+                        ;;
+                esac
+            done
+        ;;
+
             
         q)
             # Exit the script

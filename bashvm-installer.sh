@@ -51,6 +51,12 @@ check_status $? "ufw"
 apt install btop -y
 check_status $? "btop"
 
+apt install bc -y
+check_status $? "bc"
+
+apt install ifstat -y
+check_status $? "ifstat"
+
 apt install ndppd -y
 check_status $? "ndppd"
 
