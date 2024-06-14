@@ -20,7 +20,9 @@ bashvm is a console based virtual machine manager
 `bash bashvm.sh`
 
 ### Recommended OS for bashvm
-Debian 12, Ubuntu 22.04
+- Debian 12
+- Ubuntu 22.04
+- Ubuntu 24.04
 
 ### Screenshots
 https://bashvm.com/screenshots.html
