@@ -24,7 +24,7 @@ while true; do
                     echo " 6. Enable autostart of a VM   7. Disable autostart of a VM     8. Create a new / existing VM"
                     echo " 9. Undefine a VM             10. Create a new VM (Automated)  11. Console into a VM"        
                     echo "12. Change resources of a VM  13. Delete a Automated VM        14. Clone a VM"
-                    echo " q. Back to main menu"
+                    echo "15. Rename a VM                q. Back to main menu"
                     echo ""
                     read -ep "Enter your choice: " vm_manage_choice
                     case $vm_manage_choice in
@@ -277,6 +277,13 @@ while true; do
                             virt-clone --original "$vm_name" --auto-clone
                             ((counter++))
                         done
+                        ;;
+                    15)
+                        # Rename a VM
+                        read -ep "Enter the name of the virtual machine: " vm_name
+                        read -ep "Enter the new name of the virtual machine: " vm_name_new
+
+                        virsh domrename "$vm_name" "$vm_name_new"
                         ;;
                         
                     q)
