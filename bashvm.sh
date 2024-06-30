@@ -1035,7 +1035,7 @@ while true; do
 
                     5)
                         #show all metrics
-                        bash monitor.sh
+                        bash bashvm-monitor.sh
 
                     ;;
 
