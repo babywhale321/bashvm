@@ -51,7 +51,7 @@ if [ "$iso_question" == 1 ];then
 
 elif [ "$iso_question" == 2 ];then
     iso_img="ubuntu-22.04.4-live-server-amd64.iso"
-    iso_download="https://releases.ubuntu.com/jammy/ubuntu-22.04.4-live-server-amd64.iso"
+    iso_download="https://old-releases.ubuntu.com/releases/jammy/ubuntu-22.04.4-live-server-amd64.iso"
     pool_image_download
 
 elif [ "$iso_question" == 3 ];then
