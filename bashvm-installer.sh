@@ -68,6 +68,15 @@ else
     echo "dnsmasq is already installed."
 fi
 
+#Start the default pool
+virsh pool-define-as default dir --target /var/lib/libvirt/images
+virsh pool-start default
+virsh pool-autostart default
+
+#Start the default network
+virsh net-start default
+virsh net-autostart default
+
 echo ""
 echo "======================================================="
 echo "If no errors above then you can run bashvm with"
