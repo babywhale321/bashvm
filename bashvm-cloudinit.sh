@@ -303,5 +303,4 @@ echo "====================================================" | tee -a /var/log/ba
 echo ""
 chmod 600 /var/log/bashvm/"$vm_name".info.txt
 echo "Info for $vm_name has been saved to /var/log/bashvm/$vm_name.info.txt"
-echo "Please note that there will be a vnc port automatically assigned to this vm."
-echo "This is optional if needed and the ports will start at 5900 and onward."
+echo "You can access the VM with the console option."
