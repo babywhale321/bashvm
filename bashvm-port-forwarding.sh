@@ -9,7 +9,7 @@ read -ep "Enter the VM name: " vm_name
 # If the variable is empty then don't continue
 if [ -z "$vm_name" ]; then
     echo "Invalid response. Please enter a VM name."
-    break
+    exit
 fi
 
 read -ep "Enter the name of the virtual bridge [virbr0]: " int_name
