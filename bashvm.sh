@@ -818,6 +818,12 @@ while true; do
                         # Delete port forwarding rules of vm
                         read -ep "Enter the VM name: " vm_name
                         
+                        # If the variable is empty then don't continue
+                        if [ -z "$vm_name" ]; then
+                            echo "Invalid response. Please enter a VM name."
+                            break
+                        fi
+                        
                         # Port forwarding removal
                         sed -i "/#$vm_name#/,/###$vm_name###/d" /etc/libvirt/hooks/qemu
                         echo ""
