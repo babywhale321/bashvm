@@ -12,7 +12,7 @@ read -ep "Enter the username for the new VM (e.g., joe): " user_name
 read -ep "Enter the password for the new VM (e.g., password): " user_pass
 echo "1 = debian12"
 #echo "2 = ubuntu22.04"
-echo "3 = almalinux9"
+#echo "3 = almalinux9"
 read -ep "Enter the OS you would like (e.g., 1): " qcow2_question
 
 if [ "$qcow2_question" == 1 ];then
@@ -25,10 +25,10 @@ if [ "$qcow2_question" == 1 ];then
 #    qcow2_download="https://cloud-images.ubuntu.com/minimal/releases/jammy/release/ubuntu-22.04-minimal-cloudimg-amd64.img"
 #    os_info="ubuntu22.04"
 
-elif [ "$qcow2_question" == 3 ];then
-    qcow2_image="AlmaLinux-8-GenericCloud-latest.aarch64.qcow2"
-    qcow2_download="https://raw.repo.almalinux.org/almalinux/8/cloud/aarch64/images/AlmaLinux-8-GenericCloud-latest.aarch64.qcow2"
-    os_info="almalinux9"
+#elif [ "$qcow2_question" == 3 ];then
+#    qcow2_image="AlmaLinux-8-GenericCloud-latest.aarch64.qcow2"
+#    qcow2_download="https://raw.repo.almalinux.org/almalinux/8/cloud/aarch64/images/AlmaLinux-8-GenericCloud-latest.aarch64.qcow2"
+#    os_info="almalinux9"
 else
     echo "Error: Please select a valid response."
     exit
