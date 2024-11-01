@@ -30,6 +30,11 @@ if [ ! $? == 0 ];then
     exit
 fi
 
+# Accept router advertisements for the main interface
+echo "net.ipv6.conf."$int_name".accept_ra = 2" > /etc/sysctl.d/bashvm.conf
+# Reload service so no need for a reboot
+service procps force-reload
+
 # dhcpv6 info
 vm_info="  </ip>
 <ip family='ipv6' address='$ip_gateway' prefix='$ip_prefix'>

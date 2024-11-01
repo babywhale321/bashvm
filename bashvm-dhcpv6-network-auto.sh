@@ -27,6 +27,11 @@ if [ ! $? == 0 ];then
     exit
 fi
 
+# Accept router advertisements for the main interface
+echo "net.ipv6.conf."$int_name".accept_ra = 2" > /etc/sysctl.d/bashvm.conf
+# Reload service so no need for a reboot
+service procps force-reload
+
 # Detect the ipv6 address
 ipv6_address=$(ifconfig | grep inet6 | grep global | awk '{print $2}')
 
