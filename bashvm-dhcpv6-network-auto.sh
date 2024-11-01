@@ -27,10 +27,15 @@ if [ ! $? == 0 ];then
     exit
 fi
 
-# Accept router advertisements for the main interface
-echo "net.ipv6.conf."$int_name".accept_ra = 2" > /etc/sysctl.d/bashvm.conf
-# Reload service so no need for a reboot
-service procps force-reload
+# Check to see if the line is there
+accept_ra=$(cat /etc/sysctl.conf | grep "accept_ra = 2")
+
+if [ -z "$accept_ra" ]; then
+    # Accept router advertisements for the main interface
+    echo "net.ipv6.conf."$int_name".accept_ra = 2" >> /etc/sysctl.conf
+    # Reload service so no need for a reboot
+    sysctl -p
+fi
 
 # Detect the ipv6 address
 ipv6_address=$(ifconfig | grep inet6 | grep global | awk '{print $2}')
