@@ -35,7 +35,7 @@ if [ -z "$accept_ra" ]; then
     echo "
     net.ipv6.conf."$int_name".accept_ra = 2" >> /etc/sysctl.conf
     # Reload service so no need for a reboot
-    sysctl -p
+    sysctl -p >> /dev/null
 fi
 
 # Detect the ipv6 address
