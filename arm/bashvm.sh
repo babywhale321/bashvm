@@ -868,37 +868,42 @@ while true; do
                         read -ep "Enter the name of the virtual machine (e.g., vm1): " vm_name
                         read -ep "Enter a VNC password to use (e.g., pass123): " vnc_pass
 
-                        add_vnc=" <channel type='unix'>
-                            <target type='virtio' name='org.qemu.guest_agent.0'/>
-                            <address type='virtio-serial' controller='0' bus='0' port='1'/>
-                            </channel>
-                            <input type='tablet' bus='usb'>
-                            <address type='usb' bus='0' port='1'/>
-                            </input>
-                            <input type='mouse' bus='ps2'/>
-                            <input type='keyboard' bus='ps2'/>
-                            <graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0' passwd='"$vnc_pass"'>
-                            <listen type='address' address='0.0.0.0'/>
-                            </graphics>
-                            <sound model='ich9'>
-                            <address type='pci' domain='0x0000' bus='0x00' slot='0x1b' function='0x0'/>
-                            </sound>
-                            <audio id='1' type='none'/>
-                            <video>
-                            <model type='qxl' ram='65536' vram='65536' vgamem='16384' heads='1' primary='yes'/>
-                            <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x0'/>
-                            </video>
-                            <memballoon model='virtio'>
-                            <address type='pci' domain='0x0000' bus='0x05' slot='0x00' function='0x0'/>
-                            </memballoon>
-                            <rng model='virtio'>
-                            <backend model='random'>/dev/urandom</backend>
-                            <address type='pci' domain='0x0000' bus='0x06' slot='0x00' function='0x0'/>
-                            </rng>
-                        </devices>
-                        </domain>"
+                        add_vnc="   
+                                    <console type='pty'>
+                                    <target type='serial' port='0'/>
+                                    </console>
+                                    <channel type='unix'>
+                                    <target type='virtio' name='org.qemu.guest_agent.0'/>
+                                    <address type='virtio-serial' controller='0' bus='0' port='1'/>
+                                    </channel>
+                                    <tpm model='tpm-tis'>
+                                    <backend type='emulator' version='2.0'/>
+                                    </tpm>
+                                    <audio id='1' type='none'/>
+                                    <rng model='virtio'>
+                                    <backend model='random'>/dev/urandom</backend>
+                                    <address type='pci' domain='0x0000' bus='0x07' slot='0x00' function='0x0'/>
+                                    </rng>
+                                    <sound model='ich9'> 
+                                    <audio id='1'> 
+                                    </audio>
+                                    </sound>
+                                    <graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0' passwd='"$vnc_pass"'>
+                                    <listen type='address' address='0.0.0.0'/>
+                                    </graphics>
+                                    <input type='tablet' bus='usb'>
+                                    <alias name='input0'/>
+                                    </input>
+                                    <input type='keyboard' bus='usb'>
+                                    <alias name='keyboard0'/>
+                                    </input>
+                                </devices>
+                                </domain>"
 
+                        # Remove console tag and everything below it then add into a xml file        
                         virsh dumpxml "$vm_name" | sed -n '/console/q;p' > "$vm_name".xml
+
+                        # Append xml text into the xml file
                         echo "$add_vnc" >> "$vm_name".xml
                         virsh define "$vm_name".xml
                         rm "$vm_name".xml
@@ -907,37 +912,38 @@ while true; do
                     2)
                         # Remove VNC Port
                         read -ep "Enter the name of the virtual machine: " vm_name
-                        remove_vnc=" <channel type='unix'>
-                            <target type='virtio' name='org.qemu.guest_agent.0'/>
-                            <address type='virtio-serial' controller='0' bus='0' port='1'/>
-                            </channel>
-                            <input type='tablet' bus='usb'>
-                            <address type='usb' bus='0' port='1'/>
-                            </input>
-                            <input type='mouse' bus='ps2'/>
-                            <input type='keyboard' bus='ps2'/>
-                            <graphics type='vnc' port='-1' autoport='yes'>
-                            <listen type='address'/>
-                            </graphics>
-                            <sound model='ich9'>
-                            <address type='pci' domain='0x0000' bus='0x00' slot='0x1b' function='0x0'/>
-                            </sound>
-                            <audio id='1' type='none'/>
-                            <video>
-                            <model type='qxl' ram='65536' vram='65536' vgamem='16384' heads='1' primary='yes'/>
-                            <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x0'/>
-                            </video>
-                            <memballoon model='virtio'>
-                            <address type='pci' domain='0x0000' bus='0x05' slot='0x00' function='0x0'/>
-                            </memballoon>
-                            <rng model='virtio'>
-                            <backend model='random'>/dev/urandom</backend>
-                            <address type='pci' domain='0x0000' bus='0x06' slot='0x00' function='0x0'/>
-                            </rng>
-                        </devices>
-                        </domain>"
+                        remove_vnc=" <console type='pty'>
+                                    <target type='serial' port='0'/>
+                                    </console>
+                                    <channel type='unix'>
+                                    <target type='virtio' name='org.qemu.guest_agent.0'/>
+                                    <address type='virtio-serial' controller='0' bus='0' port='1'/>
+                                    </channel>
+                                    <tpm model='tpm-tis'>
+                                    <backend type='emulator' version='2.0'/>
+                                    </tpm>
+                                    <audio id='1' type='none'/>
+                                    <rng model='virtio'>
+                                    <backend model='random'>/dev/urandom</backend>
+                                    <address type='pci' domain='0x0000' bus='0x07' slot='0x00' function='0x0'/>
+                                    </rng>
+                                    <sound model='ich9'> 
+                                    <audio id='1'> 
+                                    </audio>
+                                    </sound>
+                                    <input type='tablet' bus='usb'>
+                                    <alias name='input0'/>
+                                    </input>
+                                    <input type='keyboard' bus='usb'>
+                                    <alias name='keyboard0'/>
+                                    </input>
+                                </devices>
+                                </domain>"
 
+                        # Remove console tag and everything below it then add into a xml file        
                         virsh dumpxml "$vm_name" | sed -n '/console/q;p' > "$vm_name".xml
+
+                        # Append xml text into the xml file
                         echo "$remove_vnc" >> "$vm_name".xml
                         virsh define "$vm_name".xml
                         rm "$vm_name".xml
