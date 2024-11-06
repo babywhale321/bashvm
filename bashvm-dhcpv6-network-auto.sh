@@ -36,6 +36,19 @@ if [ -z "$accept_ra" ]; then
     net.ipv6.conf."$int_name".accept_ra = 2" >> /etc/sysctl.conf
     # Reload service so no need for a reboot
     sysctl -p >> /dev/null
+    # Create service to apply accept_ra settings on boot
+    echo "[Unit]
+Description=bashvm service to apply accept_ra = 2 settings
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=sysctl -p
+
+[Install]
+WantedBy=multi-user.target" > /etc/systemd/system/bashvm-ipv6-accept-ra.service
+# Enable service
+systemctl enable bashvm-ipv6-accept-ra.service
 fi
 
 # Detect the ipv6 address
