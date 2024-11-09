@@ -196,7 +196,7 @@ start_port=$(tail -n 1 "$log_file")
 else
 touch $log_file
 chmod 600 $log_file
-start_port=1025
+start_port=49153
 fi
 
 # Check to see if there is an unused port
