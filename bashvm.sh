@@ -646,7 +646,6 @@ while true; do
                         echo "Failed to revert snapshot ""$snapshot_name"""
                         break
                         fi
-                        echo "Domain snapshot ""$snapshot_name"" reverted"
                         ;;
                     q)
                         # Back to main menu
