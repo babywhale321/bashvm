@@ -110,6 +110,7 @@ vm_xml="<domain type='kvm'>
   <os firmware='efi'>
     <type arch='aarch64' machine='virt'>hvm</type>
     <boot dev='hd'/>
+    <boot dev='cdrom'/>
   </os>
   <features>
     <acpi/>
