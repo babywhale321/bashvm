@@ -915,9 +915,6 @@ while true; do
                             </input>
                             <input type='mouse' bus='ps2'/>
                             <input type='keyboard' bus='ps2'/>
-                            <graphics type='vnc' port='-1' autoport='yes'>
-                            <listen type='address'/>
-                            </graphics>
                             <sound model='ich9'>
                             <address type='pci' domain='0x0000' bus='0x00' slot='0x1b' function='0x0'/>
                             </sound>
