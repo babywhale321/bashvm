@@ -38,7 +38,6 @@ while true; do
                         read -ep "Enter the VM name: " vm_name
                         virsh dominfo "$vm_name"
                         virsh domblkinfo "$vm_name" --all --human
-                        cat /var/log/bashvm/"$vm_name".info.txt 2>/dev/null | tail -n 9
                         ;;
 
                     2)
@@ -99,7 +98,7 @@ while true; do
                     
                     10)
                         # Create a VM (Automated)
-                        bash bashvm-cloudinit.sh
+                        bash bashvm-create-auto-vm.sh
                         ;;
                     
                     11)
@@ -211,60 +210,8 @@ while true; do
                         done
                         ;;
                     13)
-
-                        echo "Note: this will delete dhcpv4 reservation, snapshots, disks and forwarded ports of a vm."
-                        read -ep "Enter the virtual machine you would like to delete: " vm_name
-                        read -ep "Enter the network name where the vm is attached to [default]: " net_name
-                        if [ -z "$net_name" ]; then
-                            net_name="default"
-                        fi
-                        
-                        vm_state=$(virsh list --all | grep "$vm_name" | awk '{print $3}')
-                        if [ "$vm_state" == "running" ];then
-                            echo "Please shutdown the vm before running this again"
-                            break
-                        fi
-
-                        # Network
-                        echo ""
-                        echo "Removing DHCP reservation..."
-                        vm_mac=$(virsh net-dumpxml "$net_name" | grep "$vm_name" | head -n 1 | awk '{print $2}' | cut -d"'" -f2)
-                        vm_ip=$(virsh net-dumpxml "$net_name" | grep "$vm_name" | head -n 1 | awk '{print $4}' | cut -d"'" -f2)
-                        virsh net-update "$net_name" delete ip-dhcp-host "<host mac='$vm_mac' name='$vm_name' ip='$vm_ip' />" --live --config
-                        if [ ! $? == 0 ]; then
-                        echo "Failed to remove DHCP reservation."
-                        break
-                        fi
-
-                        echo "$vm_ip" >> /var/log/bashvm/unused_ip.log
-                        sed -i '/'"$vm_ip"'/d' /var/log/bashvm/used_ip.log
-
-                        # Disk
-                        echo ""
-                        echo "Removing Disk..."
-                        virsh undefine "$vm_name" --remove-all-storage --snapshots-metadata
-                        if [ ! $? == 0 ]; then
-                        echo "Failed to remove disk."
-                        break
-                        fi
-
-                        # Ports
-                        echo "Removing Ports..."
-
-                        # Port log entry removal
-                        unused_port=$(cat /var/log/bashvm/"$vm_name".info.txt | grep Ports | tail -n 1 | awk '{print $4}')
-                        unused_port=$(($unused_port + 2))
-                        sed -i '/'$unused_port'/d' /var/log/bashvm/used_ports.log
-                        echo "$unused_port" >> /var/log/bashvm/unused_ports.log
-                        
-                        # Sort then rename
-                        sort -n "/var/log/bashvm/used_ports.log" > "/var/log/bashvm/used_ports.log.sort"
-                        mv "/var/log/bashvm/used_ports.log.sort" "/var/log/bashvm/used_ports.log"
-
-                        # Port forwarding removal
-                        sed -i "/#$vm_name#/,/###$vm_name###/d" /etc/libvirt/hooks/qemu
-                        echo ""
-                        echo "$vm_name has been deleted"
+                        # Delete a auto VM
+                        bash bashvm-delete-auto-vm.sh
                         ;;
 
                     14)
@@ -522,9 +469,9 @@ while true; do
                         read -ep "Enter the network name [default]: " vm_net
 
                         if [ -z "$vm_net" ]; then
-                        vm_net="default"
+                            vm_net="default"
                         fi
-
+                        
                         echo "Setting DHCP reservation..."
 
                         virsh net-update "$vm_net" add ip-dhcp-host "<host mac='$vm_mac' name='$vm_name' ip='$vm_ip' />" --live --config
@@ -542,7 +489,7 @@ while true; do
                         read -ep "Enter the network name [default]: " net_name
 
                         if [ -z "$net_name" ]; then
-                        net_name="default"
+                            net_name="default"
                         fi
 
                         echo "Removing DHCP reservation..."                        
@@ -795,6 +742,8 @@ while true; do
                     s)  
                         # Show port forwarding ruless
                         iptables -t nat -L -n -v
+                        echo ""
+                        bash bashvm-show-port-forwarding.sh
                         ;;
 
                     1)
@@ -809,24 +758,13 @@ while true; do
 
                     2)
                         # Add port forwarding rules to a VM behind a NAT
-                        bash bashvm-port-forwarding.sh
+                        bash bashvm-add-port-forwarding.sh
                         ;;
 
 
                     3)
                         # Delete port forwarding rules of vm
-                        read -ep "Enter the VM name: " vm_name
-                        
-                        # If the variable is empty then don't continue
-                        if [ -z "$vm_name" ]; then
-                            echo "Invalid response. Please enter a VM name."
-                            break
-                        fi
-                        
-                        # Port forwarding removal
-                        sed -i "/#$vm_name#/,/###$vm_name###/d" /etc/libvirt/hooks/qemu
-                        echo ""
-                        echo "Port forwarding rules for $vm_name has been deleted."
+                        bash bashvm-remove-port-forwarding.sh
                         ;;
 
                     4)

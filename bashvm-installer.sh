@@ -60,6 +60,9 @@ check_status $? "ifstat"
 apt install ndppd -y
 check_status $? "ndppd"
 
+apt install sqlite3 -y
+check_status $? "sqlite3"
+
 # Check and install dnsmasq
 dpkg --list | grep dnsmasq >> /dev/null
 if [ ! $? == 0 ]; then
