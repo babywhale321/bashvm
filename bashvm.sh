@@ -302,8 +302,18 @@ while true; do
                     5)
                         # Delete a storage pool
                         read -ep "Enter the name of the storage pool to delete: " delete_pool_name
-                        virsh pool-destroy "$delete_pool_name"
-                        virsh pool-delete "$delete_pool_name"
+
+                        virsh pool-info "$delete_pool_name" >> /dev/null
+                        if [ $? == 0 ]; then
+                            virsh pool-destroy "$delete_pool_name"
+                        else
+                            break
+                        fi
+
+                        virsh pool-undefine "$delete_pool_name"
+                        if [ ! $? == 0 ]; then
+                            break
+                        fi
                         ;;
 
                     6)
