@@ -580,28 +580,50 @@ while true; do
                     s)
                         # List all snapshots of a virtual machine
                         read -ep "Enter the name of the virtual machine: " vm_name
+
                         virsh snapshot-list "$vm_name"
                         ;;
                     1)
                         # Create a snapshot of a virtual machine
                         read -ep "Enter the name of the virtual machine: " vm_name
+                        
+                        virsh snapshot-list "$vm_name"
+                        if [ ! $? == 0 ]; then
+                            break
+                        fi
+
                         read -ep "Enter the name for the new snapshot: " snapshot_name
+                        
                         virsh snapshot-create-as "$vm_name" "$snapshot_name"
                         ;;
                     2)
                         # Delete a snapshot of a virtual machine
                         read -ep "Enter the name of the virtual machine: " vm_name
+
+                        virsh snapshot-list "$vm_name"
+                        if [ ! $? == 0 ]; then
+                            break
+                        fi
+
                         read -ep "Enter the name of the snapshot to delete: " snapshot_name
+                        
                         virsh snapshot-delete "$vm_name" "$snapshot_name"
                         ;;
                     3)
                         # Revert to a snapshot of a virtual machine
                         read -ep "Enter the name of the virtual machine: " vm_name
+
+                        virsh snapshot-list "$vm_name"
+                        if [ ! $? == 0 ]; then
+                            break
+                        fi
+                        
                         read -ep "Enter the name of the snapshot to revert to: " snapshot_name
+                        
                         virsh snapshot-revert "$vm_name" "$snapshot_name"
                         if [ ! $? == 0 ]; then
-                        echo "Failed to revert snapshot ""$snapshot_name"""
-                        break
+                            echo "Failed to revert snapshot ""$snapshot_name"""
+                            break
                         fi
                         ;;
                     q)
