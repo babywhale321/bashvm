@@ -4,9 +4,6 @@ bashvm is a console based virtual machine manager
 
 ## How to use
 
-### One-liner Command
-`wget -qO- https://github.com/babywhale321/bashvm/releases/download/11-03-2024/bashvm.tar.gz | tar xz && cd bashvm && bash bashvm-installer.sh && bash bashvm.sh`
-
 ### Getting Started
 
 `apt install git -y`
