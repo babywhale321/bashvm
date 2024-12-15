@@ -969,13 +969,11 @@ while true; do
                             cpu_time_2=$(virsh domstats $vm_name | grep "vcpu.$i.time" | cut -d= -f2)
                             # Delta is to be equal of time between recordings
                             delta_t=1
-                            # convert delta_t to nanoseconds
-                            delta_t_ns=$(echo "$delta_t * 1000000000" | bc)
-                            # Calculate the scaling factor
-                            scaling_factor=$(echo "scale=10; 100 / $delta_t_ns" | bc)
-                            # Calculate the individual core usage
-                            cpu_usage=$(echo "scale=2; (($cpu_time_2 - $cpu_time_1) * $scaling_factor)" | bc)
-                            echo "CPU $i Usage: $cpu_usage%"
+                            # Calculate the difference in CPU time (nanoseconds)
+                            delta_cpu_time=$((cpu_time_2 - cpu_time_1))
+                            # Normalize CPU usage as a percentage of total time available
+                            cpu_usage=$(echo "scale=2; ($delta_cpu_time / ($delta_t * 1000000000)) * 100" | bc)
+                            printf "CPU %d Usage: %.2f%%\n" "$i" "$cpu_usage"
                         done
                         ;;
                     2)
