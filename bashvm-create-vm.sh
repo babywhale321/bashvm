@@ -225,10 +225,6 @@ vm_xml="<domain type='kvm'>
     <target type='virtio' name='org.qemu.guest_agent.0'/>
     <address type='virtio-serial' controller='0' bus='0' port='1'/>
     </channel>
-    <channel type='spicevmc'>
-    <target type='virtio' name='com.redhat.spice.0'/>
-    <address type='virtio-serial' controller='0' bus='0' port='2'/>
-    </channel>
     <input type='tablet' bus='usb'>
     <address type='usb' bus='0' port='1'/>
     </input>
@@ -237,24 +233,13 @@ vm_xml="<domain type='kvm'>
     <graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0'>
     <listen type='address' address='0.0.0.0'/>
     </graphics>
-    <graphics type='spice' autoport='yes' listen='0.0.0.0'>
-    <listen type='address' address='0.0.0.0'/>
-    <image compression='off'/>
-    </graphics>
     <sound model='ich9'>
     <address type='pci' domain='0x0000' bus='0x00' slot='0x1b' function='0x0'/>
     </sound>
-    <audio id='1' type='spice'/>
     <video>
     <model type='qxl' ram='65536' vram='65536' vgamem='16384' heads='1' primary='yes'/>
     <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x0'/>
     </video>
-    <redirdev bus='usb' type='spicevmc'>
-    <address type='usb' bus='0' port='2'/>
-    </redirdev>
-    <redirdev bus='usb' type='spicevmc'>
-    <address type='usb' bus='0' port='3'/>
-    </redirdev>
     <memballoon model='virtio'>
     <address type='pci' domain='0x0000' bus='0x05' slot='0x00' function='0x0'/>
     </memballoon>
