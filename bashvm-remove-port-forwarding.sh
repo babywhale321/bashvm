@@ -34,7 +34,7 @@ fi
 # Confirm the record exists before deleting
 record_count=$(sqlite3 $db_file "SELECT COUNT(*) FROM $net_table WHERE vm_name = '$vm_name';")
 
-if [ "$record_count" -eq 0 ]; then
+if [ -z "$record_count" ]; then
     echo "No record found for VM name '$vm_name'."
     exit 1
 fi
