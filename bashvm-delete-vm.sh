@@ -96,7 +96,7 @@ delete_vm() {
 
 # Confirm the record exists before attempting database deletion
 record_count=$(sqlite3 "$db_file" "SELECT COUNT(*) FROM $net_table WHERE vm_name = '$vm_name';" 2>/dev/null)
-if [ "$record_count" -gt 0 ]; then
+if [ ! -z "$record_count" ]; then
     delete_db_entry
 else
     echo "No database entry exists for the VM. Skipping database operations."
