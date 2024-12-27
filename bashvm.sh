@@ -23,7 +23,7 @@ while true; do
                     echo " 3. Reboot a VM                4. Shutdown a VM (graceful)      5. Shutdown a VM (force)"     
                     echo " 6. Enable autostart of a VM   7. Disable autostart of a VM     8. Create a new / existing VM"
                     echo " 9. Undefine a VM             10. Create a new VM (Automated)  11. Console into a VM"        
-                    echo "12. Change resources of a VM  13. Delete a Automated VM        14. Clone a VM"
+                    echo "12. Change resources of a VM  13. Delete a VM                  14. Clone a VM"
                     echo "15. Rename a VM                q. Back to main menu"
                     echo ""
                     read -ep "Enter your choice: " vm_manage_choice
@@ -112,7 +112,7 @@ while true; do
                         bash bashvm-change-resources.sh
                         ;;
                     13)
-                        # Delete a auto VM
+                        # Delete a VM
                         bash bashvm-delete-vm.sh
                         ;;
 
