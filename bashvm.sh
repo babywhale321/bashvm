@@ -113,7 +113,7 @@ while true; do
                         ;;
                     13)
                         # Delete a auto VM
-                        bash bashvm-delete-auto-vm.sh
+                        bash bashvm-delete-vm.sh
                         ;;
 
                     14)
