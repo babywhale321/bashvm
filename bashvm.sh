@@ -6,73 +6,89 @@
 
 while true; do
     # Display the main menu
-    echo -e "\n============================ Main Menu ============================"
-    echo " 1. Virtual Machines  2. Storage Pools         3. Networks"
-    echo " 4. Snapshots         5. Edit Properties       6. Firewall Settings"
-    echo " 7. Port Forwarding   8. VNC / Console Access  9. System Monitor"   
-    echo "10. VM Monitor        q. Exit"
-    echo ""
-    # Prompt user for input
-    read -ep "Enter your choice: " main_choice
+    main_choice=$(whiptail --title "Main Menu" --menu "Choose an option" 20 78 10 \
+    "1" "Virtual Machines" \
+    "2" "Storage Pools" \
+    "3" "Networks" \
+    "4" "Snapshots" \
+    "5" "Edit Properties" \
+    "6" "Firewall Settings" \
+    "7" "Port Forwarding" \
+    "8" "VNC / Console Access" \
+    "9" "System Monitor" \
+    "10" "VM Monitor" \
+    "q" "Exit" 3>&1 1>&2 2>&3)
+
     case $main_choice in
         1)
             # Virtual Machines Menu    
             while true; do
-                    echo -e "\n============================== Manage Virtual Machine =============================="
-                    echo " s. Show all virtual machines  1. Show more details of a VM     2. Start a VM" 
-                    echo " 3. Reboot a VM                4. Shutdown a VM (graceful)      5. Shutdown a VM (force)"     
-                    echo " 6. Enable autostart of a VM   7. Disable autostart of a VM     8. Create a new / existing VM"
-                    echo " 9. Undefine a VM             10. Create a new VM (Automated)  11. Console into a VM"        
-                    echo "12. Change resources of a VM  13. Delete a VM                  14. Clone a VM"
-                    echo "15. Rename a VM                q. Back to main menu"
-                    echo ""
-                    read -ep "Enter your choice: " vm_manage_choice
-                    case $vm_manage_choice in
+                vm_manage_choice=$(whiptail --title "Manage Virtual Machine" --menu "Choose an option" 20 78 15 \
+                "s" "Show all virtual machines" \
+                "1" "Show more details of a VM" \
+                "2" "Start a VM" \
+                "3" "Reboot a VM" \
+                "4" "Shutdown a VM (graceful)" \
+                "5" "Shutdown a VM (force)" \
+                "6" "Enable autostart of a VM" \
+                "7" "Disable autostart of a VM" \
+                "8" "Create a new / existing VM" \
+                "9" "Undefine a VM" \
+                "10" "Create a new VM (Automated)" \
+                "11" "Console into a VM" \
+                "12" "Change resources of a VM" \
+                "13" "Delete a VM" \
+                "14" "Clone a VM" \
+                "15" "Rename a VM" \
+                "q" "Back to main menu" 3>&1 1>&2 2>&3)
+
+                case $vm_manage_choice in
                     s)
                         # Show all virtual machines
                         virsh list --all
+                        whiptail --title "Virtual Machines" --msgbox "$(virsh list --all)" 20 78
                         ;;
 
                     1)
                         # Show details of a virtual machine
-                        read -ep "Enter the VM name: " vm_name
-                        virsh dominfo "$vm_name"
-                        virsh domblkinfo "$vm_name" --all --human
+                        vm_name=$(whiptail --inputbox "Enter the VM name:" 8 78 --title "VM Details" 3>&1 1>&2 2>&3)
+                        details=$(virsh dominfo "$vm_name"; virsh domblkinfo "$vm_name" --all --human)
+                        whiptail --title "VM Details" --msgbox "$details" 20 78
                         ;;
 
                     2)
                         # Start a virtual machine
-                        read -ep "Enter the name of the virtual machine to start: " vm_name
+                        vm_name=$(whiptail --inputbox "Enter the name of the virtual machine to start:" 8 78 --title "Start VM" 3>&1 1>&2 2>&3)
                         virsh start "$vm_name"
                         ;;
 
                     3)
                         # Reboot a VM
-                        read -ep "Enter the name of the virtual machine to restart: " vm_name
+                        vm_name=$(whiptail --inputbox "Enter the name of the virtual machine to restart:" 8 78 --title "Reboot VM" 3>&1 1>&2 2>&3)
                         virsh reboot "$vm_name"
                         ;;
 
                     4)
                         # Shutdown a VM (graceful)
-                        read -ep "Enter the name of the virtual machine to shutdown: " vm_name
+                        vm_name=$(whiptail --inputbox "Enter the name of the virtual machine to shutdown:" 8 78 --title "Shutdown VM" 3>&1 1>&2 2>&3)
                         virsh shutdown "$vm_name"
                         ;;
 
                     5)
                         # Shutdown a VM (force)
-                        read -ep "Enter the name of the virtual machine to force shutdown: " vm_name
+                        vm_name=$(whiptail --inputbox "Enter the name of the virtual machine to force shutdown:" 8 78 --title "Force Shutdown VM" 3>&1 1>&2 2>&3)
                         virsh destroy "$vm_name"
                         ;;
 
                     6)
                         # Enable autostart
-                        read -ep "Enter the name of the virtual machine to autostart on boot: " vm_name
+                        vm_name=$(whiptail --inputbox "Enter the name of the virtual machine to autostart on boot:" 8 78 --title "Enable Autostart" 3>&1 1>&2 2>&3)
                         virsh autostart "$vm_name"
                         ;;
                     
                     7)
                         # Disable autostart
-                        read -ep "Enter the name of the virtual machine to disable autostart on boot: " vm_name
+                        vm_name=$(whiptail --inputbox "Enter the name of the virtual machine to disable autostart on boot:" 8 78 --title "Disable Autostart" 3>&1 1>&2 2>&3)
                         virsh autostart --disable "$vm_name"
                         ;;
                         
@@ -81,14 +97,14 @@ while true; do
                         bash bashvm-create-vm.sh
                         ;;
 
-                    9)
+                     9)
                         # Undefine a virtual machine
-                        read -ep "Enter the name of the virtual machine to undefine: " vm_name
+                        vm_name=$(whiptail --inputbox "Enter the name of the virtual machine to undefine:" 8 78 --title "Undefine VM" 3>&1 1>&2 2>&3)
                         
                         vm_state=$(virsh list --all | grep "$vm_name" | awk '{print $3}')
                         
                         if [ "$vm_state" == "running" ];then
-                            echo "Please shutdown the vm before running this again"
+                            whiptail --title "Error" --msgbox "Please shutdown the vm before running this again" 8 78
                             break
                         fi
                         
@@ -103,7 +119,7 @@ while true; do
                     
                     11)
                         # Console into a VM
-                        read -ep "Enter the VM name to console into: " hostname
+                        hostname=$(whiptail --inputbox "Enter the VM name to console into:" 8 78 --title "Console into VM" 3>&1 1>&2 2>&3)
                         virsh console "$hostname"
                         ;;
 
@@ -118,8 +134,8 @@ while true; do
 
                     14)
                         # Clone a VM
-                        read -ep "Enter the name of the vm to clone (e.g., test-vm): " vm_name
-                        read -ep "Enter the amount of clones of this vm to create (e.g., 1): " clone_num
+                        vm_name=$(whiptail --inputbox "Enter the name of the vm to clone (e.g., test-vm):" 8 78 --title "Clone VM" 3>&1 1>&2 2>&3)
+                        clone_num=$(whiptail --inputbox "Enter the amount of clones of this vm to create (e.g., 1):" 8 78 --title "Clone VM" 3>&1 1>&2 2>&3)
                         counter=1
                         while [ "$counter" -le "$clone_num" ]
                         do
@@ -129,9 +145,8 @@ while true; do
                         ;;
                     15)
                         # Rename a VM
-                        read -ep "Enter the name of the virtual machine: " vm_name
-                        read -ep "Enter the new name of the virtual machine: " vm_name_new
-
+                        vm_name=$(whiptail --inputbox "Enter the name of the virtual machine:" 8 78 --title "Rename VM" 3>&1 1>&2 2>&3)
+                        vm_name_new=$(whiptail --inputbox "Enter the new name of the virtual machine:" 8 78 --title "Rename VM" 3>&1 1>&2 2>&3)
                         virsh domrename "$vm_name" "$vm_name_new"
                         ;;
                         
@@ -141,7 +156,7 @@ while true; do
                         ;;
 
                     *)
-                        echo "Invalid choice. Please enter a valid option."
+                        whiptail --title "Error" --msgbox "Invalid choice. Please enter a valid option." 8 78
                         ;;
                 esac
             done
@@ -150,32 +165,38 @@ while true; do
         2)
             # Storage Pools Menu
             while true; do
-                echo -e "\n============================== Manage Storage Pool =============================="
-                echo "s. Show all storage pools     1. Show all volumes in a pool  2. Activate a storage pool"
-                echo "3. Deactivate a storage pool  4. Create a storage pool       5. Delete a storage pool"
-                echo "6. Create a storage volume    7. Delete a storage volume     8. Clone a storage volume"
-                echo "q. Back to main menu"
-                echo ""
-                read -ep "Enter your choice: " storage_manage_choice
+                storage_manage_choice=$(whiptail --title "Manage Storage Pool" --menu "Choose an option" 20 78 10 \
+                "s" "Show all storage pools" \
+                "1" "Show all volumes in a pool" \
+                "2" "Activate a storage pool" \
+                "3" "Deactivate a storage pool" \
+                "4" "Create a storage pool" \
+                "5" "Delete a storage pool" \
+                "6" "Create a storage volume" \
+                "7" "Delete a storage volume" \
+                "8" "Clone a storage volume" \
+                "q" "Back to main menu" 3>&1 1>&2 2>&3)
 
                 case $storage_manage_choice in
                     s)
                         # Show all pools
-                        virsh pool-list --details
+                        pools=$(virsh pool-list --details)
+                        whiptail --title "Storage Pools" --msgbox "$pools" 20 78
                         ;;
 
                     1)
                         #Show all volumes in a pool
-                        read -ep "Enter the name of the storage pool [default]: " pool_name
+                        pool_name=$(whiptail --inputbox "Enter the name of the storage pool [default]:" 8 78 --title "Show Volumes" 3>&1 1>&2 2>&3)
                         if [ -z "$pool_name" ]; then
                             pool_name="default"
                         fi
-                        virsh vol-list --pool "$pool_name"
+                        volumes=$(virsh vol-list --pool "$pool_name")
+                        whiptail --title "Storage Volumes" --msgbox "$volumes" 20 78
                         ;;
                     
                     2)
                         # Activate a storage pool
-                        read -ep "Enter the name of the storage pool to activate [default]: " pool_name
+                        pool_name=$(whiptail --inputbox "Enter the name of the storage pool to activate [default]:" 8 78 --title "Activate Storage Pool" 3>&1 1>&2 2>&3)
                         if [ -z "$pool_name" ]; then
                             pool_name="default"
                         fi
@@ -184,7 +205,7 @@ while true; do
                         
                     3)
                         # Deactivate a storage pool
-                        read -ep "Enter the name of the storage pool to deactivate [default]: " pool_name
+                        pool_name=$(whiptail --inputbox "Enter the name of the storage pool to deactivate [default]:" 8 78 --title "Deactivate Storage Pool" 3>&1 1>&2 2>&3)
                         if [ -z "$pool_name" ]; then
                             pool_name="default"
                         fi
@@ -193,9 +214,9 @@ while true; do
 
                     4)
                         # Create a new storage pool
-                        read -ep "Enter the name of the new storage pool: " new_pool_name
-                        read -ep "Enter the type of the new storage pool (e.g., dir, logical, fs): " pool_type
-                        read -ep "Enter the target path or source for the new storage pool: " pool_source
+                        new_pool_name=$(whiptail --inputbox "Enter the name of the new storage pool:" 8 78 --title "Create Storage Pool" 3>&1 1>&2 2>&3)
+                        pool_type=$(whiptail --inputbox "Enter the type of the new storage pool (e.g., dir, logical, fs):" 8 78 --title "Create Storage Pool" 3>&1 1>&2 2>&3)
+                        pool_source=$(whiptail --inputbox "Enter the target path or source for the new storage pool:" 8 78 --title "Create Storage Pool" 3>&1 1>&2 2>&3)
                         virsh pool-define-as "$new_pool_name" "$pool_type" --target "$pool_source"
                         virsh pool-start "$new_pool_name"
                         virsh pool-autostart "$new_pool_name"
@@ -203,53 +224,40 @@ while true; do
 
                     5)
                         # Delete a storage pool
-                        read -ep "Enter the name of the storage pool to delete: " delete_pool_name
-
-                        virsh pool-info "$delete_pool_name" >> /dev/null
-                        if [ $? == 0 ]; then
-                            virsh pool-destroy "$delete_pool_name"
-                        else
-                            break
-                        fi
-
+                        delete_pool_name=$(whiptail --inputbox "Enter the name of the storage pool to delete:" 8 78 --title "Delete Storage Pool" 3>&1 1>&2 2>&3)
+                        virsh pool-destroy "$delete_pool_name"
                         virsh pool-undefine "$delete_pool_name"
-                        if [ ! $? == 0 ]; then
-                            break
-                        fi
                         ;;
 
                     6)
                         # Create a storage volume
-                        read -ep "Enter the name of the storage pool to use [default]: " pool_name
+                        pool_name=$(whiptail --inputbox "Enter the name of the storage pool to use [default]:" 8 78 --title "Create Storage Volume" 3>&1 1>&2 2>&3)
                         if [ -z "$pool_name" ]; then
                             pool_name="default"
                         fi
-                        read -ep "Enter the name of the new storage volume (e.g., new-vm): " volume_name
-                        read -ep "Enter the size of the volume (e.g., 10G): " volume_capacity
+                        volume_name=$(whiptail --inputbox "Enter the name of the new storage volume (e.g., new-vm):" 8 78 --title "Create Storage Volume" 3>&1 1>&2 2>&3)
+                        volume_capacity=$(whiptail --inputbox "Enter the size of the volume (e.g., 10G):" 8 78 --title "Create Storage Volume" 3>&1 1>&2 2>&3)
                         virsh vol-create-as --pool "$pool_name" --name "$volume_name.qcow2" --capacity "$volume_capacity" --format qcow2
                         ;;
                     
                     7)
                         # Delete a storage volume
-                        read -ep "Enter the storage pool name that the volume is under [default]: " pool_name
+                        pool_name=$(whiptail --inputbox "Enter the storage pool name that the volume is under [default]:" 8 78 --title "Delete Storage Volume" 3>&1 1>&2 2>&3)
                         if [ -z "$pool_name" ]; then
                             pool_name="default"
                         fi
-                        read -ep "Enter the name of the volume to delete (e.g., new-vm): " volume_name
-
-                        # Delete the storage volume
+                        volume_name=$(whiptail --inputbox "Enter the name of the volume to delete (e.g., new-vm):" 8 78 --title "Delete Storage Volume" 3>&1 1>&2 2>&3)
                         virsh vol-delete --pool "$pool_name" "$volume_name.qcow2"
                         ;;
                     
                     8)
                         # Clone a storage volume
-                        read -ep "Enter the name of the volume to clone (e.g., test-vm): " vm_name
-                        read -ep "Enter the new volume name (e.g., new-test-vm): " new_vm_name
-                        read -ep "Enter the storage pool name that the volume is under [default]: " pool_name
+                        vm_name=$(whiptail --inputbox "Enter the name of the volume to clone (e.g., test-vm):" 8 78 --title "Clone Storage Volume" 3>&1 1>&2 2>&3)
+                        new_vm_name=$(whiptail --inputbox "Enter the new volume name (e.g., new-test-vm):" 8 78 --title "Clone Storage Volume" 3>&1 1>&2 2>&3)
+                        pool_name=$(whiptail --inputbox "Enter the storage pool name that the volume is under [default]:" 8 78 --title "Clone Storage Volume" 3>&1 1>&2 2>&3)
                         if [ -z "$pool_name" ]; then
                             pool_name="default"
-                        fi                        
-
+                        fi
                         virsh vol-clone "$vm_name.qcow2" "$new_vm_name.qcow2" --pool "$pool_name"
                         ;;
                     
@@ -259,7 +267,7 @@ while true; do
                         ;;
 
                     *)
-                        echo "Invalid choice. Please enter a valid option."
+                        whiptail --title "Error" --msgbox "Invalid choice. Please enter a valid option." 8 78
                         ;;
                 esac
             done
@@ -267,35 +275,42 @@ while true; do
         3)
             # Networks Menu       
             while true; do
-                echo -e "\n============================================= Manage Network ============================================="
-                echo " s. Show all networks                1. Show more details of a network       2. Start a network"
-                echo " 3. Stop a network                   4. Create a NAT network                 5. Create a macvtap network"      
-                echo " 6. Delete a network                 7. Add a IPv4 reservation to a network  8. Remove a IPv4 reservation"
-                echo " 9. Add dhcpv6 to a network (auto)  10. Add dhcpv6 to a network (manual)    11. Add a IPv6 reservation to a network"
-                echo "12. Edit a network                   q. Back to main menu"
-                echo ""
-                read -ep "Enter your choice: " network_manage_choice
+                network_manage_choice=$(whiptail --title "Manage Network" --menu "Choose an option" 20 78 12 \
+                "s" "Show all networks" \
+                "1" "Show more details of a network" \
+                "2" "Start a network" \
+                "3" "Stop a network" \
+                "4" "Create a NAT network" \
+                "5" "Create a macvtap network" \
+                "6" "Delete a network" \
+                "7" "Add a IPv4 reservation to a network" \
+                "8" "Remove a IPv4 reservation" \
+                "9" "Add dhcpv6 to a network (auto)" \
+                "10" "Add dhcpv6 to a network (manual)" \
+                "11" "Add a IPv6 reservation to a network" \
+                "12" "Edit a network" \
+                "q" "Back to main menu" 3>&1 1>&2 2>&3)
 
                 case $network_manage_choice in
                     s)
                         # List all networks
-                        virsh net-list --all
+                        networks=$(virsh net-list --all)
+                        whiptail --title "Networks" --msgbox "$networks" 20 78
                         ;;
 
                     1)
                         # Show details of a network
-                        read -ep "Enter the network name [default]: " network_name
+                        network_name=$(whiptail --inputbox "Enter the network name [default]:" 8 78 --title "Network Details" 3>&1 1>&2 2>&3)
                         if [ -z "$network_name" ]; then
                             network_name="default"
                         fi
-
-                        virsh net-info "$network_name"
-                        virsh net-dhcp-leases "$network_name"
+                        details=$(virsh net-info "$network_name"; virsh net-dhcp-leases "$network_name")
+                        whiptail --title "Network Details" --msgbox "$details" 20 78
                         ;;
 
                     2)
                         # Start a network
-                        read -ep "Enter the name of the network to start [default]: " network_name
+                        network_name=$(whiptail --inputbox "Enter the name of the network to start [default]:" 8 78 --title "Start Network" 3>&1 1>&2 2>&3)
                         if [ -z "$network_name" ]; then
                             network_name="default"
                         fi
@@ -305,7 +320,7 @@ while true; do
 
                     3)
                         # Stop a network
-                        read -ep "Enter the name of the network to stop [default]: " network_name
+                        network_name=$(whiptail --inputbox "Enter the name of the network to stop [default]:" 8 78 --title "Stop Network" 3>&1 1>&2 2>&3)
                         if [ -z "$network_name" ]; then
                             network_name="default"
                         fi
@@ -314,14 +329,13 @@ while true; do
 
                     4)
                         # Prompt user for NAT network configuration
-                        read -ep "Enter the new network name (e.g., natbr0): " network_name
-                        read -ep "Enter the virtual bridge name (e.g., natbr0): " bridge_name
-                        read -ep "Enter the new gateway ip address (e.g., 192.168.100.1): " network_ip
-                        read -ep "Enter the new subnet mask (e.g., 255.255.255.0): " netmask
-                        read -ep "Enter the starting ip for the DHCP range (e.g., 192.168.100.2): " dhcp_start
-                        read -ep "Enter the ending ip for the DHCP range (e.g., 192.168.100.254): " dhcp_end
+                        network_name=$(whiptail --inputbox "Enter the new network name (e.g., natbr0):" 8 78 --title "Create NAT Network" 3>&1 1>&2 2>&3)
+                        bridge_name=$(whiptail --inputbox "Enter the virtual bridge name (e.g., natbr0):" 8 78 --title "Create NAT Network" 3>&1 1>&2 2>&3)
+                        network_ip=$(whiptail --inputbox "Enter the new gateway ip address (e.g., 192.168.100.1):" 8 78 --title "Create NAT Network" 3>&1 1>&2 2>&3)
+                        netmask=$(whiptail --inputbox "Enter the new subnet mask (e.g., 255.255.255.0):" 8 78 --title "Create NAT Network" 3>&1 1>&2 2>&3)
+                        dhcp_start=$(whiptail --inputbox "Enter the starting ip for the DHCP range (e.g., 192.168.100.2):" 8 78 --title "Create NAT Network" 3>&1 1>&2 2>&3)
+                        dhcp_end=$(whiptail --inputbox "Enter the ending ip for the DHCP range (e.g., 192.168.100.254):" 8 78 --title "Create NAT Network" 3>&1 1>&2 2>&3)
 
-                        # Create network XML file
                         network_xml="
                         <network>
                         <name>${network_name}</name>
@@ -334,11 +348,9 @@ while true; do
                         </ip>
                         </network>"
 
-                        # Save the network XML to a file
                         net_xml_file="/etc/libvirt/qemu/networks/$network_name.xml"
                         echo "${network_xml}" > "${net_xml_file}"
 
-                        # Define and start network
                         virsh net-define "${net_xml_file}"
                         virsh net-start "${network_name}"
                         virsh net-autostart "${network_name}"
@@ -346,8 +358,8 @@ while true; do
 
                     5) 
                         # Prompt user for macvtap network configuration
-                        read -ep "Enter the new network name: " network_name
-                        read -ep "Enter the physical network interface to attach: " int_name
+                        network_name=$(whiptail --inputbox "Enter the new network name:" 8 78 --title "Create Macvtap Network" 3>&1 1>&2 2>&3)
+                        int_name=$(whiptail --inputbox "Enter the physical network interface to attach:" 8 78 --title "Create Macvtap Network" 3>&1 1>&2 2>&3)
 
                         network_xml="
                         <network>
@@ -360,7 +372,6 @@ while true; do
                         net_xml_file="/etc/libvirt/qemu/networks/$network_name.xml"
                         echo "${network_xml}" > "${net_xml_file}"
 
-                        # Define and start network
                         virsh net-define "${net_xml_file}"
                         virsh net-start "${network_name}"
                         virsh net-autostart "${network_name}"
@@ -368,43 +379,38 @@ while true; do
 
                     6)
                         # Delete a network
-                        read -ep "Enter the name of the network to delete: " delete_network_name
+                        delete_network_name=$(whiptail --inputbox "Enter the name of the network to delete:" 8 78 --title "Delete Network" 3>&1 1>&2 2>&3)
                         virsh net-destroy "$delete_network_name"
                         virsh net-undefine "$delete_network_name"
                         ;;
 
                     7)
                         # Add a dhcpv4 reservation to a network
-                        read -ep "Enter the virtual machines name: " vm_name
-                        read -ep "Enter the virtual machines mac address: " vm_mac
-                        read -ep "Enter the new ip address for the virtual machine: " vm_ip
-                        read -ep "Enter the network name [default]: " vm_net
+                        vm_name=$(whiptail --inputbox "Enter the virtual machines name:" 8 78 --title "Add DHCPv4 Reservation" 3>&1 1>&2 2>&3)
+                        vm_mac=$(whiptail --inputbox "Enter the virtual machines mac address:" 8 78 --title "Add DHCPv4 Reservation" 3>&1 1>&2 2>&3)
+                        vm_ip=$(whiptail --inputbox "Enter the new ip address for the virtual machine:" 8 78 --title "Add DHCPv4 Reservation" 3>&1 1>&2 2>&3)
+                        vm_net=$(whiptail --inputbox "Enter the network name [default]:" 8 78 --title "Add DHCPv4 Reservation" 3>&1 1>&2 2>&3)
 
                         if [ -z "$vm_net" ]; then
                             vm_net="default"
                         fi
-                        
-                        echo "Setting DHCP reservation..."
 
                         virsh net-update "$vm_net" add ip-dhcp-host "<host mac='$vm_mac' name='$vm_name' ip='$vm_ip' />" --live --config
                         
                         if [ ! $? == 0 ]; then
-                            echo "Failed to set DHCP reservation in $vm_net"
+                            whiptail --title "Error" --msgbox "Failed to set DHCP reservation in $vm_net" 8 78
                         else
-                            echo "You may need to start / stop the vm for the changes to take effect"
-
+                            whiptail --title "Success" --msgbox "DHCP reservation set successfully. You may need to start / stop the vm for the changes to take effect" 8 78
                         fi
                         ;;
                     8)
                         # Remove a dhcpv4 reservation
-                        read -ep "Enter the VM name: " vm_name
-                        read -ep "Enter the network name [default]: " net_name
+                        vm_name=$(whiptail --inputbox "Enter the VM name:" 8 78 --title "Remove DHCPv4 Reservation" 3>&1 1>&2 2>&3)
+                        net_name=$(whiptail --inputbox "Enter the network name [default]:" 8 78 --title "Remove DHCPv4 Reservation" 3>&1 1>&2 2>&3)
 
                         if [ -z "$net_name" ]; then
                             net_name="default"
                         fi
-
-                        echo "Removing DHCP reservation..."                        
 
                         vm_mac=$(virsh net-dumpxml "$net_name" | grep "$vm_name" | head -n 1 | awk '{print $2}'| cut -d"'" -f2)
                         vm_ip=$(virsh net-dumpxml "$net_name" | grep "$vm_name" | head -n 1 | awk '{print $4}'| cut -d"'" -f2)
@@ -412,9 +418,9 @@ while true; do
                         virsh net-update "$net_name" delete ip-dhcp-host "<host mac='$vm_mac' name='$vm_name' ip='$vm_ip' />" --live --config
                         
                         if [ ! $? == 0 ]; then
-                            echo "Failed to remove DHCP reservation from $net_name"
+                            whiptail --title "Error" --msgbox "Failed to remove DHCP reservation from $net_name" 8 78
                         else
-                            echo "You may need to start / stop the vm for the changes to take effect"
+                            whiptail --title "Success" --msgbox "DHCP reservation removed successfully. You may need to start / stop the vm for the changes to take effect" 8 78
                         fi
                         ;;
 
@@ -430,28 +436,26 @@ while true; do
 
                     11)
                         # Add a dhcpv6 reservation to a network
-                        read -ep "Enter the vm name you are assigning a IPv6 address to: " vm_name
-                        read -ep "Enter the desired IPv6 address to assign the vm (e.g., xxxx::3): " net_address
-                        read -ep "Enter the network name [default]: " net_name
+                        vm_name=$(whiptail --inputbox "Enter the vm name you are assigning a IPv6 address to:" 8 78 --title "Add DHCPv6 Reservation" 3>&1 1>&2 2>&3)
+                        net_address=$(whiptail --inputbox "Enter the desired IPv6 address to assign the vm (e.g., xxxx::3):" 8 78 --title "Add DHCPv6 Reservation" 3>&1 1>&2 2>&3)
+                        net_name=$(whiptail --inputbox "Enter the network name [default]:" 8 78 --title "Add DHCPv6 Reservation" 3>&1 1>&2 2>&3)
 
                         if [ -z "$net_name" ]; then
                             net_name="default"
                         fi
 
-                        echo "Setting DHCP reservation..."
-
                         virsh net-update "$net_name" add-last ip-dhcp-host "<host name='$vm_name' ip='$net_address'/>" --live --config --parent-index 1
                         
                         if [ ! $? == 0 ]; then
-                            echo "Failed to set DHCP reservation in $net_name"
+                            whiptail --title "Error" --msgbox "Failed to set DHCP reservation in $net_name" 8 78
                         else
-                            echo "You may need to restart the vm for the changes to take effect"
+                            whiptail --title "Success" --msgbox "DHCP reservation set successfully. You may need to restart the vm for the changes to take effect" 8 78
                         fi
                         ;;
 
                    12)
                         # Edit a network
-                        read -ep "Enter the network name [default]: " net_name
+                        net_name=$(whiptail --inputbox "Enter the network name [default]:" 8 78 --title "Edit Network" 3>&1 1>&2 2>&3)
                         if [ -z "$net_name" ]; then
                             net_name="default"
                         fi
@@ -464,7 +468,7 @@ while true; do
                         ;;
 
                     *)
-                        echo "Invalid choice. Please enter a valid option."
+                        whiptail --title "Error" --msgbox "Invalid choice. Please enter a valid option." 8 78
                         ;;
                 esac
             done
@@ -472,68 +476,44 @@ while true; do
         4)
             # Managing a snapshot
             while true; do
-                echo -e "\n========================= Manage Snapshot ========================="
-                echo "s. Show all snapshots of a VM  1. Create a snapshot  2. Delete a snapshot"
-                echo "3. Revert to a snapshot        q. Back to main menu"
-                echo ""
-                read -ep "Enter your choice: " snapshot_manage_choice
+                snapshot_manage_choice=$(whiptail --title "Manage Snapshot" --menu "Choose an option" 20 78 4 \
+                "s" "Show all snapshots of a VM" \
+                "1" "Create a snapshot" \
+                "2" "Delete a snapshot" \
+                "3" "Revert to a snapshot" \
+                "q" "Back to main menu" 3>&1 1>&2 2>&3)
 
                 case $snapshot_manage_choice in
                     s)
                         # List all snapshots of a virtual machine
-                        read -ep "Enter the name of the virtual machine: " vm_name
-
-                        virsh snapshot-list "$vm_name"
+                        vm_name=$(whiptail --inputbox "Enter the name of the virtual machine:" 8 78 --title "Show Snapshots" 3>&1 1>&2 2>&3)
+                        snapshots=$(virsh snapshot-list "$vm_name")
+                        whiptail --title "Snapshots" --msgbox "$snapshots" 20 78
                         ;;
                     1)
                         # Create a snapshot of a virtual machine
-                        read -ep "Enter the name of the virtual machine: " vm_name
-                        
-                        virsh snapshot-list "$vm_name"
-                        if [ ! $? == 0 ]; then
-                            break
-                        fi
-
-                        read -ep "Enter the name for the new snapshot: " snapshot_name
-                        
+                        vm_name=$(whiptail --inputbox "Enter the name of the virtual machine:" 8 78 --title "Create Snapshot" 3>&1 1>&2 2>&3)
+                        snapshot_name=$(whiptail --inputbox "Enter the name for the new snapshot:" 8 78 --title "Create Snapshot" 3>&1 1>&2 2>&3)
                         virsh snapshot-create-as "$vm_name" "$snapshot_name"
                         ;;
                     2)
                         # Delete a snapshot of a virtual machine
-                        read -ep "Enter the name of the virtual machine: " vm_name
-
-                        virsh snapshot-list "$vm_name"
-                        if [ ! $? == 0 ]; then
-                            break
-                        fi
-
-                        read -ep "Enter the name of the snapshot to delete: " snapshot_name
-                        
+                        vm_name=$(whiptail --inputbox "Enter the name of the virtual machine:" 8 78 --title "Delete Snapshot" 3>&1 1>&2 2>&3)
+                        snapshot_name=$(whiptail --inputbox "Enter the name of the snapshot to delete:" 8 78 --title "Delete Snapshot" 3>&1 1>&2 2>&3)
                         virsh snapshot-delete "$vm_name" "$snapshot_name"
                         ;;
                     3)
                         # Revert to a snapshot of a virtual machine
-                        read -ep "Enter the name of the virtual machine: " vm_name
-
-                        virsh snapshot-list "$vm_name"
-                        if [ ! $? == 0 ]; then
-                            break
-                        fi
-                        
-                        read -ep "Enter the name of the snapshot to revert to: " snapshot_name
-                        
+                        vm_name=$(whiptail --inputbox "Enter the name of the virtual machine:" 8 78 --title "Revert to Snapshot" 3>&1 1>&2 2>&3)
+                        snapshot_name=$(whiptail --inputbox "Enter the name of the snapshot to revert to:" 8 78 --title "Revert to Snapshot" 3>&1 1>&2 2>&3)
                         virsh snapshot-revert "$vm_name" "$snapshot_name"
-                        if [ ! $? == 0 ]; then
-                            echo "Failed to revert snapshot ""$snapshot_name"""
-                            break
-                        fi
                         ;;
                     q)
                         # Back to main menu
                         break
                         ;;
                     *)
-                        echo "Invalid choice. Please enter a valid option."
+                        whiptail --title "Error" --msgbox "Invalid choice. Please enter a valid option." 8 78
                         ;;
                 esac
             done
@@ -542,22 +522,22 @@ while true; do
         5)
             # Edit Properties
             while true; do
-                echo -e "\n====================== Edit Properties ======================"
-                echo "1. Edit a VM        2. Edit a storage pool  3. Edit a network"
-                echo "4. Edit a snapshot  q. Back to main menu"
-                echo ""
-                echo ""
-                read -ep "Enter your choice: " xml_manage_choice
+                xml_manage_choice=$(whiptail --title "Edit Properties" --menu "Choose an option" 20 78 5 \
+                "1" "Edit a VM" \
+                "2" "Edit a storage pool" \
+                "3" "Edit a network" \
+                "4" "Edit a snapshot" \
+                "q" "Back to main menu" 3>&1 1>&2 2>&3)
 
                 case $xml_manage_choice in
                     1)  
                         # edit a vm
-                        read -ep "Enter the VM name: " vm_name
+                        vm_name=$(whiptail --inputbox "Enter the VM name:" 8 78 --title "Edit VM" 3>&1 1>&2 2>&3)
                         virsh edit "$vm_name"
                         ;;
                     2)
                         # edit a storage pool
-                        read -ep "Enter the storage pool name [default]: " pool_name
+                        pool_name=$(whiptail --inputbox "Enter the storage pool name [default]:" 8 78 --title "Edit Storage Pool" 3>&1 1>&2 2>&3)
                         if [ -z "$pool_name" ]; then
                             pool_name="default"
                         fi
@@ -565,7 +545,7 @@ while true; do
                         ;;
                     3)
                         # edit a network
-                        read -ep "Enter the network name [default]: " net_name
+                        net_name=$(whiptail --inputbox "Enter the network name [default]:" 8 78 --title "Edit Network" 3>&1 1>&2 2>&3)
                         if [ -z "$net_name" ]; then
                             net_name="default"
                         fi
@@ -573,8 +553,8 @@ while true; do
                         ;;
                     4)
                         # edit a snapshot
-                        read -ep "Enter the VM name: " vm_name
-                        read -ep "Enter the snapshot name: " snap_name
+                        vm_name=$(whiptail --inputbox "Enter the VM name:" 8 78 --title "Edit Snapshot" 3>&1 1>&2 2>&3)
+                        snap_name=$(whiptail --inputbox "Enter the snapshot name:" 8 78 --title "Edit Snapshot" 3>&1 1>&2 2>&3)
                         virsh snapshot-edit --snapshotname "$snap_name" --domain "$vm_name"
                         ;;
                     q)
@@ -582,7 +562,7 @@ while true; do
                         break
                         ;;
                     *)
-                        echo "Invalid choice. Please enter a valid option."
+                        whiptail --title "Error" --msgbox "Invalid choice. Please enter a valid option." 8 78
                         ;;
                 esac
             done
@@ -592,54 +572,60 @@ while true; do
 
             # Firewall Settings
             while true; do
-                echo -e "\n===================== Firewall Settings ====================="
-                echo "s. Show ufw status  1. Show listening ports   2. Allow port range"
-                echo "3. Deny port range  4. Allow single port      5. Deny single port"
-                echo "6. Delete a rule    7. Enable and reload ufw  8. Disable and reset ufw"
-                echo "q. Back to main menu"
-                echo ""
-                read -ep "Enter your choice: " firewall_choice
+                firewall_choice=$(whiptail --title "Firewall Settings" --menu "Choose an option" 20 78 9 \
+                "s" "Show ufw status" \
+                "1" "Show listening ports" \
+                "2" "Allow port range" \
+                "3" "Deny port range" \
+                "4" "Allow single port" \
+                "5" "Deny single port" \
+                "6" "Delete a rule" \
+                "7" "Enable and reload ufw" \
+                "8" "Disable and reset ufw" \
+                "q" "Back to main menu" 3>&1 1>&2 2>&3)
 
                 case $firewall_choice in
                     s)  
                         # Show ufw status
-                        ufw status numbered
+                        ufw_status=$(ufw status numbered)
+                        whiptail --title "UFW Status" --msgbox "$ufw_status" 20 78
                         ;;
                     1)
                         # Show listening ports
-                        netstat -l | grep "tcp\|udp"
+                        listening_ports=$(netstat -l | grep "tcp\|udp")
+                        whiptail --title "Listening Ports" --msgbox "$listening_ports" 20 78
                         ;;
                     2)
                         # Allow port range
-                        read -ep "Enter starting port: " port_start
-                        read -ep "Enter ending port: " port_end
+                        port_start=$(whiptail --inputbox "Enter starting port:" 8 78 --title "Allow Port Range" 3>&1 1>&2 2>&3)
+                        port_end=$(whiptail --inputbox "Enter ending port:" 8 78 --title "Allow Port Range" 3>&1 1>&2 2>&3)
                         ufw allow "$port_start":"$port_end"/tcp
                         ufw allow "$port_start":"$port_end"/udp
                         ufw reload
                         ;;
                     3)
                         # Deny Port range
-                        read -ep "Enter starting port: " port_start
-                        read -ep "Enter ending port: " port_end
+                        port_start=$(whiptail --inputbox "Enter starting port:" 8 78 --title "Deny Port Range" 3>&1 1>&2 2>&3)
+                        port_end=$(whiptail --inputbox "Enter ending port:" 8 78 --title "Deny Port Range" 3>&1 1>&2 2>&3)
                         ufw deny "$port_start":"$port_end"/tcp
                         ufw deny "$port_start":"$port_end"/udp
                         ufw reload
                         ;;
                     4)
                         # Allow single port
-                        read -ep "Enter the port number: " port
+                        port=$(whiptail --inputbox "Enter the port number:" 8 78 --title "Allow Single Port" 3>&1 1>&2 2>&3)
                         ufw allow "$port"
                         ufw reload
                         ;;
                     5)
                         # Deny single port
-                        read -ep "Enter the port number: " port
+                        port=$(whiptail --inputbox "Enter the port number:" 8 78 --title "Deny Single Port" 3>&1 1>&2 2>&3)
                         ufw deny "$port"
                         ufw reload
                         ;;
                     6)
                         # Delete a rule
-                        read -ep "Enter the rule number to delete: " rule_number
+                        rule_number=$(whiptail --inputbox "Enter the rule number to delete:" 8 78 --title "Delete Rule" 3>&1 1>&2 2>&3)
                         ufw delete "$rule_number"
                         ufw reload
                         ;;
@@ -658,7 +644,7 @@ while true; do
                         break
                         ;;
                     *)
-                        echo "Invalid choice. Please enter a valid option."
+                        whiptail --title "Error" --msgbox "Invalid choice. Please enter a valid option." 8 78
                         ;;
                 esac
             done
@@ -666,35 +652,36 @@ while true; do
         7) 
             # Manage Port forwarding
             while true; do
-                echo -e "\n==================================== Manage Port Forwarding ===================================="
-                echo "s. Show port forwarding rules        1. List DHCP leases from a network  2. Add port forwarding to a VM"  
-                echo "3. Remove port forwarding from a VM  4. Edit port forwarding rule file   q. Back to main menu"
-                echo ""
-                read -ep "Enter your choice: " port_choice
+                port_choice=$(whiptail --title "Manage Port Forwarding" --menu "Choose an option" 20 78 6 \
+                "s" "Show port forwarding rules" \
+                "1" "List DHCP leases from a network" \
+                "2" "Add port forwarding to a VM" \
+                "3" "Remove port forwarding from a VM" \
+                "4" "Edit port forwarding rule file" \
+                "q" "Back to main menu" 3>&1 1>&2 2>&3)
 
                 case $port_choice in
                     s)  
-                        # Show port forwarding ruless
-                        iptables -t nat -L -n -v
-                        echo ""
+                        # Show port forwarding rules
+                        port_rules=$(iptables -t nat -L -n -v)
+                        whiptail --title "Port Forwarding Rules" --msgbox "$port_rules" 20 78
                         bash bashvm-show-port-forwarding.sh
                         ;;
 
                     1)
                         # List DHCP leases
-                        read -ep "Enter the network name [default]: " network_name
+                        network_name=$(whiptail --inputbox "Enter the network name [default]:" 8 78 --title "List DHCP Leases" 3>&1 1>&2 2>&3)
                         if [ -z "$network_name" ]; then
                             network_name="default"
                         fi
-
-                        virsh net-dhcp-leases "$network_name"
+                        leases=$(virsh net-dhcp-leases "$network_name")
+                        whiptail --title "DHCP Leases" --msgbox "$leases" 20 78
                         ;;
 
                     2)
                         # Add port forwarding rules to a VM behind a NAT
                         bash bashvm-add-port-forwarding.sh
                         ;;
-
 
                     3)
                         # Delete port forwarding rules of vm
@@ -712,7 +699,7 @@ while true; do
                         ;;
 
                     *)
-                        echo "Invalid choice. Please enter a valid option."
+                        whiptail --title "Error" --msgbox "Invalid choice. Please enter a valid option." 8 78
                         ;;
                 esac
             done
@@ -720,24 +707,25 @@ while true; do
 
         8)
             # VNC / Console Access
-                        while true; do
-                echo -e "\n======================== VNC / Console Access ========================"
-                echo "s. Show listening ports  1. Add VNC port with password  2. Remove VNC port"        
-                echo "3. Console into a vm     q. Back to main menu"
-                echo ""
-                read -ep "Enter your choice: " vnc_manage_choice
+            while true; do
+                vnc_manage_choice=$(whiptail --title "VNC / Console Access" --menu "Choose an option" 20 78 4 \
+                "s" "Show listening ports" \
+                "1" "Add VNC port with password" \
+                "2" "Remove VNC port" \
+                "3" "Console into a vm" \
+                "q" "Back to main menu" 3>&1 1>&2 2>&3)
 
                 case $vnc_manage_choice in
-
                     s)
                         # Show listening ports
-                        netstat -l | grep "tcp\|udp"
+                        listening_ports=$(netstat -l | grep "tcp\|udp")
+                        whiptail --title "Listening Ports" --msgbox "$listening_ports" 20 78
                         ;;
 
                     1)
                         # Add vnc access with password
-                        read -ep "Enter the name of the virtual machine (e.g., vm1): " vm_name
-                        read -ep "Enter a VNC password to use (e.g., pass123): " vnc_pass
+                        vm_name=$(whiptail --inputbox "Enter the name of the virtual machine (e.g., vm1):" 8 78 --title "Add VNC Port" 3>&1 1>&2 2>&3)
+                        vnc_pass=$(whiptail --inputbox "Enter a VNC password to use (e.g., pass123):" 8 78 --title "Add VNC Port" 3>&1 1>&2 2>&3)
 
                         add_vnc=" <channel type='unix'>
                             <target type='virtio' name='org.qemu.guest_agent.0'/>
@@ -773,11 +761,11 @@ while true; do
                         echo "$add_vnc" >> "$vm_name".xml
                         virsh define "$vm_name".xml
                         rm "$vm_name".xml
-                        echo "Please shutdown then start the vm for the changes to take effect"
+                        whiptail --title "Success" --msgbox "Please shutdown then start the vm for the changes to take effect" 8 78
                         ;;
                     2)
                         # Remove VNC Port
-                        read -ep "Enter the name of the virtual machine: " vm_name
+                        vm_name=$(whiptail --inputbox "Enter the name of the virtual machine:" 8 78 --title "Remove VNC Port" 3>&1 1>&2 2>&3)
                         remove_vnc=" <channel type='unix'>
                             <target type='virtio' name='org.qemu.guest_agent.0'/>
                             <address type='virtio-serial' controller='0' bus='0' port='1'/>
@@ -809,12 +797,12 @@ while true; do
                         echo "$remove_vnc" >> "$vm_name".xml
                         virsh define "$vm_name".xml
                         rm "$vm_name".xml
-                        echo "Please shutdown then start the vm for the changes to take effect"
+                        whiptail --title "Success" --msgbox "Please shutdown then start the vm for the changes to take effect" 8 78
                         ;;
 
                     3)
                         # Console into a VM
-                        read -ep "Enter the VM name to console into: " hostname
+                        hostname=$(whiptail --inputbox "Enter the VM name to console into:" 8 78 --title "Console into VM" 3>&1 1>&2 2>&3)
                         virsh console "$hostname"
                         ;;
                         
@@ -823,7 +811,7 @@ while true; do
                         break
                         ;;
                     *)
-                        echo "Invalid choice. Please enter a valid option."
+                        whiptail --title "Error" --msgbox "Invalid choice. Please enter a valid option." 8 78
                         ;;
                 esac
             done
@@ -835,22 +823,24 @@ while true; do
         10)
             # Manage Port forwarding
             while true; do
-                echo -e "\n==================================== VM Monitor ===================================="
-                echo "s. Show all virtual machines  1. VCPU usage of a VM     2. Memory usage of a VM"  
-                echo "3. Disk usage of a VM         4. Network usage of a VM  5. All usage metrics of a VM"
-                echo "q. Back to main menu"
-                echo ""
-                read -ep "Enter your choice: " port_choice
+                port_choice=$(whiptail --title "VM Monitor" --menu "Choose an option" 20 78 6 \
+                "s" "Show all virtual machines" \
+                "1" "VCPU usage of a VM" \
+                "2" "Memory usage of a VM" \
+                "3" "Disk usage of a VM" \
+                "4" "Network usage of a VM" \
+                "5" "All usage metrics of a VM" \
+                "q" "Back to main menu" 3>&1 1>&2 2>&3)
 
                 case $port_choice in
                     s)  
                         # Show all virtual machines
-                        virsh list --all
+                        vms=$(virsh list --all)
+                        whiptail --title "Virtual Machines" --msgbox "$vms" 20 78
                         ;;
 
                     1)
-                        read -ep "Enter the name of the VM: " vm_name
-
+                        vm_name=$(whiptail --inputbox "Enter the name of the VM:" 8 78 --title "VCPU Usage" 3>&1 1>&2 2>&3)
                         vm_check=$(virsh dominfo "$vm_name")
                         if [ ! $? == 0 ];then
                             break
@@ -879,8 +869,7 @@ while true; do
                         done
                         ;;
                     2)
-                        read -ep "Enter the name of the VM: " vm_name
-
+                        vm_name=$(whiptail --inputbox "Enter the name of the VM:" 8 78 --title "Memory Usage" 3>&1 1>&2 2>&3)
                         vm_check=$(virsh dominfo "$vm_name")
                         if [ ! $? == 0 ];then
                             break
@@ -892,13 +881,12 @@ while true; do
                         mem_ava=$(virsh domstats $vm_name | grep "balloon.available" | cut -d= -f2)
                         # Calculate the usage percentage
                         memory_usage=$(echo "scale=2; ($mem_rss / ($mem_rss + $mem_ava)) * 100" | bc)
-                        echo "Memory Usage: $memory_usage%"
+                        whiptail --title "Memory Usage" --msgbox "Memory Usage: $memory_usage%" 8 78
                     ;;
 
                     3)  
                         #Disk usage
-                        read -ep "Enter the name of the VM: " vm_name
-
+                        vm_name=$(whiptail --inputbox "Enter the name of the VM:" 8 78 --title "Disk Usage" 3>&1 1>&2 2>&3)
                         vm_check=$(virsh dominfo "$vm_name")
                         if [ ! $? == 0 ];then
                             break
@@ -911,13 +899,11 @@ while true; do
                         disk_used=$(virsh guestinfo $vm_name | grep fs.0 | grep "used" | cut -d: -f2)
                         # Calculate the percentage value of the used disk space
                         disk_usage=$(echo "scale=2; ($disk_used / $disk_total) * 100" | bc)
-                        echo "Disk Usage: $disk_usage%"
-
+                        whiptail --title "Disk Usage" --msgbox "Disk Usage: $disk_usage%" 8 78
                     ;;
 
                     4)
-                        read -ep "Enter the name of the VM: " vm_name
-
+                        vm_name=$(whiptail --inputbox "Enter the name of the VM:" 8 78 --title "Network Usage" 3>&1 1>&2 2>&3)
                         vm_check=$(virsh dominfo "$vm_name")
                         if [ ! $? == 0 ];then
                             break
@@ -926,15 +912,12 @@ while true; do
                         # Show the virtual interface assigned to the vm and output the usage
                         interface=$(virsh domiflist $vm_name | grep v | awk '{print $1}')
                         ifstat -i $interface 1 1
-
                     ;;
 
                     5)
                         #show all metrics
                         bash bashvm-monitor.sh
-
                     ;;
-
 
                     q)
                         # Back to Main Menu
@@ -942,20 +925,19 @@ while true; do
                         ;;
 
                     *)
-                        echo "Invalid choice. Please enter a valid option."
+                        whiptail --title "Error" --msgbox "Invalid choice. Please enter a valid option." 8 78
                         ;;
                 esac
             done
         ;;
 
-            
         q)
             # Exit the script
-            echo "Exiting."
+            whiptail --title "Exit" --msgbox "Exiting." 8 78
             exit 0
             ;;
         *)
-            echo "Invalid choice. Please enter a valid option."
+            whiptail --title "Error" --msgbox "Invalid choice. Please enter a valid option." 8 78
             ;;
     esac
 done

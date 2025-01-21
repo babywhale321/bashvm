@@ -37,3 +37,19 @@ https://www.paypal.com/paypalme/babywhale123
 
 ### Sponsors:
 Huge thanks to https://metalvps.com for their contribution and support!
+
+### Using the TUI
+
+bashvm now includes a Text User Interface (TUI) using `whiptail`. To use the TUI, follow these steps:
+
+1. Ensure `whiptail` is installed on your system. You can install it using the following command:
+   ```
+   sudo apt-get install whiptail
+   ```
+
+2. Run the main script:
+   ```
+   bash bashvm.sh
+   ```
+
+The TUI will provide a graphical interface for managing your virtual machines.
