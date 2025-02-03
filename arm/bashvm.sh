@@ -23,7 +23,7 @@ while true; do
                     echo " 3. Reboot a VM                4. Shutdown a VM (graceful)      5. Shutdown a VM (force)"     
                     echo " 6. Enable autostart of a VM   7. Disable autostart of a VM     8. Create a new / existing VM"
                     echo " 9. Undefine a VM             10. Create a new VM (Automated)  11. Console into a VM"        
-                    echo "12. Change resources of a VM  13. Delete a Automated VM        14. Clone a VM"
+                    echo "12. Change resources of a VM  13. Delete a VM                  14. Clone a VM"
                     echo "15. Rename a VM                q. Back to main menu"
                     echo ""
                     read -ep "Enter your choice: " vm_manage_choice
@@ -38,7 +38,6 @@ while true; do
                         read -ep "Enter the VM name: " vm_name
                         virsh dominfo "$vm_name"
                         virsh domblkinfo "$vm_name" --all --human
-                        cat /var/log/bashvm/"$vm_name".info.txt 2>/dev/null | tail -n 9
                         ;;
 
                     2)
@@ -99,7 +98,7 @@ while true; do
                     
                     10)
                         # Create a VM (Automated)
-                        bash bashvm-cloudinit.sh
+                        bash bashvm-create-auto-vm.sh
                         ;;
                     
                     11)
@@ -110,161 +109,11 @@ while true; do
 
                     12)
                         # Change resources of a VM
-                        while true; do
-                            echo -e "\n=================================== Manage Resources ==================================="
-                            echo "s. Show resources of a VM             1. Add disk space to a VM     2. Shrink disk space of a VM"
-                            echo "3. Change the number of vcpu in a VM  4. Change the memory of a VM  5. Attach a disk to a VM"
-                            echo "6. Detach a disk from a VM            q. Back to main menu"
-                            echo ""
-                            read -ep "Enter your choice: " manage_choice
-
-                            case $manage_choice in
-                                s)
-                                    # Show resources of a VM
-                                    read -ep "Enter the VM name: " vm_name
-                                    virsh dominfo "$vm_name"
-                                    virsh domfsinfo "$vm_name"
-                                    virsh domblkinfo "$vm_name" --all --human
-                                    ;;
-
-                                1)
-                                    # Add disk space to a VM
-                                    read -ep "Enter the name of the virtual machine: " vm_name
-                                    read -ep "Enter the new disk size (e.g., 40GB): " disk_size
-                                    read -ep "Enter the pool name [default]: " pool_name
-                                    if [ -z "$pool_name" ]; then
-                                        pool_name="default"
-                                    fi
-                                    virsh vol-resize "$vm_name".qcow2 "$disk_size" --pool "$pool_name"
-                                    ;;
-
-                                2)
-                                    # Shrink disk space of a VM
-                                    read -ep "Enter the name of the virtual machine: " vm_name
-                                    read -ep "Enter the new disk size (e.g., 40GB): " disk_size
-                                    read -ep "Enter the pool name [default]: " pool_name
-                                    if [ -z "$pool_name" ]; then
-                                        pool_name="default"
-                                    fi
-                                    virsh vol-resize "$vm_name".qcow2 "$disk_size" --pool "$pool_name" --shrink
-                                    ;;
-
-                                3)
-                                    # Change vcpus
-                                    read -ep "Enter the name of the virtual machine: " vm_name
-                                    read -ep "Enter the new vcpu number (e.g., 4): " vcpu_num
-                                    virsh setvcpus --domain "$vm_name" --count "$vcpu_num" --config --maximum
-                                    if [ ! $? == 0 ];then
-                                    echo "Failed to set new vcpu maximum"
-                                    break
-                                    fi
-
-                                    virsh setvcpus --domain "$vm_name" --count "$vcpu_num" --config      
-                                    if [ ! $? == 0 ];then
-                                    echo "Failed to set new vcpu count"
-                                    break
-                                    fi
-                                    echo "New vcpu count has been set successfully"
-                                    ;;
-
-                                4)
-                                    # Change memory
-                                    read -ep "Enter the name of the virtual machine: " vm_name
-                                    read -ep "Enter the new memory size (e.g., 1GB): " mem_num
-                                    virsh setmaxmem --domain "$vm_name" --size "$mem_num" --current
-                                    if [ ! $? == 0 ];then
-                                    echo "Failed to set new memory maximum"
-                                    break
-                                    fi
-                                    virsh setmem --domain "$vm_name" --size "$mem_num" --current
-                                    if [ ! $? == 0 ];then
-                                    echo "Failed to set new memory size"
-                                    break
-                                    fi
-                                    echo "New memory size has been set successfully"
-                                    ;;
-                                
-                                5) 
-                                    # Attach a disk to a vm
-                                    read -ep "Enter the name of the virtual machine: " vm_name
-                                    read -ep "Enter the new target device: (e.g., vdb): " vm_target
-                                    read -ep "Enter the qcow2 virtual disk name: (e.g., /var/lib/libvirt/images/vm1.qcow2): " vm_qcow2
-                                    virsh attach-disk "$vm_name" "$vm_qcow2" "$vm_target" --current --subdriver qcow2
-                                    ;;
-
-                                6)
-
-                                    # Detach a disk from a vm
-                                    read -ep "Enter the name of the virtual machine: " vm_name
-                                    read -ep "Enter the qcow2 virtual disk name: (e.g., /var/lib/libvirt/images/vm1.qcow2): " vm_qcow2
-                                    virsh detach-disk "$vm_name" "$vm_qcow2" --current
-                                    ;;
-
-                                q)
-                                    # Back to main menu
-                                    break
-                                    ;;
-                                *)
-                                    echo "Invalid choice. Please enter a valid option."
-                                    ;;
-                            esac
-                        done
+                        bash bashvm-change-resources.sh
                         ;;
                     13)
-
-                        echo "Note: this will delete dhcpv4 reservation, snapshots, disks and forwarded ports of a vm."
-                        read -ep "Enter the virtual machine you would like to delete: " vm_name
-                        read -ep "Enter the network name where the vm is attached to [default]: " net_name
-                        if [ -z "$net_name" ]; then
-                            net_name="default"
-                        fi
-                        
-                        vm_state=$(virsh list --all | grep "$vm_name" | awk '{print $3}')
-                        if [ "$vm_state" == "running" ];then
-                            echo "Please shutdown the vm before running this again"
-                            break
-                        fi
-
-                        # Network
-                        echo ""
-                        echo "Removing DHCP reservation..."
-                        vm_mac=$(virsh net-dumpxml "$net_name" | grep "$vm_name" | head -n 1 | awk '{print $2}' | cut -d"'" -f2)
-                        vm_ip=$(virsh net-dumpxml "$net_name" | grep "$vm_name" | head -n 1 | awk '{print $4}' | cut -d"'" -f2)
-                        virsh net-update "$net_name" delete ip-dhcp-host "<host mac='$vm_mac' name='$vm_name' ip='$vm_ip' />" --live --config
-                        if [ ! $? == 0 ]; then
-                        echo "Failed to remove DHCP reservation."
-                        break
-                        fi
-
-                        echo "$vm_ip" >> /var/log/bashvm/unused_ip.log
-                        sed -i '/'"$vm_ip"'/d' /var/log/bashvm/used_ip.log
-
-                        # Disk
-                        echo ""
-                        echo "Removing Disk..."
-                        virsh undefine --nvram "$vm_name" --remove-all-storage --snapshots-metadata
-                        if [ ! $? == 0 ]; then
-                        echo "Failed to remove disk."
-                        break
-                        fi
-
-                        # Ports
-                        echo "Removing Ports..."
-
-                        # Port log entry removal
-                        unused_port=$(cat /var/log/bashvm/"$vm_name".info.txt | grep Ports | tail -n 1 | awk '{print $4}')
-                        unused_port=$(($unused_port + 2))
-                        sed -i '/'$unused_port'/d' /var/log/bashvm/used_ports.log
-                        echo "$unused_port" >> /var/log/bashvm/unused_ports.log
-                        
-                        # Sort then rename
-                        sort -n "/var/log/bashvm/used_ports.log" > "/var/log/bashvm/used_ports.log.sort"
-                        mv "/var/log/bashvm/used_ports.log.sort" "/var/log/bashvm/used_ports.log"
-
-                        # Port forwarding removal
-                        sed -i "/#$vm_name#/,/###$vm_name###/d" /etc/libvirt/hooks/qemu
-                        echo ""
-                        echo "$vm_name has been deleted"
+                        # Delete a VM
+                        bash bashvm-delete-vm.sh
                         ;;
 
                     14)
@@ -355,8 +204,18 @@ while true; do
                     5)
                         # Delete a storage pool
                         read -ep "Enter the name of the storage pool to delete: " delete_pool_name
-                        virsh pool-destroy "$delete_pool_name"
-                        virsh pool-delete "$delete_pool_name"
+
+                        virsh pool-info "$delete_pool_name" >> /dev/null
+                        if [ $? == 0 ]; then
+                            virsh pool-destroy "$delete_pool_name"
+                        else
+                            break
+                        fi
+
+                        virsh pool-undefine "$delete_pool_name"
+                        if [ ! $? == 0 ]; then
+                            break
+                        fi
                         ;;
 
                     6)
@@ -522,9 +381,9 @@ while true; do
                         read -ep "Enter the network name [default]: " vm_net
 
                         if [ -z "$vm_net" ]; then
-                        vm_net="default"
+                            vm_net="default"
                         fi
-
+                        
                         echo "Setting DHCP reservation..."
 
                         virsh net-update "$vm_net" add ip-dhcp-host "<host mac='$vm_mac' name='$vm_name' ip='$vm_ip' />" --live --config
@@ -542,7 +401,7 @@ while true; do
                         read -ep "Enter the network name [default]: " net_name
 
                         if [ -z "$net_name" ]; then
-                        net_name="default"
+                            net_name="default"
                         fi
 
                         echo "Removing DHCP reservation..."                        
@@ -623,28 +482,50 @@ while true; do
                     s)
                         # List all snapshots of a virtual machine
                         read -ep "Enter the name of the virtual machine: " vm_name
+
                         virsh snapshot-list "$vm_name"
                         ;;
                     1)
                         # Create a snapshot of a virtual machine
                         read -ep "Enter the name of the virtual machine: " vm_name
+                        
+                        virsh snapshot-list "$vm_name"
+                        if [ ! $? == 0 ]; then
+                            break
+                        fi
+
                         read -ep "Enter the name for the new snapshot: " snapshot_name
+                        
                         virsh snapshot-create-as "$vm_name" "$snapshot_name"
                         ;;
                     2)
                         # Delete a snapshot of a virtual machine
                         read -ep "Enter the name of the virtual machine: " vm_name
+
+                        virsh snapshot-list "$vm_name"
+                        if [ ! $? == 0 ]; then
+                            break
+                        fi
+
                         read -ep "Enter the name of the snapshot to delete: " snapshot_name
+                        
                         virsh snapshot-delete "$vm_name" "$snapshot_name"
                         ;;
                     3)
                         # Revert to a snapshot of a virtual machine
                         read -ep "Enter the name of the virtual machine: " vm_name
+
+                        virsh snapshot-list "$vm_name"
+                        if [ ! $? == 0 ]; then
+                            break
+                        fi
+                        
                         read -ep "Enter the name of the snapshot to revert to: " snapshot_name
+                        
                         virsh snapshot-revert "$vm_name" "$snapshot_name"
                         if [ ! $? == 0 ]; then
-                        echo "Failed to revert snapshot ""$snapshot_name"""
-                        break
+                            echo "Failed to revert snapshot ""$snapshot_name"""
+                            break
                         fi
                         ;;
                     q)
@@ -795,6 +676,8 @@ while true; do
                     s)  
                         # Show port forwarding ruless
                         iptables -t nat -L -n -v
+                        echo ""
+                        bash bashvm-show-port-forwarding.sh
                         ;;
 
                     1)
@@ -809,24 +692,13 @@ while true; do
 
                     2)
                         # Add port forwarding rules to a VM behind a NAT
-                        bash bashvm-port-forwarding.sh
+                        bash bashvm-add-port-forwarding.sh
                         ;;
 
 
                     3)
                         # Delete port forwarding rules of vm
-                        read -ep "Enter the VM name: " vm_name
-                        
-                        # If the variable is empty then don't continue
-                        if [ -z "$vm_name" ]; then
-                            echo "Invalid response. Please enter a VM name."
-                            break
-                        fi
-                        
-                        # Port forwarding removal
-                        sed -i "/#$vm_name#/,/###$vm_name###/d" /etc/libvirt/hooks/qemu
-                        echo ""
-                        echo "Port forwarding rules for $vm_name has been deleted."
+                        bash bashvm-remove-port-forwarding.sh
                         ;;
 
                     4)
@@ -899,10 +771,7 @@ while true; do
                                 </devices>
                                 </domain>"
 
-                        # Remove console tag and everything below it then add into a xml file        
                         virsh dumpxml "$vm_name" | sed -n '/console/q;p' > "$vm_name".xml
-
-                        # Append xml text into the xml file
                         echo "$add_vnc" >> "$vm_name".xml
                         virsh define "$vm_name".xml
                         rm "$vm_name".xml
@@ -939,10 +808,7 @@ while true; do
                                 </devices>
                                 </domain>"
 
-                        # Remove console tag and everything below it then add into a xml file        
                         virsh dumpxml "$vm_name" | sed -n '/console/q;p' > "$vm_name".xml
-
-                        # Append xml text into the xml file
                         echo "$remove_vnc" >> "$vm_name".xml
                         virsh define "$vm_name".xml
                         rm "$vm_name".xml
@@ -986,37 +852,47 @@ while true; do
                         ;;
 
                     1)
-                        read -ep "Enter the name of the VM: " domain
+                        read -ep "Enter the name of the VM: " vm_name
+
+                        vm_check=$(virsh dominfo "$vm_name")
+                        if [ ! $? == 0 ];then
+                            break
+                        fi
+
                         # Setting the vcpu core count
-                        cpu_count=$(virsh dominfo $domain | grep "CPU(s)" | awk '{print $2}')
+                        cpu_count=$(virsh dominfo $vm_name | grep "CPU(s)" | awk '{print $2}')
                         # Counting starts at 0 so take away 1
                         cpu_count=$(( $cpu_count - 1 ))
 
                         # Loop through each core to output the usage
                         for ((i = 0; i <= $cpu_count; i++)); do
                             # Begin init time of vcpu
-                            cpu_time_1=$(virsh domstats $domain | grep "vcpu.$i.time" | cut -d= -f2)
+                            cpu_time_1=$(virsh domstats $vm_name | grep "vcpu.$i.time" | cut -d= -f2)
                             # Sleep
                             sleep 1
                             # End of init time of vcpu
-                            cpu_time_2=$(virsh domstats $domain | grep "vcpu.$i.time" | cut -d= -f2)
+                            cpu_time_2=$(virsh domstats $vm_name | grep "vcpu.$i.time" | cut -d= -f2)
                             # Delta is to be equal of time between recordings
                             delta_t=1
-                            # convert delta_t to nanoseconds
-                            delta_t_ns=$(echo "$delta_t * 1000000000" | bc)
-                            # Calculate the scaling factor
-                            scaling_factor=$(echo "scale=10; 100 / $delta_t_ns" | bc)
-                            # Calculate the individual core usage
-                            cpu_usage=$(echo "scale=2; (($cpu_time_2 - $cpu_time_1) * $scaling_factor)" | bc)
-                            echo "CPU $i Usage: $cpu_usage%"
+                            # Calculate the difference in CPU time (nanoseconds)
+                            delta_cpu_time=$((cpu_time_2 - cpu_time_1))
+                            # Normalize CPU usage as a percentage of total time available
+                            cpu_usage=$(echo "scale=2; ($delta_cpu_time / ($delta_t * 1000000000)) * 100" | bc)
+                            printf "CPU %d Usage: %.2f%%\n" "$i" "$cpu_usage"
                         done
                         ;;
                     2)
-                        read -ep "Enter the name of the VM: " domain
+                        read -ep "Enter the name of the VM: " vm_name
+
+                        vm_check=$(virsh dominfo "$vm_name")
+                        if [ ! $? == 0 ];then
+                            break
+                        fi
+
                         # Set the memory reported by the guest as being actively used
-                        mem_rss=$(virsh domstats $domain | grep "balloon.rss" | cut -d= -f2)
+                        mem_rss=$(virsh domstats $vm_name | grep "balloon.rss" | cut -d= -f2)
                         # Set the memory reported by the guest as being available
-                        mem_ava=$(virsh domstats $domain | grep "balloon.available" | cut -d= -f2)
+                        mem_ava=$(virsh domstats $vm_name | grep "balloon.available" | cut -d= -f2)
                         # Calculate the usage percentage
                         memory_usage=$(echo "scale=2; ($mem_rss / ($mem_rss + $mem_ava)) * 100" | bc)
                         echo "Memory Usage: $memory_usage%"
@@ -1024,12 +900,18 @@ while true; do
 
                     3)  
                         #Disk usage
-                        read -ep "Enter the name of the VM: " domain
-                        disk=$(virsh domblklist $domain | grep v | awk '{print $1}')
+                        read -ep "Enter the name of the VM: " vm_name
+
+                        vm_check=$(virsh dominfo "$vm_name")
+                        if [ ! $? == 0 ];then
+                            break
+                        fi
+
+                        disk=$(virsh domblklist $vm_name | grep v | awk '{print $1}')
                         # Set the total allocated disk space
-                        disk_total=$(virsh guestinfo $domain | grep fs.0 | grep "total" | cut -d: -f2)
+                        disk_total=$(virsh guestinfo $vm_name | grep fs.0 | grep "total" | cut -d: -f2)
                         # Set the used disk space
-                        disk_used=$(virsh guestinfo $domain | grep fs.0 | grep "used" | cut -d: -f2)
+                        disk_used=$(virsh guestinfo $vm_name | grep fs.0 | grep "used" | cut -d: -f2)
                         # Calculate the percentage value of the used disk space
                         disk_usage=$(echo "scale=2; ($disk_used / $disk_total) * 100" | bc)
                         echo "Disk Usage: $disk_usage%"
@@ -1037,9 +919,15 @@ while true; do
                     ;;
 
                     4)
-                        read -ep "Enter the name of the VM: " domain
+                        read -ep "Enter the name of the VM: " vm_name
+
+                        vm_check=$(virsh dominfo "$vm_name")
+                        if [ ! $? == 0 ];then
+                            break
+                        fi
+
                         # Show the virtual interface assigned to the vm and output the usage
-                        interface=$(virsh domiflist $domain | grep v | awk '{print $1}')
+                        interface=$(virsh domiflist $vm_name | grep v | awk '{print $1}')
                         ifstat -i $interface 1 1
 
                     ;;
