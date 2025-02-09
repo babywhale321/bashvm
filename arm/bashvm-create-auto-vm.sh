@@ -95,7 +95,7 @@ fi
 
 
 # Deploy the new VM
-virt-install --name "$vm_name" --memory "$vm_memory" --vcpus "$vm_vcpus" --disk=size="$vm_disk",backing_store=/var/lib/libvirt/images/$qcow2_image --cloud-init user-data=/var/lib/libvirt/images/bashvm-cloudinit.yaml,disable=on --network bridge=virbr0 --osinfo=$os_info --noautoconsole
+virt-install --name "$vm_name" --memory "$vm_memory" --vcpus "$vm_vcpus" --disk=size="$vm_disk",backing_store=/var/lib/libvirt/images/$qcow2_image --cloud-init user-data=/var/lib/libvirt/images/bashvm-cloudinit.yaml,disable=on --network bridge=virbr0 --osinfo=$os_info --boot uefi=off --noautoconsole
 
 if [ ! $? == 0 ]; then
 echo "Please see the errors above for possible solutions"
