@@ -37,12 +37,15 @@ read -ep "Enter the number of virtual CPUs (e.g., 2): " new_vcpus
 
 echo ""
 echo "1. debian-12.5         2. ubuntu-22.04  3. AlmaLinux-9.4"
-echo "4. openmediavault_7.0  5. TrueNas-13.0  "
+echo "4. openmediavault_7.0  5. TrueNas-13.0  6. Windows based OS"
 echo ""
 
 echo "Enter the iso you would like to use"
 read -ep "You can safely say no if you have your own or not using an iso: " iso_question
 
+target_bus="<target dev='vda' bus='virtio'/>
+<address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x0'/>"
+model_type="virtio"
 
 if [ "$iso_question" == 1 ];then
     iso_img="debian-12.5.0-amd64-netinst.iso"
@@ -68,6 +71,14 @@ elif [ "$iso_question" == 5 ];then
     iso_img="TrueNAS-13.0-U6.1.iso"
     iso_download="https://download-core.sys.truenas.net/13.0/STABLE/U6.1/x64/TrueNAS-13.0-U6.1.iso"
     pool_image_download
+
+elif [ "$iso_question" == 6 ];then
+    # full iso path needed
+    echo "Enter the full path to the ISO file (e.g., /var/lib/libvirt/images/windows-11.iso)"
+    echo "Note: If you dont want to add an ISO then you can just ignore this option and press enter" 
+    read -ep ": " iso_path  
+    target_bus="<target dev='sdb' bus='sata'/>"
+    model_type="e1000"
 
 else
     # full iso path needed
@@ -153,7 +164,7 @@ vm_xml="<domain type='kvm'>
     <disk type='file' device='disk'>
     <driver name='qemu' type='qcow2' cache='none' io='native'/>
     <source file='$disk_path'/>
-    <target dev='sdb' bus='sata'/>
+    '$target_bus'
     </disk>
     <disk type='file' device='cdrom'>
     <driver name='qemu' type='raw'/>
@@ -210,7 +221,7 @@ vm_xml="<domain type='kvm'>
     <interface type='network'>
     <mac address='$mac_address'/>
     <source network='$network_name'/>
-    <model type='e1000'/>
+    <model type='$model_type'/>
     <address type='pci' domain='0x0000' bus='0x01' slot='0x00' function='0x0'/>
     </interface>
     <serial type='pty'>
