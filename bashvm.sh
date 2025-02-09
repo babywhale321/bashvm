@@ -368,9 +368,7 @@ while true; do
 
                     6)
                         # Delete a network
-                        read -ep "Enter the name of the network to delete: " delete_network_name
-                        virsh net-destroy "$delete_network_name"
-                        virsh net-undefine "$delete_network_name"
+                        bash bashvm-delete-network.sh
                         ;;
 
                     7)
