@@ -69,7 +69,7 @@ read -ep "Would you like to create a new volume? (y/n): " disk_question
 
 # Convert to lowercase
 lowercase_input=$(echo "$disk_question" | tr '[:upper:]' '[:lower:]')
-if [[ "$lowercase_input" == y || "$lowercase_input" == yes ]];then
+if [[ "$lowercase_input" == y || "$lowercase_input" == ye || "$lowercase_input" == yes ]];then
 
     # disk name, capacity and pool
     read -ep "Enter the name of the new storage volume (e.g., new-vm): " volume_name
