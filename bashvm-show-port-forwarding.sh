@@ -9,7 +9,7 @@ tables=$(sqlite3 "$db_file" "SELECT name FROM sqlite_master WHERE type='table';"
 # Iterate over each table and select all data
 for table in $tables; do
     echo "table: $table"
-    # Fetch and format table data with dynamic column spacing
-    sqlite3 -header -csv "$db_file" "SELECT * FROM $table;" | column -s, -t
+    # Format table data
+    sqlite3 -header "$db_file" ".mode column" "SELECT * FROM $table;"
     echo ""
 done
