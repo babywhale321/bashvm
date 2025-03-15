@@ -13,6 +13,7 @@ read -ep "Enter the password for the new VM (e.g., password): " user_pass
 echo "1 = debian12"
 echo "2 = ubuntu22.04"
 echo "3 = almalinux9"
+echo "4 = opensuse15.6"
 read -ep "Enter the OS you would like (e.g., 1): " qcow2_question
 
 if [ "$qcow2_question" == 1 ];then
@@ -29,6 +30,12 @@ elif [ "$qcow2_question" == 3 ];then
     qcow2_image="AlmaLinux-9-GenericCloud-latest.x86_64.qcow2"
     qcow2_download="https://repo.almalinux.org/almalinux/9/cloud/x86_64/images/AlmaLinux-9-GenericCloud-latest.x86_64.qcow2"
     os_info="almalinux9"
+
+elif [ "$qcow2_question" == 4 ];then
+    qcow2_image="openSUSE-Leap-15.6.x86_64-NoCloud.qcow2"
+    qcow2_download="https://download.opensuse.org/repositories/Cloud:/Images:/Leap_15.6/images/openSUSE-Leap-15.6.x86_64-NoCloud.qcow2"
+    os_info="opensuse15.4"
+
 else
     echo "Error: Please select a valid response."
     exit
