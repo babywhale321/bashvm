@@ -99,10 +99,11 @@ INSERT INTO $net_table (vm_name, ipv4, ssh_port, start_port, end_port)
 VALUES ("$vm_name", "$ipv4", "$ssh_port", "$start_port", "$end_port");
 EOF
 
-shebang=$(cat /etc/libvirt/hooks/qemu | grep '#!/bin/bash')
+shebang=$(cat /etc/libvirt/hooks/qemu 2>/dev/null | grep '#!/bin/bash')
 
 if [ -z "$shebang" ]; then
     echo "#!/bin/bash" >> /etc/libvirt/hooks/qemu
+    chmod +x /etc/libvirt/hooks/qemu
 fi
 
 # Identifier for deleting if needed
