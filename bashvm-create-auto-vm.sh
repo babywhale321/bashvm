@@ -98,10 +98,11 @@ virsh net-start default
 virsh net-autostart default
 fi
 
-shebang=$(cat /etc/libvirt/hooks/qemu | grep '#!/bin/bash')
+shebang=$(cat /etc/libvirt/hooks/qemu 2>/dev/null | grep '#!/bin/bash')
 
 if [ -z "$shebang" ]; then
     echo "#!/bin/bash" >> /etc/libvirt/hooks/qemu
+    chmod +x /etc/libvirt/hooks/qemu
 fi
 
 # Deploy the new VM
