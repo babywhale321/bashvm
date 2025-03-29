@@ -69,6 +69,15 @@ initialize_db() {
 # Initialize database
 initialize_db
 
+# Check if the vm name exists in the database
+vm_exists=$(sqlite3 "$db_file" "SELECT EXISTS(SELECT 1 FROM "$net_table" WHERE vm_name='$vm_name');")
+
+# Verify the result
+if [[ "$vm_exists" -eq 1 ]]; then
+    echo "The vm name '$vm_name' already exists in the database."
+    exit 1
+fi
+
 # Check if ipv4 exists in the database
 exists=$(sqlite3 "$db_file" "SELECT EXISTS(SELECT 1 FROM "$net_table" WHERE ipv4='$ipv4');")
 
