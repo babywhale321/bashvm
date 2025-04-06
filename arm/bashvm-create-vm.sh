@@ -54,6 +54,13 @@ elif [ "$iso_question" == 2 ];then
     pool_image_download
 
 else
+    
+    read -ep "Enter the storage pool name that has the ISO image [default]: " pool_name
+    if [ -z "$pool_name" ]; then
+        pool_name="default"
+    fi
+    # List everything in pool
+    virsh vol-list --pool "$pool_name"
     # full iso path needed
     echo "Enter the full path to the ISO file (e.g., /var/lib/libvirt/images/debian-12.6.0-arm64-netinst.iso)"
     echo "Note: If you dont want to add an ISO then you can just ignore this option and press enter" 
@@ -82,6 +89,13 @@ if [[ "$lowercase_input" == y || "$lowercase_input" == ye || "$lowercase_input" 
     virsh vol-create-as --pool "$pool_name" --name "$volume_name.qcow2" --capacity "$volume_capacity" --format qcow2
     disk_path=$(virsh vol-path --pool "$pool_name" --vol "$volume_name.qcow2")
 else
+
+    read -ep "Enter the storage pool name that has the disk volume [default]: " pool_name
+    if [ -z "$pool_name" ]; then
+        pool_name="default"
+    fi
+    # List everything in pool
+    virsh vol-list --pool "$pool_name"
     # full disk path needed
     read -ep "Enter the full path of the virtual machine disk (e.g., /var/lib/libvirt/images/vm.qcow2): " disk_path
 fi
