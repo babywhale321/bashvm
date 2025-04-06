@@ -37,11 +37,11 @@ read -ep "Enter the number of virtual CPUs (e.g., 2): " new_vcpus
 
 echo ""
 echo "1. debian-12.5         2. ubuntu-22.04  3. AlmaLinux-9.4"
-echo "4. openmediavault_7.0  5. TrueNas-13.0  6. Windows based OS"
+echo "4. openmediavault_7.0  5. TrueNas-13.0"
 echo ""
 
 echo "Enter the iso you would like to use"
-read -ep "You can safely say no if you have your own or not using an iso: " iso_question
+read -ep "You can enter nothing if you have your own iso or not using an iso: " iso_question
 
 target_bus="<target dev='vda' bus='virtio'/>
 <address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x0'/>"
@@ -72,27 +72,33 @@ elif [ "$iso_question" == 5 ];then
     iso_download="https://download-core.sys.truenas.net/13.0/STABLE/U6.1/x64/TrueNAS-13.0-U6.1.iso"
     pool_image_download
 
-elif [ "$iso_question" == 6 ];then
-    # full iso path needed
-    echo "Enter the full path to the ISO file (e.g., /var/lib/libvirt/images/windows-11.iso)"
-    echo "Note: If you dont want to add an ISO then you can just ignore this option and press enter" 
-    read -ep ": " iso_path  
-    target_bus="<target dev='sdb' bus='sata'/>"
-    model_type="e1000"
-
 else
+
+    read -ep "Will this be a windows based OS? (y/n): " os_win
+    # Convert to lowercase
+    lowercase_input=$(echo "$os_win" | tr '[:upper:]' '[:lower:]')
+    if [[ "$lowercase_input" == y || "$lowercase_input" == ye || "$lowercase_input" == yes ]];then
+        target_bus="<target dev='sdb' bus='sata'/>"
+        model_type="e1000"
+    fi
+
+    read -ep "Enter the storage pool name that has the ISO image [default]: " pool_name
+    if [ -z "$pool_name" ]; then
+        pool_name="default"
+    fi
+    
+    # List everything in pool
+    virsh vol-list --pool "$pool_name"
+
     # full iso path needed
     echo "Enter the full path to the ISO file (e.g., /var/lib/libvirt/images/debian-12.5.0-amd64-netinst.iso)"
     echo "Note: If you dont want to add an ISO then you can just ignore this option and press enter" 
     read -ep ": " iso_path
-fi
-    
 
+fi
 
 # DISK CREATION #
-
-
-read -ep "Would you like to create a new volume? (y/n): " disk_question
+read -ep "Would you like to create a new disk volume? (y/n): " disk_question
 
 # Convert to lowercase
 lowercase_input=$(echo "$disk_question" | tr '[:upper:]' '[:lower:]')
@@ -109,9 +115,17 @@ if [[ "$lowercase_input" == y || "$lowercase_input" == ye || "$lowercase_input" 
     virsh vol-create-as --pool "$pool_name" --name "$volume_name.qcow2" --capacity "$volume_capacity" --format qcow2
     disk_path=$(virsh vol-path --pool "$pool_name" --vol "$volume_name.qcow2")
 else
+    
+    read -ep "Enter the storage pool name that has the disk volume [default]: " pool_name
+    if [ -z "$pool_name" ]; then
+        pool_name="default"
+    fi
+    # List everything in pool
+    virsh vol-list --pool "$pool_name"
     # full disk path needed
     read -ep "Enter the full path of the virtual machine disk (e.g., /var/lib/libvirt/images/vm.qcow2): " disk_path
 fi
+
 # Network select
 read -ep "Enter the network name to connect the virtual machine to [default]: " network_name
 if [ -z "$network_name" ]; then
