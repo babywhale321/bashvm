@@ -182,7 +182,7 @@ EOF
 # Main menu
 while true; do
     echo ""
-    echo "VM Port Configuration Manager"
+    echo "SQLite Editor Menu"
     echo "s. View all entries"
     echo "1. Add new VM entry"
     echo "2. Delete VM entry"
