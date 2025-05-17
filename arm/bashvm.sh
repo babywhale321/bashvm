@@ -10,7 +10,7 @@ while true; do
     echo " 1. Virtual Machines  2. Storage Pools         3. Networks"
     echo " 4. Snapshots         5. Edit Properties       6. Firewall Settings"
     echo " 7. Port Forwarding   8. VNC / Console Access  9. System Monitor"   
-    echo "10. VM Monitor        q. Exit"
+    echo "10. VM Monitor       11. SQLite Editor         q. Exit"
     echo ""
     # Prompt user for input
     read -ep "Enter your choice: " main_choice
@@ -949,7 +949,10 @@ while true; do
             done
         ;;
 
-            
+        11)
+            # sqlite editor
+            bash bashvm-sqlite-editor.sh
+            ;;
         q)
             # Exit the script
             echo "Exiting."
