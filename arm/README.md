@@ -10,7 +10,7 @@ bashvm is a console based virtual machine manager
 
 `git clone https://github.com/babywhale321/bashvm.git`
 
-`cd bashvm/`
+`cd bashvm/arm/`
 
 `bash bashvm-installer.sh`
 
@@ -26,6 +26,12 @@ bashvm is a console based virtual machine manager
 - Raspberry Pi OS Lite (64-bit)
 - Ubuntu Server 22.04.5 LTS (64-bit)
 
+
+### bashvm-installer.sh
+The bashvm installer script installs the following packages
+
+- qemu-kvm, libvirt-daemon-system, libvirt-clients, virt-manager, qemu-utils, cloud-init, bridge-utils, net-tools, ufw, ifstat, ndppd, dnsmasq, btop, bc, sqlite3
+    
 ### Screenshots
 https://bashvm.com/screenshots.html
 
