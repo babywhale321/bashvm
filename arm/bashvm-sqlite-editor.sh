@@ -188,7 +188,7 @@ while true; do
     echo "2. Delete VM entry"
     echo "3. Update VM entry"
     echo "q. Exit"
-    read -p "Enter your choice [1-5]: " choice
+    read -p "Enter your choice: " choice
 
     case $choice in
         s) view_vms ;;
