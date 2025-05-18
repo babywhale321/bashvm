@@ -118,10 +118,8 @@ update_vm() {
     fi
 
     echo "Select field to update:"
-    echo "1. IPv4 Address"
-    echo "2. SSH Port"
-    echo "3. Start Port"
-    echo "4. End Port"
+    echo "1. IPv4 Address  2. SSH Port"
+    echo "3. Start Port    4. End Port"
     read -ep "Enter choice [1-4]: " field
 
     case $field in
@@ -167,8 +165,8 @@ update_vm() {
 
 # View all entries with formatting
 view_vms() {
-    echo "Current VM Configurations:"
-    echo "------------------------------------------------------------"
+    echo ""
+    echo "========================== "$table_name" =========================="
     sqlite3 -column -header "$db_name" <<EOF
 SELECT vm_name as 'VM Name',
        ipv4 as 'IPv4 Address',
@@ -178,7 +176,6 @@ SELECT vm_name as 'VM Name',
 FROM $table_name
 ORDER BY vm_name;
 EOF
-    echo "------------------------------------------------------------"
 }
 
 # Delete current table
@@ -204,13 +201,10 @@ delete_table() {
 # Main menu
 while true; do
     echo ""
-    echo "SQLite Editor Menu"
-    echo "s. View all entries"
-    echo "1. Add new VM entry"
-    echo "2. Delete VM entry"
-    echo "3. Update VM entry"
-    echo "4. Delete current table"
-    echo "q. Exit"
+    echo "============================ SQLite Editor Menu ============================"
+    echo "s. View all entries  1. Add new VM entry      2. Delete VM entry"
+    echo "3. Update VM entry   4. Delete current table  q. Exit"
+    echo ""
     read -ep "Enter your choice: " choice
 
     case $choice in
