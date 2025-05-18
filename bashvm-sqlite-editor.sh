@@ -12,11 +12,13 @@ while true; do
     if [ -z "$net_name" ]; then
         net_name="default"
     fi
+
     net_list=$(virsh net-list --all | grep "$net_name" | awk '{print $1}')
     if [ -z "$net_list" ]; then
         echo "Please enter a valid network, The network "$net_name" was not found."
         continue
     fi
+    
     table_name=""$net_name"_table"
     break
 done
@@ -179,6 +181,26 @@ EOF
     echo "------------------------------------------------------------"
 }
 
+# Delete current table
+delete_table() {
+    exists=$(sqlite3 "$db_name" "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='$table_name';")
+    if [ "$exists" -eq 0 ]; then
+        echo "Table $table_name does not exist."
+        return
+    fi
+
+    read -p "Are you sure you want to delete the entire table $table_name? This cannot be undone! (y/n): " confirm
+    lowercase_input=$(echo "$confirm" | tr '[:upper:]' '[:lower:]')
+    if [[ "$lowercase_input" == y || "$lowercase_input" == ye || "$lowercase_input" == yes ]];then
+        sqlite3 "$db_name" "DROP TABLE $table_name;"
+        echo "Table $table_name deleted successfully."
+        exit
+    else
+        echo "Deletion cancelled."
+        return
+    fi
+}
+
 # Main menu
 while true; do
     echo ""
@@ -187,6 +209,7 @@ while true; do
     echo "1. Add new VM entry"
     echo "2. Delete VM entry"
     echo "3. Update VM entry"
+    echo "4. Delete current table"
     echo "q. Exit"
     read -p "Enter your choice: " choice
 
@@ -195,6 +218,7 @@ while true; do
         1) add_vm ;;
         2) delete_vm ;;
         3) update_vm ;;
+        4) delete_table ;;
         q) exit ;;
         *) echo "Invalid option. Please try again." ;;
     esac
