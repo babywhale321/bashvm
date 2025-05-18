@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+#bashvm.com
+#
+#Author: Kyle Schroeder "BabyWhale"
 
 # Configurable Database Variables
 db_file="bashvm.db" # SQLite database file
