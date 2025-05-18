@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+#bashvm.com
+#
+#Author: Kyle Schroeder "BabyWhale"
 
 # Manage Resources of a VM
 while true; do

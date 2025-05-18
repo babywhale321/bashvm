@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+#bashvm.com
+#
+#Author: Kyle Schroeder "BabyWhale"
 
 # Prompt user for VM details
 read -ep "Enter the VM name: " vm_name

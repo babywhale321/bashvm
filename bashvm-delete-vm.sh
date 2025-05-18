@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+#bashvm.com
+#
+#Author: Kyle Schroeder "BabyWhale"
 
 # Note: This script deletes DHCP reservations, snapshots, disks, and forwarded ports for a VM.
 
