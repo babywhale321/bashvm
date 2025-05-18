@@ -8,7 +8,7 @@ db_name="bashvm.db"
 
 # What network to use with validation
 while true; do
-    read -p "Enter the network name to edit [default]: " net_name
+    read -ep "Enter the network name to edit [default]: " net_name
     if [ -z "$net_name" ]; then
         net_name="default"
     fi
@@ -57,7 +57,7 @@ validate_integer() {
 add_vm() {
     echo "Adding new VM entry:"
     while true; do
-        read -p "VM Name: " vm_name
+        read -ep "VM Name: " vm_name
         if [ -z "$vm_name" ]; then
             echo "VM Name cannot be empty!"
             continue
@@ -66,7 +66,7 @@ add_vm() {
     done
 
     while true; do
-        read -p "IPv4 Address: " ipv4
+        read -ep "IPv4 Address: " ipv4
         if [ -z "$ipv4" ]; then
             echo "IPv4 cannot be null!"
             continue
@@ -74,13 +74,13 @@ add_vm() {
         validate_ipv4 "$ipv4" && break
     done
 
-    read -p "SSH Port (press Enter for NULL): " ssh_port
+    read -ep "SSH Port (press Enter for NULL): " ssh_port
     validate_integer "$ssh_port" || return
 
-    read -p "Start Port (press Enter for NULL): " start_port
+    read -ep "Start Port (press Enter for NULL): " start_port
     validate_integer "$start_port" || return
 
-    read -p "End Port (press Enter for NULL): " end_port
+    read -ep "End Port (press Enter for NULL): " end_port
     validate_integer "$end_port" || return
 
     sqlite3 "$db_name" <<EOF
@@ -97,7 +97,7 @@ EOF
 
 # Delete VM with existence check
 delete_vm() {
-    read -p "Enter VM Name to delete: " vm_name
+    read -ep "Enter VM Name to delete: " vm_name
     exists=$(sqlite3 "$db_name" "SELECT COUNT(*) FROM $table_name WHERE vm_name='$vm_name';")
     if [ "$exists" -eq 0 ]; then
         echo "VM $vm_name does not exist!"
@@ -110,7 +110,7 @@ delete_vm() {
 # Update VM with validation
 update_vm() {
     echo "Update VM entry:"
-    read -p "Enter VM Name to update: " vm_name
+    read -ep "Enter VM Name to update: " vm_name
     exists=$(sqlite3 "$db_name" "SELECT COUNT(*) FROM $table_name WHERE vm_name='$vm_name';")
     if [ "$exists" -eq 0 ]; then
         echo "VM $vm_name does not exist!"
@@ -122,13 +122,13 @@ update_vm() {
     echo "2. SSH Port"
     echo "3. Start Port"
     echo "4. End Port"
-    read -p "Enter choice [1-4]: " field
+    read -ep "Enter choice [1-4]: " field
 
     case $field in
         1)
             column="ipv4"
             while true; do
-                read -p "Enter new IPv4 address: " new_value
+                read -ep "Enter new IPv4 address: " new_value
                 if [ -z "$new_value" ]; then
                     echo "Error: IPv4 cannot be null!"
                     continue
@@ -145,7 +145,7 @@ update_vm() {
             esac
             
             while true; do
-                read -p "Enter new value for $column (press Enter for NULL): " new_value
+                read -ep "Enter new value for $column (press Enter for NULL): " new_value
                 validate_integer "$new_value" && break
             done
             
@@ -189,7 +189,7 @@ delete_table() {
         return
     fi
 
-    read -p "Are you sure you want to delete the entire table $table_name? This cannot be undone! (y/n): " confirm
+    read -ep "Are you sure you want to delete the entire table $table_name? This cannot be undone! (y/n): " confirm
     lowercase_input=$(echo "$confirm" | tr '[:upper:]' '[:lower:]')
     if [[ "$lowercase_input" == y || "$lowercase_input" == ye || "$lowercase_input" == yes ]];then
         sqlite3 "$db_name" "DROP TABLE $table_name;"
@@ -211,7 +211,7 @@ while true; do
     echo "3. Update VM entry"
     echo "4. Delete current table"
     echo "q. Exit"
-    read -p "Enter your choice: " choice
+    read -ep "Enter your choice: " choice
 
     case $choice in
         s) view_vms ;;
