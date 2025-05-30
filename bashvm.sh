@@ -730,9 +730,18 @@ while true; do
                     s)
                         # Show assigned VNC ports
                         echo ""
-                        for vm in $(virsh list --name); do
-                            port=$(virsh vncdisplay $vm 2>/dev/null | sed 's/^://')
-                            [ -n "$port" ] && echo "VM: $vm, VNC Port: $((5900 + port))"
+                        for vm in $(virsh list --all --name); do
+                            vm_run=$(virsh domstate "$vm")
+                            if [ "$vm_run" != "running" ]; then
+                                echo "$vm is not running (state: $vm_run)"
+                            else
+                                port=$(virsh vncdisplay "$vm" 2>/dev/null | sed 's/^://')
+                                if [ -z "$port" ]; then
+                                    echo "VM: $vm, VNC Port: none"
+                                else
+                                    echo "VM: $vm, VNC Port: $((5900 + port))"
+                                fi
+                            fi
                             echo ""
                         done
                         ;;
