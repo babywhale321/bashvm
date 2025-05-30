@@ -720,16 +720,21 @@ while true; do
             # VNC / Console Access
                         while true; do
                 echo -e "\n======================== VNC / Console Access ========================"
-                echo "s. Show listening ports  1. Add VNC port with password  2. Remove VNC port"        
-                echo "3. Console into a vm     q. Back to main menu"
+                echo "s. Show assigned VNC ports  1. Add VNC port with password  2. Remove VNC port"        
+                echo "3. Console into a vm        q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " vnc_manage_choice
 
                 case $vnc_manage_choice in
 
                     s)
-                        # Show listening ports
-                        netstat -l | grep "tcp\|udp"
+                        # Show assigned VNC ports
+                        echo ""
+                        for vm in $(virsh list --name); do
+                            port=$(virsh vncdisplay $vm 2>/dev/null | sed 's/^://')
+                            [ -n "$port" ] && echo "VM: $vm, VNC Port: $((5900 + port))"
+                            echo ""
+                        done
                         ;;
 
                     1)
