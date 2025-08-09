@@ -267,12 +267,12 @@ while true; do
         3)
             # Networks Menu       
             while true; do
-                echo -e "\n============================================= Manage Network ============================================="
-                echo " s. Show all networks                1. Show more details of a network       2. Start a network"
-                echo " 3. Stop a network                   4. Create a NAT network                 5. Create a macvtap network"      
-                echo " 6. Delete a network                 7. Add a IPv4 reservation to a network  8. Remove a IPv4 reservation"
-                echo " 9. Add dhcpv6 to a network (auto)  10. Add dhcpv6 to a network (manual)    11. Add a IPv6 reservation to a network"
-                echo "12. Edit a network                   q. Back to main menu"
+               echo -e "\n============================================== Manage Network =============================================="
+                echo " s. Show all networks              1. Show more details of a network   2. Start a network"
+                echo " 3. Stop a network                 4. Create a NAT network             5. Create a macvtap network"
+                echo " 6. Create a routed IPv4 network   7. Delete a network                 8. Add a IPv4 reservation"
+                echo " 9. Remove a IPv4 reservation     10. Add dhcpv6 to a network (auto)  11. Add dhcpv6 to a network (manual)"
+                echo "12. Add a IPv6 reservation        13. Edit a network                   q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " network_manage_choice
 
@@ -313,6 +313,13 @@ while true; do
                         ;;
 
                     4)
+                        # NAT network explanation
+                        echo "A NAT network will create a seperate private network"
+                        echo "Allows VMs to share host's IP address for outbound traffic"
+                        echo "Provides network isolation with internal DHCP service"
+                        echo "(Ctrl+C to exit)"
+                        echo ""
+                        
                         # Prompt user for NAT network configuration
                         read -ep "Enter the new network name (e.g., natbr0): " network_name
                         read -ep "Enter the virtual bridge name (e.g., natbr0): " bridge_name
@@ -345,9 +352,16 @@ while true; do
                         ;;
 
                     5) 
+                        # macvtap network explanation
+                        echo "A macvtap network will have direct network access to the bridged interface"
+                        echo "Connects VMs directly to physical network interface"
+                        echo "Each VM gets its own MAC address on the physical network"
+                        echo "(Ctrl+C to exit)"
+                        echo ""
+                        
                         # Prompt user for macvtap network configuration
                         read -ep "Enter the new network name: " network_name
-                        read -ep "Enter the physical network interface to attach: " int_name
+                        read -ep "Enter the physical network interface to bridge to: " int_name
 
                         network_xml="
                         <network>
@@ -367,11 +381,52 @@ while true; do
                         ;;
 
                     6)
+                        # Routed network explanation
+                        echo "A routed network is for static IPv4 and IPv6 configurations"
+                        echo "Routes traffic between VMs and external network"
+                        echo "No NAT translation or DHCP service"
+                        echo "(Ctrl+C to exit)"
+                        echo ""
+                        
+                        read -ep "Enter the new network name: " network_name
+                        read -ep "Enter the new virtual bridge name: " bridge_name
+                        read -ep "Enter the IPv4 address that would act as the gateway ( 123.123.123.123 ): " network_ip
+                        read -ep "Enter the new subnet mask (e.g., 255.255.255.0): " netmask
+
+                        ipv4_forward=$(cat /etc/sysctl.conf | grep "net.ipv4.ip_forward=1")
+                        ipv4_forward_comment="#net.ipv4.ip_forward=1"
+
+                        if [ "$ipv4_forward" == "$ipv4_forward_comment" ]; then
+                            echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
+                        fi
+
+                        network_xml="
+                        <network>
+                        <name>$network_name</name>
+                        <forward mode='route' stp='off' delay='0'/>
+                        <bridge name='$bridge_name'/>
+                        <ip address='${network_ip}' netmask='${netmask}'>
+                        </ip>
+                        </network>"
+
+                        net_xml_file="/etc/libvirt/qemu/networks/$network_name.xml"
+                        echo "${network_xml}" > "${net_xml_file}"
+
+                        # Define and start network
+                        virsh net-define "${net_xml_file}"
+                        virsh net-start "${network_name}"
+                        virsh net-autostart "${network_name}"
+
+                        echo "When adding a static IPv4 to a vm the gateway address will be "$network_ip""
+                        echo "If no errors above then the new network "$network_name" is ready to use"
+                        ;;
+
+                    7)
                         # Delete a network
                         bash bashvm-delete-network.sh
                         ;;
 
-                    7)
+                    8)
                         # Add a dhcpv4 reservation to a network
                         read -ep "Enter the virtual machines name: " vm_name
                         read -ep "Enter the virtual machines mac address: " vm_mac
@@ -390,10 +445,9 @@ while true; do
                             echo "Failed to set DHCP reservation in $vm_net"
                         else
                             echo "You may need to start / stop the vm for the changes to take effect"
-
                         fi
                         ;;
-                    8)
+                    9)
                         # Remove a dhcpv4 reservation
                         read -ep "Enter the VM name: " vm_name
                         read -ep "Enter the network name [default]: " net_name
@@ -416,17 +470,17 @@ while true; do
                         fi
                         ;;
 
-                    9)  
+                    10)  
                         # Add dhcpv6 to a network (auto)
                         bash bashvm-dhcpv6-network-auto.sh
                         ;; 
                     
-                    10)
+                    11)
                         # Add dhcpv6 to a network (manual)
                         bash bashvm-dhcpv6-network-manual.sh
                         ;;
 
-                    11)
+                    12)
                         # Add a dhcpv6 reservation to a network
                         read -ep "Enter the vm name you are assigning a IPv6 address to: " vm_name
                         read -ep "Enter the desired IPv6 address to assign the vm (e.g., xxxx::3): " net_address
@@ -447,7 +501,7 @@ while true; do
                         fi
                         ;;
 
-                   12)
+                    13)
                         # Edit a network
                         read -ep "Enter the network name [default]: " net_name
                         if [ -z "$net_name" ]; then
