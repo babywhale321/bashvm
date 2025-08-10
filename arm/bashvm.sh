@@ -267,12 +267,13 @@ while true; do
         3)
             # Networks Menu       
             while true; do
-               echo -e "\n============================================== Manage Network =============================================="
-                echo " s. Show all networks              1. Show more details of a network   2. Start a network"
-                echo " 3. Stop a network                 4. Create a NAT network             5. Create a macvtap network"
-                echo " 6. Create a routed IPv4 network   7. Delete a network                 8. Add a IPv4 reservation"
-                echo " 9. Remove a IPv4 reservation     10. Add dhcpv6 to a network (auto)  11. Add dhcpv6 to a network (manual)"
-                echo "12. Add a IPv6 reservation        13. Edit a network                   q. Back to main menu"
+                echo -e "\n============================================== Manage Network =============================================="
+                echo " s. Show all networks                   1. Show more details of a network   2. Start a network"
+                echo " 3. Stop a network                      4. Create a NAT network             5. Create a macvtap network"
+                echo " 6. Create a routed IPv4 network        7. Create a routed IPv6 network     8. Delete a network"
+                echo " 9. Add a IPv4 reservation             10. Remove a IPv4 reservation       11. Add dhcpv6 to a network (auto)"
+                echo "12. Add dhcpv6 to a network (manual)   13. Add a IPv6 reservation          14. Edit a network"                   
+                echo " q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " network_manage_choice
 
@@ -420,13 +421,19 @@ while true; do
                         echo "When adding a static IPv4 to a vm the gateway address will be "$network_ip""
                         echo "If no errors above then the new network "$network_name" is ready to use"
                         ;;
-
                     7)
+
+                        # Route IPv6 network
+                        bash bashvm-ipv6-route-network.sh
+                        ;;
+
+
+                    8)
                         # Delete a network
                         bash bashvm-delete-network.sh
                         ;;
 
-                    8)
+                    9)
                         # Add a dhcpv4 reservation to a network
                         read -ep "Enter the virtual machines name: " vm_name
                         read -ep "Enter the virtual machines mac address: " vm_mac
@@ -447,7 +454,7 @@ while true; do
                             echo "You may need to start / stop the vm for the changes to take effect"
                         fi
                         ;;
-                    9)
+                    10)
                         # Remove a dhcpv4 reservation
                         read -ep "Enter the VM name: " vm_name
                         read -ep "Enter the network name [default]: " net_name
@@ -470,17 +477,17 @@ while true; do
                         fi
                         ;;
 
-                    10)  
+                    11)  
                         # Add dhcpv6 to a network (auto)
                         bash bashvm-dhcpv6-network-auto.sh
                         ;; 
                     
-                    11)
+                    12)
                         # Add dhcpv6 to a network (manual)
                         bash bashvm-dhcpv6-network-manual.sh
                         ;;
 
-                    12)
+                    13)
                         # Add a dhcpv6 reservation to a network
                         read -ep "Enter the vm name you are assigning a IPv6 address to: " vm_name
                         read -ep "Enter the desired IPv6 address to assign the vm (e.g., xxxx::3): " net_address
@@ -501,7 +508,7 @@ while true; do
                         fi
                         ;;
 
-                    13)
+                    14)
                         # Edit a network
                         read -ep "Enter the network name [default]: " net_name
                         if [ -z "$net_name" ]; then
