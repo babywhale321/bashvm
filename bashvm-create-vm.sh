@@ -284,5 +284,7 @@ echo "$vm_xml" > "$vm_xml_file"
 # Create the new virtual machine
 virsh define "$vm_xml_file"
 
-echo "Please note that there will be a vnc port automatically assigned to this vm."
-echo "This is optional if needed and the ports will start at 5900 and onward."
+echo "Please note that there will be a vnc port automatically assigned to this vm with no password"
+echo "The VNC password can be set within the VNC / Console Access menu"
+echo "To have console access for this vm you will need to run this systemd command on the vm"
+echo "systemctl enable --now serial-getty@ttyS0.service"
