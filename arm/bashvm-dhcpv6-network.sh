@@ -4,16 +4,25 @@
 #
 #Author: Kyle Schroeder "BabyWhale"
 
-read -ep "Enter the ipv6 address that will be served as the gateway ( e.g., xxxx::1 ): " ip_gateway
-read -ep "Enter the prefix of the gateway (e.g., 64): " ip_prefix
-read -ep "Enter the starting range ( e.g., xxxx::2 ): " ip_start
-read -ep "Enter the ending range ( e.g., xxxx::300 ): " ip_end
-read -ep "Enter the main interface name (e.g., eth0): " int_name
-read -ep "Enter the network name [default]: " net_name
+read -ep "Enter the network name to add DHCPv6 [default]: " net_name
 
 if [ -z "$net_name" ]; then
     net_name="default"
 fi
+
+is_nat_check=$(virsh net-dumpxml "$net_name" | grep "<forward mode='nat'>")
+
+if [ -z "$is_nat_check" ]; then
+    echo "This function only works on NAT networks currently"
+    exit
+fi
+
+read -ep "Enter the main interface name (e.g., eth0): " int_name
+read -ep "Enter the ipv6 address that will be served as the gateway ( e.g., xxxx::1 ): " ip_gateway
+read -ep "Enter the prefix of the gateway (e.g., 64): " ip_prefix
+read -ep "Enter the starting range ( e.g., xxxx::2 ): " ip_start
+read -ep "Enter the ending range ( e.g., xxxx::300 ): " ip_end
+
 
 cat /etc/libvirt/qemu/networks/"$net_name".xml | grep "ipv6" >> /dev/null
 
