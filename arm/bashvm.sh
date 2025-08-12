@@ -265,15 +265,14 @@ while true; do
             done
             ;;
         3)
-            # Networks Menu       
+                       # Networks Menu       
             while true; do
                 echo -e "\n============================================== Manage Network =============================================="
                 echo " s. Show all networks                   1. Show more details of a network   2. Start a network"
                 echo " 3. Stop a network                      4. Create a NAT network             5. Create a macvtap network"
                 echo " 6. Create a routed IPv4 network        7. Create a routed IPv6 network     8. Delete a network"
-                echo " 9. Add a IPv4 reservation             10. Remove a IPv4 reservation       11. Add dhcpv6 to a network (auto)"
-                echo "12. Add dhcpv6 to a network (manual)   13. Add a IPv6 reservation          14. Edit a network"                   
-                echo " q. Back to main menu"
+                echo " 9. Add a IPv4 reservation             10. Remove a IPv4 reservation       11. Add dhcpv6 to a NAT network"                   
+                echo "12. Add a IPv6 reservation             13. Edit a network                   q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " network_manage_choice
 
@@ -476,18 +475,13 @@ while true; do
                             echo "You may need to start / stop the vm for the changes to take effect"
                         fi
                         ;;
-
-                    11)  
-                        # Add dhcpv6 to a network (auto)
-                        bash bashvm-dhcpv6-network-auto.sh
-                        ;; 
                     
-                    12)
+                    11)
                         # Add dhcpv6 to a network (manual)
-                        bash bashvm-dhcpv6-network-manual.sh
+                        bash bashvm-dhcpv6-network.sh
                         ;;
 
-                    13)
+                    12)
                         # Add a dhcpv6 reservation to a network
                         read -ep "Enter the vm name you are assigning a IPv6 address to: " vm_name
                         read -ep "Enter the desired IPv6 address to assign the vm (e.g., xxxx::3): " net_address
@@ -508,7 +502,7 @@ while true; do
                         fi
                         ;;
 
-                    14)
+                    13)
                         # Edit a network
                         read -ep "Enter the network name [default]: " net_name
                         if [ -z "$net_name" ]; then
