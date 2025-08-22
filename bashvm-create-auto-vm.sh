@@ -10,30 +10,30 @@ read -ep "Enter the number of virtual CPUs (e.g., 2): " vm_vcpus
 read -ep "Enter the amount of disk space in GB (e.g., 50): " vm_disk
 read -ep "Enter the username for the new VM (e.g., joe): " user_name
 read -ep "Enter the password for the new VM (e.g., password): " user_pass
-echo "1 = debian12"
-echo "2 = ubuntu22.04"
-echo "3 = almalinux9"
+echo "1 = debian13"
+echo "2 = ubuntu24.04"
+echo "3 = almalinux10"
 echo "4 = opensuse15.6"
 read -ep "Enter the OS you would like (e.g., 1): " qcow2_question
 
 if [ "$qcow2_question" == 1 ];then
-    qcow2_image="debian-12-generic-amd64.qcow2"
-    qcow2_download="https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2"
+    qcow2_image="debian-13-generic-amd64.qcow2"
+    qcow2_download="https://iso.bashvm.com/debian-13-generic-amd64.qcow2"
     os_info="debian11"
     
 elif [ "$qcow2_question" == 2 ];then
-    qcow2_image="ubuntu-22.04-minimal-cloudimg-amd64.img"
-    qcow2_download="https://cloud-images.ubuntu.com/minimal/releases/jammy/release/ubuntu-22.04-minimal-cloudimg-amd64.img"
+    qcow2_image="ubuntu-24.04-minimal-cloudimg-amd64.img"
+    qcow2_download="https://iso.bashvm.com/ubuntu-24.04-minimal-cloudimg-amd64.img"
     os_info="ubuntu22.04"
 
 elif [ "$qcow2_question" == 3 ];then
-    qcow2_image="AlmaLinux-9-GenericCloud-latest.x86_64.qcow2"
-    qcow2_download="https://repo.almalinux.org/almalinux/9/cloud/x86_64/images/AlmaLinux-9-GenericCloud-latest.x86_64.qcow2"
+    qcow2_image="AlmaLinux-10-GenericCloud-latest.x86_64.qcow2"
+    qcow2_download="https://iso.bashvm.com/AlmaLinux-10-GenericCloud-latest.x86_64.qcow2"
     os_info="almalinux9"
 
 elif [ "$qcow2_question" == 4 ];then
     qcow2_image="openSUSE-Leap-15.6.x86_64-NoCloud.qcow2"
-    qcow2_download="https://download.opensuse.org/repositories/Cloud:/Images:/Leap_15.6/images/openSUSE-Leap-15.6.x86_64-NoCloud.qcow2"
+    qcow2_download="https://iso.bashvm.com/openSUSE-Leap-15.6.x86_64-NoCloud.qcow2"
     os_info="opensuse15.4"
 
 else
