@@ -18,22 +18,22 @@ read -ep "Enter the OS you would like (e.g., 1): " qcow2_question
 
 if [ "$qcow2_question" == 1 ];then
     qcow2_image="debian-13-generic-amd64.qcow2"
-    qcow2_download="https://iso.bashvm.com/debian-13-generic-amd64.qcow2"
+    qcow2_download="http://iso.bashvm.com/debian-13-generic-amd64.qcow2"
     os_info="debian11"
     
 elif [ "$qcow2_question" == 2 ];then
     qcow2_image="ubuntu-24.04-minimal-cloudimg-amd64.img"
-    qcow2_download="https://iso.bashvm.com/ubuntu-24.04-minimal-cloudimg-amd64.img"
+    qcow2_download="http://iso.bashvm.com/ubuntu-24.04-minimal-cloudimg-amd64.img"
     os_info="ubuntu22.04"
 
 elif [ "$qcow2_question" == 3 ];then
     qcow2_image="AlmaLinux-10-GenericCloud-latest.x86_64.qcow2"
-    qcow2_download="https://iso.bashvm.com/AlmaLinux-10-GenericCloud-latest.x86_64.qcow2"
+    qcow2_download="http://iso.bashvm.com/AlmaLinux-10-GenericCloud-latest.x86_64.qcow2"
     os_info="almalinux9"
 
 elif [ "$qcow2_question" == 4 ];then
     qcow2_image="openSUSE-Leap-15.6.x86_64-NoCloud.qcow2"
-    qcow2_download="https://iso.bashvm.com/openSUSE-Leap-15.6.x86_64-NoCloud.qcow2"
+    qcow2_download="http://iso.bashvm.com/openSUSE-Leap-15.6.x86_64-NoCloud.qcow2"
     os_info="opensuse15.4"
 
 else
