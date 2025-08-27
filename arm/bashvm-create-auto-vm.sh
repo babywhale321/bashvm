@@ -18,12 +18,12 @@ read -ep "Enter the OS you would like (e.g., 1): " qcow2_question
 
 if [ "$qcow2_question" == 1 ];then
     qcow2_image="debian-12-generic-arm64.qcow2"
-    qcow2_download="https://iso.bashvm.com/debian-12-generic-arm64.qcow2"
+    qcow2_download="http://iso.bashvm.com/debian-12-generic-arm64.qcow2"
     os_info="debian11"
 
 elif [ "$qcow2_question" == 2 ];then
     qcow2_image="debian-13-generic-arm64.qcow2"
-    qcow2_download="https://iso.bashvm.com/debian-13-generic-arm64.qcow2"
+    qcow2_download="http://iso.bashvm.com/debian-13-generic-arm64.qcow2"
     os_info="debian11"
 
 #elif [ "$qcow2_question" == 3 ];then
