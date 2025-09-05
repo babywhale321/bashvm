@@ -483,7 +483,6 @@ while true; do
 
                     12)
                         # Add a dhcpv6 reservation to a network
-                        read -ep "Enter the VM name you are assigning an IPv6 address to: " vm_name
                         read -ep "Enter the desired IPv6 address to assign the VM (e.g., xxxx::3): " net_address
                         read -ep "Enter the network name [default]: " net_name
 
