@@ -16,6 +16,26 @@ bashvm is a console based virtual machine manager
 
 `bash bashvm.sh`
 
+### Updating bashvm
+
+Copy the bashvm.db file somewhere else
+
+`cp bashvm.db ../`
+
+Remove the current bashvm directory
+
+`cd ../`
+
+`rm -r bashvm/`
+
+Download the new version
+
+`git clone https://github.com/babywhale321/bashvm.git`
+
+Copy the database file back into the bashvm directory
+
+`cp bashvm.db bashvm/`
+
 ### Recommended OS for bashvm
 #### amd64
 - Debian 12 (64-bit)
