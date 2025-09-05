@@ -271,7 +271,7 @@ while true; do
                 echo " s. Show all networks                   1. Show more details of a network   2. Start a network"
                 echo " 3. Stop a network                      4. Create a NAT network             5. Create a macvtap network"
                 echo " 6. Create a routed IPv4 network        7. Create a routed IPv6 network     8. Delete a network"
-                echo " 9. Add a IPv4 reservation             10. Remove a IPv4 reservation       11. Add dhcpv6 to a NAT network"                   
+                echo " 9. Add a IPv4 reservation             10. Remove a IPv4 reservation       11. Add DHCPv6 to a NAT network"                   
                 echo "12. Add a IPv6 reservation             13. Edit a network                   q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " network_manage_choice
@@ -483,22 +483,28 @@ while true; do
 
                     12)
                         # Add a dhcpv6 reservation to a network
-                        read -ep "Enter the vm name you are assigning a IPv6 address to: " vm_name
-                        read -ep "Enter the desired IPv6 address to assign the vm (e.g., xxxx::3): " net_address
+                        read -ep "Enter the VM name you are assigning an IPv6 address to: " vm_name
+                        read -ep "Enter the desired IPv6 address to assign the VM (e.g., xxxx::3): " net_address
                         read -ep "Enter the network name [default]: " net_name
 
                         if [ -z "$net_name" ]; then
                             net_name="default"
                         fi
 
-                        echo "Setting DHCP reservation..."
+                        echo ""
 
-                        virsh net-update "$net_name" add-last ip-dhcp-host "<host name='$vm_name' ip='$net_address'/>" --live --config --parent-index 1
-                        
-                        if [ ! $? == 0 ]; then
-                            echo "Failed to set DHCP reservation in $net_name"
+                        virsh net-dhcp-leases "$net_name"
+
+                        read -ep "Enter the DUID of the VM: " vm_duid
+
+                        echo ""
+
+                        virsh net-update "$net_name" add-last ip-dhcp-host "<host id='$vm_duid' ip='$net_address'/>" --live --config --parent-index 1
+
+                        if [ $? -eq 0 ]; then
+                            echo "DHCPv6 reservation added successfully. You may need to restart the VM for changes to take effect."
                         else
-                            echo "You may need to restart the vm for the changes to take effect"
+                            echo "Failed to set DHCPv6 reservation in $net_name"
                         fi
                         ;;
 
