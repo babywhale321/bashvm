@@ -32,13 +32,6 @@ if [ $? == 0 ];then
     exit
 fi
 
-ip address show dev "$int_name" | grep inet6 | grep global >> /dev/null
-
-if [ ! $? == 0 ];then
-    echo "There is no IPv6 address detected on the main interface"
-    exit
-fi
-
 # Check to see if the line is there
 accept_ra=$(cat /etc/sysctl.conf | grep "accept_ra = 2")
 
