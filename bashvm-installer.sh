@@ -66,6 +66,16 @@ else
 fi
 echo ""
 
+# Check and start libvirtd service if not active
+if ! systemctl is-active --quiet libvirtd; then
+    echo "Starting libvirtd service..."
+    systemctl start libvirtd
+    systemctl enable libvirtd
+else
+    echo "libvirtd is already active."
+fi
+echo ""
+
 # Check and manage the default pool
 if ! virsh pool-info default &>/dev/null; then
     echo "Default storage pool not found. Creating it..."
