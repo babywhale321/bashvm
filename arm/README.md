@@ -38,6 +38,7 @@ Copy the database file back into the bashvm directory
 
 ### Recommended OS for bashvm
 #### amd64
+- Debian 13 (64-bit)
 - Debian 12 (64-bit)
 - Ubuntu 22.04 (64-bit)
 - Ubuntu 24.04 (64-bit)
