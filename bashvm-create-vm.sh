@@ -36,8 +36,8 @@ read -ep "Enter the amount of memory in MB (e.g., 1024): " new_memory
 read -ep "Enter the number of virtual CPUs (e.g., 2): " new_vcpus
 
 echo ""
-echo "1. debian-12.5         2. ubuntu-22.04  3. AlmaLinux-9.4"
-echo "4. openmediavault_7.0  5. TrueNas-13.0"
+echo "1. debian-13.2         2. ubuntu-24.04  3. AlmaLinux-10.1"
+echo "4. openmediavault-7.4  5. TrueNAS-SCALE-25.10"
 echo ""
 
 echo "Enter the iso you would like to use"
@@ -48,28 +48,28 @@ target_bus="<target dev='vda' bus='virtio'/>
 model_type="virtio"
 
 if [ "$iso_question" == 1 ];then
-    iso_img="debian-12.5.0-amd64-netinst.iso"
-    iso_download="https://cdimage.debian.org/mirror/cdimage/archive/12.5.0/amd64/iso-cd/debian-12.5.0-amd64-netinst.iso"
+    iso_img="debian-13.2.0-amd64-netinst.iso"
+    iso_download="https://iso.bashvm.com/debian-13.2.0-amd64-netinst.iso"
     pool_image_download
 
 elif [ "$iso_question" == 2 ];then
-    iso_img="ubuntu-22.04.4-live-server-amd64.iso"
-    iso_download="https://old-releases.ubuntu.com/releases/jammy/ubuntu-22.04.4-live-server-amd64.iso"
+    iso_img="ubuntu-24.04.3-live-server-amd64.iso"
+    iso_download="https://iso.bashvm.com/ubuntu-24.04.3-live-server-amd64.iso"
     pool_image_download
 
 elif [ "$iso_question" == 3 ];then
-    iso_img="AlmaLinux-9.4-x86_64-minimal.iso"
-    iso_download="https://repo.almalinux.org/almalinux/9.4/isos/x86_64/AlmaLinux-9.4-x86_64-minimal.iso"
+    iso_img="AlmaLinux-10.1-x86_64-minimal.iso"
+    iso_download="https://iso.bashvm.com/AlmaLinux-10.1-x86_64-minimal.iso"
     pool_image_download
 
 elif [ "$iso_question" == 4 ];then
-    iso_img="openmediavault_7.0-32-amd64.iso"
-    iso_download="https://sourceforge.net/projects/openmediavault/files/iso/7.0-32/openmediavault_7.0-32-amd64.iso"
+    iso_img="openmediavault_7.4.17-amd64.iso"
+    iso_download="https://iso.bashvm.com/openmediavault_7.4.17-amd64.iso"
     pool_image_download
 
 elif [ "$iso_question" == 5 ];then
-    iso_img="TrueNAS-13.0-U6.1.iso"
-    iso_download="https://download-core.sys.truenas.net/13.0/STABLE/U6.1/x64/TrueNAS-13.0-U6.1.iso"
+    iso_img="TrueNAS-SCALE-25.10.0.1.iso"
+    iso_download="https://iso.bashvm.com/TrueNAS-SCALE-25.10.0.1.iso"
     pool_image_download
 
 else
