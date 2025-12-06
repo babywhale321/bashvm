@@ -36,7 +36,7 @@ read -ep "Enter the amount of memory in MB (e.g., 1024): " new_memory
 read -ep "Enter the number of virtual CPUs (e.g., 2): " new_vcpus
 
 echo ""
-echo "1. debian-12.5         2. ubuntu-22.04"
+echo "1. debian-13.2         2. ubuntu-24.04"
 echo ""
 
 echo "Enter the iso you would like to use"
@@ -44,13 +44,13 @@ read -ep "You can safely say no if you have your own or not using an iso: " iso_
 
 
 if [ "$iso_question" == 1 ];then
-    iso_img="debian-12.6.0-arm64-netinst.iso"
-    iso_download="https://cdimage.debian.org/mirror/cdimage/archive/12.6.0/arm64/iso-cd/debian-12.6.0-arm64-netinst.iso"
+    iso_img="debian-13.2.0-arm64-netinst.iso"
+    iso_download="https://iso.bashvm.com/debian-13.2.0-arm64-netinst.iso"
     pool_image_download
 
 elif [ "$iso_question" == 2 ];then
-    iso_img="ubuntu-22.04.4-live-server-arm64.iso"
-    iso_download="http://old-releases.ubuntu.com/releases/jammy/ubuntu-22.04.4-live-server-arm64.iso"
+    iso_img="ubuntu-24.04.3-live-server-arm64.iso"
+    iso_download="https://iso.bashvm.com/ubuntu-24.04.3-live-server-arm64.iso"
     pool_image_download
 
 else
