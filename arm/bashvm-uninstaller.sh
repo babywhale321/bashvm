@@ -10,7 +10,7 @@ echo "This uninstall script will only remove packages and dependencies needed to
 echo ""
 echo "Here is a list of packages that would have been installed with the installer"
 echo "qemu-kvm, libvirt-daemon-system, libvirt-clients, virt-manager, qemu-utils,"
-echo "cloud-init, bridge-utils, net-tools, ufw, ifstat, ndppd, dnsmasq, btop, bc, sqlite3"
+echo "cloud-init, bridge-utils, net-tools, ufw, ifstat, ndppd, btop, bc, sqlite3"
 echo ""
 echo "Do not run this script if any of the packages above are needed for other programs"
 echo ""
@@ -89,9 +89,6 @@ check_status $? "ndppd"
 echo ""
 apt remove sqlite3 -y
 check_status $? "sqlite3"
-echo ""
-apt remove dnsmasq -y
-check_status $? "dnsmasq"
 echo ""
 # Remove dependencies that are now orphaned
 apt autoremove -y
