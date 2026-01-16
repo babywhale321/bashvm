@@ -89,7 +89,7 @@ while true; do
                         
                         if [ "$vm_state" == "running" ];then
                             echo "Please shutdown the vm before running this again"
-                            break
+                            continue
                         fi
                         
                         virsh destroy "$vm_name" > /dev/null 2>&1
@@ -209,12 +209,12 @@ while true; do
                         if [ $? == 0 ]; then
                             virsh pool-destroy "$delete_pool_name"
                         else
-                            break
+                            continue
                         fi
 
                         virsh pool-undefine "$delete_pool_name"
                         if [ ! $? == 0 ]; then
-                            break
+                            continue
                         fi
                         ;;
 
@@ -549,7 +549,7 @@ while true; do
                         
                         virsh snapshot-list "$vm_name"
                         if [ ! $? == 0 ]; then
-                            break
+                            continue
                         fi
 
                         read -ep "Enter the name for the new snapshot: " snapshot_name
@@ -562,7 +562,7 @@ while true; do
 
                         virsh snapshot-list "$vm_name"
                         if [ ! $? == 0 ]; then
-                            break
+                            continue
                         fi
 
                         read -ep "Enter the name of the snapshot to delete: " snapshot_name
@@ -575,7 +575,7 @@ while true; do
 
                         virsh snapshot-list "$vm_name"
                         if [ ! $? == 0 ]; then
-                            break
+                            continue
                         fi
                         
                         read -ep "Enter the name of the snapshot to revert to: " snapshot_name
@@ -583,7 +583,7 @@ while true; do
                         virsh snapshot-revert "$vm_name" "$snapshot_name"
                         if [ ! $? == 0 ]; then
                             echo "Failed to revert snapshot ""$snapshot_name"""
-                            break
+                            continue
                         fi
                         ;;
                     q)
@@ -925,7 +925,7 @@ while true; do
 
                         vm_check=$(virsh dominfo "$vm_name")
                         if [ ! $? == 0 ];then
-                            break
+                            continue
                         fi
 
                         # Setting the vcpu core count
@@ -955,7 +955,7 @@ while true; do
 
                         vm_check=$(virsh dominfo "$vm_name")
                         if [ ! $? == 0 ];then
-                            break
+                            continue
                         fi
 
                         # Set the memory reported by the guest as being actively used
@@ -973,7 +973,7 @@ while true; do
 
                         vm_check=$(virsh dominfo "$vm_name")
                         if [ ! $? == 0 ];then
-                            break
+                            continue
                         fi
 
                         disk=$(virsh domblklist $vm_name | grep v | awk '{print $1}')
@@ -992,7 +992,7 @@ while true; do
 
                         vm_check=$(virsh dominfo "$vm_name")
                         if [ ! $? == 0 ];then
-                            break
+                            continue
                         fi
 
                         # Show the virtual interface assigned to the vm and output the usage
