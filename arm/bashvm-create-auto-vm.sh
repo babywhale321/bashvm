@@ -145,7 +145,13 @@ create_net_table="CREATE TABLE IF NOT EXISTS $net_table (
     end_port INTEGER
 );"
 
-get_highest_assigned_port="SELECT MAX(end_port) FROM $net_table;"
+get_highest_assigned_port="SELECT MAX(max_port) FROM (
+    SELECT MAX(ssh_port) AS max_port FROM $net_table
+    UNION ALL
+    SELECT MAX(start_port) AS max_port FROM $net_table
+    UNION ALL
+    SELECT MAX(end_port) AS max_port FROM $net_table
+);"
 
 # Resource Values
 default_ipv4_prefix="192.168.122." # Base IPv4 prefix for auto-generation
