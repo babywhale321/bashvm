@@ -87,17 +87,23 @@ if [[ "$exists" -eq 1 ]]; then
     exit 1
 fi
 
-# Get the highest end_port from the database
-highest_end_port=$(sqlite3 "$db_file" \
-    "SELECT MAX(end_port) FROM $net_table;")
+# Get the highest port number from all three port columns in the database
+highest_port=$(sqlite3 "$db_file" \
+    "SELECT MAX(max_port) FROM (
+        SELECT MAX(ssh_port) AS max_port FROM $net_table
+        UNION ALL
+        SELECT MAX(start_port) AS max_port FROM $net_table
+        UNION ALL
+        SELECT MAX(end_port) AS max_port FROM $net_table
+    );")
 
-# Check if the highest_end_port is valid (not NULL)
-if [[ -z "$highest_end_port" || "$highest_end_port" == "NULL" ]]; then
+# Check if the highest_port is valid (not NULL)
+if [[ -z "$highest_port" || "$highest_port" == "NULL" ]]; then
     echo "No existing entries in the database. Proceeding."
 else
-    # Compare user input with the highest_end_port
-    if (( ssh_port <= highest_end_port || start_port <= highest_end_port || end_port <= highest_end_port )); then
-        echo "Error: ssh_port, start_port and end_port must be higher than the highest end_port in the database ($highest_end_port)."
+    # Compare user input with the highest_port found
+    if (( ssh_port <= highest_port || start_port <= highest_port || end_port <= highest_port )); then
+        echo "Error: ssh_port, start_port and end_port must all be higher than the highest existing port in the database ($highest_port)."
         exit 1
     fi
 fi
