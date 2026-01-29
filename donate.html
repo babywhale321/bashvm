@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <title>bashvm</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #707070;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 80px auto 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #000000;
+        }
+        p {
+            text-align: center;
+            font-size: 1.1em;
+        }
+        .command {
+            background-color: #272822;
+            color: #f8f8f2;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-family: 'Courier New', Courier, monospace;
+            position: relative;
+            overflow-x: auto;
+        }
+        .command code {
+            display: block;
+            white-space: pre-wrap;
+        }
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: transparent;
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+        }
+        .copy-button:hover {
+            color: #4CAF50;
+        }
+        .copy-message {
+            display: none;
+            margin-left: 10px;
+            font-size: 0.8em;
+            color: #4CAF50;
+        }
+        .show {
+            display: inline;
+        }
+        #menu {
+            background-color: #333;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        #menu a {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-size: 17px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        #menu a:hover {
+            background-color: #575757;
+            color: white;
+        }
+        .menu-icon {
+            margin-right: 5px;
+        }
+        .menu-icon:hover {
+            color: #4CAF50;
+        }
+        .donate-button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            color: white;
+            background-color: #0070ba;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+        .donate-button:hover {
+            background-color: #005c99;
+        }
+        .donate-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="menu">
+        <a href="index.html">
+            <i class="fas fa-home menu-icon"></i>Home
+        </a>
+        <a href="download.html">
+            <i class="fas fa-download menu-icon"></i>Download
+        </a>
+        <a href="guide.html">
+            <i class="fas fa-book menu-icon"></i>Guide
+        </a>
+        <a href="screenshots.html">
+            <i class="fas fa-image menu-icon"></i>Screenshots
+        </a>
+        <a href="sponsors.html">
+            <i class="fas fa-handshake menu-icon"></i>Sponsors
+        </a>
+        <a href="donate.html">
+            <i class="fas fa-donate menu-icon"></i>Donate
+        </a>
+        <a href="https://github.com/babywhale321/bashvm">
+            <i class="fab fa-github"></i>Github
+        </a>
+    </div>
+    <div class="container">
+        <h1>Donate</h1>
+        <br>
+        <p>All contributions are very welcomed and go towards the development of bashvm</p>
+        <br>
+        <div class="donate-container">
+            <a href="https://www.paypal.com/paypalme/babywhale123" class="donate-button">Donate</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <title>bashvm</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #707070;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 80px auto 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #ffffff;
+        }
+        p {
+            text-align: center;
+            font-size: 1.1em;
+        }
+        .command {
+            background-color: #272822;
+            color: #f8f8f2;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-family: 'Courier New', Courier, monospace;
+            position: relative;
+            overflow-x: auto;
+        }
+        .command code {
+            display: block;
+            white-space: pre-wrap;
+        }
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: transparent;
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+        }
+        .copy-button:hover {
+            color: #4CAF50;
+        }
+        .copy-message {
+            display: none;
+            margin-left: 10px;
+            font-size: 0.8em;
+            color: #4CAF50;
+        }
+        .show {
+            display: inline;
+        }
+        #menu {
+            background-color: #333;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        #menu a {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-size: 17px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        #menu a:hover {
+            background-color: #575757;
+            color: white;
+        }
+        .menu-icon {
+            margin-right: 5px;
+        }
+        .menu-icon:hover {
+            color: #4CAF50;
+        }
+        details {
+            margin-left: 32px;
+        }
+        summary {
+            cursor:pointer;
+        }
+        h1 {
+            text-align: center;
+        }
+        p {
+            text-align: center;
+        }
+        img {
+            max-width:90%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="menu">
+        <a href="index.html">
+            <i class="fas fa-home menu-icon"></i>Home
+        </a>
+        <a href="download.html">
+            <i class="fas fa-download menu-icon"></i>Download
+        </a>
+        <a href="guide.html">
+            <i class="fas fa-book menu-icon"></i>Guide
+        </a>
+        <a href="screenshots.html">
+            <i class="fas fa-image menu-icon"></i>Screenshots
+        </a>
+        <a href="sponsors.html">
+            <i class="fas fa-handshake menu-icon"></i>Sponsors
+        </a>
+        <a href="donate.html">
+            <i class="fas fa-donate menu-icon"></i>Donate
+        </a>
+        <a href="https://github.com/babywhale321/bashvm">
+            <i class="fab fa-github"></i>Github
+        </a>
+    </div>
+    <div class="container">
+        <br>
+        <div class="command">
+            <h1>Guide</h1>
+
+            <!-- Getting started -->
+            <details>
+                <summary>Getting Started</summary>
+                <br>
+
+                 <details>
+                    <summary>Inital installing</summary>
+                    <br>
+                    <code>apt install git -y<br>git clone https://github.com/babywhale321/bashvm.git<br>cd bashvm/<br>bash bashvm-installer.sh<br>bash bashvm.sh</code>
+                 </details>
+
+                 <br>
+
+                 <details>
+                    <summary>Creating a Storage Pool</summary>
+                    <br>
+                        <p>A storage pool is where your ISO and disk images will reside on.</p>
+                        <p><img src="guide.d/screen2.0.0.webp" alt=""></p>
+                 </details>
+                 
+                 <br>
+
+                 <details>
+                    <summary>Creating a Storage Volume</summary>
+                    <br>
+                        <p>The storage volume is where the actual vm will reside on.</p>
+                        <p><img src="guide.d/screen2.0.1.webp" alt=""></p>
+                 </details>
+
+                 <br>
+
+                 <details>
+                    <summary>Creating a Network</summary>
+                    <br>
+                        <p>Choosing a macvtap network will be directly attached to the host interface.</p>
+                        <p>Where a NAT network will be a private subnet behind the host interface.</p>
+                        <p><img src="guide.d/screen3.0.0.webp" alt=""></p>
+                 </details>
+
+                 <br>
+
+                 <details>
+                    <summary>Creating a VM</summary>
+                    <br>
+                        <p>See the example below about creating a new vm.</p>
+                        <p><img src="guide.d/screen1.0.0.webp" alt=""></p>
+                 </details>
+                 <br>
+
+                 <details>
+                    <summary>Creating a VM (Automated)</summary>
+                    <br>
+                        <p>Creating a automated vm will use the default network, and will use the default pool "/var/lib/libvirt/images"</p>
+                        <p><img src="guide.d/screen1.0.1.webp" alt=""></p>
+                 </details>
+            </details>
+            <!-- Getting started -->
+
+        <br><br>
+         
+            <!-- Virtual Machines -->
+            <details>
+                <summary>Virtual Machines</summary>
+                <br>
+                 <details>
+                    <summary>Creating a new / exsisting vm</summary>
+                       <p>See the example below about creating a new or exsisting vm.</p>
+                       <p><img src="guide.d/screen1.0.0.webp" alt=""></p>
+                 </details>
+                 <br>
+                 <details>
+                    <summary>Creating a VM (Automated)</summary>
+                    <br>
+                        <p>Creating a automated vm will use the default network, and will use the default pool "/var/lib/libvirt/images"</p>
+                        <p><img src="guide.d/screen1.0.1.webp" alt=""></p>
+                 </details>
+             </details>
+            <!-- Virtual Machines -->
+        
+        <br><br>
+            
+            <!-- Storage Pools-->
+             <details>
+                <summary>Storage Pools</summary>
+                <br>
+
+                <details>
+                   <summary>Creating a Storage Pool</summary>
+                   <br>
+                       <p>A storage pool is where your ISO and disk images will reside on.</p>
+                       <p><img src="guide.d/screen2.0.0.webp" alt=""></p>
+                </details>
+                
+                <br>
+
+                <details>
+                   <summary>Creating a Storage Volume</summary>
+                   <br>
+                       <p>The storage volume is where the actual vm will reside on.</p>
+                       <p><img src="guide.d/screen2.0.1.webp" alt=""></p>
+                </details>        
+            </details>
+            <!-- Storage Pools -->
+
+        <br><br>
+            
+            <!-- Networking -->
+             <details>
+                <summary>Networking</summary>
+                <br>
+
+                <details>
+                   <summary>Creating a Network</summary>
+                   <br>
+                       <p>Choosing a macvtap network will be directly attached to the host interface,
+                       Where a NAT network will be a private subnet behind the host interface.</p>
+                       <p><img src="guide.d/screen3.0.0.webp" alt=""></p>
+                </details>
+                <br>
+                <details>
+                    <summary>DHCPv6 configuration</summary>
+                    <br>
+                        <p>An example configuration, For manual setup</p>
+                        <p><img src="guide.d/screen3.0.1.webp" alt=""></p>
+                        <p>An auto setup  will try to make an educated guess about the necessary information</p>
+                        <p><img src="guide.d/screen3.0.3.webp" alt=""></p>
+                 </details>
+                 <br>
+                 <details>
+                    <summary>DHCP reservation</summary>
+                    <br>
+                        <p>For IPv4 you will need to know the vm name, mac address, network name and the new IPv4 to assign</p>
+                        <p>For IPv6 you will need to know the vm name, network name and the new IPv6 to assign</p>
+                        <p><img src="guide.d/screen3.0.2.webp" alt=""></p>
+                 </details>
+             </details>
+            <!-- Networking -->
+        
+        <br><br>
+
+            <!-- Port Forwarding -->
+             <details>
+                <summary>Port Forwarding</summary>
+                <br>
+
+                <details>
+                   <summary>Creating port forwarding rules</summary>
+                   <br>
+                       <p>These rules are optional but will forward 1 ssh + 20 ports</p>
+                       <p><img src="guide.d/screen7.0.0.webp" alt=""></p>
+                </details>
+             </details>
+            <!-- Port Forwarding -->
+
+        <br><br>
+
+            <!-- VNC / Console -->
+            <details>
+                <summary>VNC / Console</summary>
+                <br>
+
+                <details>
+                   <summary>Adding / Removing VNC</summary>
+                   <br>
+                       <p>When accessing through VNC there is no user / password</p>
+                       <p>See example below for adding or removing vnc access</p>
+                       <p><img src="guide.d/screen8.0.0.webp" alt=""></p>
+                </details>
+                <br>
+                <details>
+                    <summary>Console Access</summary>
+                    <br>
+                        <p>Manually created vm's will not have console access by default</p>
+                        <p>On the vm os you can either use the console service or grub entry as followed</p>
+                        <br>
+                        <p>systemctl service</p>
+                        <p>systemctl enable --now serial-getty@ttyS0.service</p>
+                        <p><img src="guide.d/screen8.0.1.webp" alt=""></p>
+                        <br>
+                        <p>grub entry "/etc/default/grub"</p>
+                        <p>GRUB_CMDLINE_LINUX_DEFAULT="console=tty0 console=ttyS0,115200n8"</p>
+                        <p><img src="guide.d/screen8.0.2.webp" alt=""></p>
+                 </details>
+             </details>
+             <!-- VNC / Console -->
+        <br><br>
+        
+
+        </div>
+    </div>
+</body>
+</html>
