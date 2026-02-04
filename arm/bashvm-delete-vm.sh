@@ -98,6 +98,15 @@ delete_vm() {
 
 }
 
+echo ""
+echo "Are you sure you would like to delete this VM?"
+read -ep "Type DELETE to delete the VM or anything else to cancel: " confirmation
+
+if [ "$confirmation" != "DELETE" ]; then
+    echo "Deletion cancelled"
+    exit
+fi
+
 # Confirm the record exists before attempting database deletion
 record_count=$(sqlite3 "$db_file" "SELECT COUNT(*) FROM $net_table WHERE vm_name = '$vm_name';" 2>/dev/null)
 if [ ! -z "$record_count" ]; then
