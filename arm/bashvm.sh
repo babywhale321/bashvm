@@ -154,7 +154,7 @@ while true; do
                 echo "s. Show all storage pools     1. Show all volumes in a pool  2. Activate a storage pool"
                 echo "3. Deactivate a storage pool  4. Create a storage pool       5. Delete a storage pool"
                 echo "6. Create a storage volume    7. Delete a storage volume     8. Clone a storage volume"
-                echo "q. Back to main menu"
+                echo "9. Download a iso / file      q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " storage_manage_choice
 
@@ -170,6 +170,14 @@ while true; do
                         if [ -z "$pool_name" ]; then
                             pool_name="default"
                         fi
+
+                        # Check to see if this pool exists before continuing
+                        pool_exists=$(virsh pool-list --all | grep "$pool_name")
+                        if [ -z "$pool_exists" ]; then
+                            echo "No pool with this name was found. Please try again."
+                            continue
+                        fi
+
                         virsh vol-list --pool "$pool_name"
                         ;;
                     
@@ -179,6 +187,14 @@ while true; do
                         if [ -z "$pool_name" ]; then
                             pool_name="default"
                         fi
+                        
+                        # Check to see if this pool exists before continuing
+                        pool_exists=$(virsh pool-list --all | grep "$pool_name")
+                        if [ -z "$pool_exists" ]; then
+                            echo "No pool with this name was found. Please try again."
+                            continue
+                        fi
+
                         virsh pool-start "$pool_name"
                         ;;
                         
@@ -188,6 +204,14 @@ while true; do
                         if [ -z "$pool_name" ]; then
                             pool_name="default"
                         fi
+
+                        # Check to see if this pool exists before continuing
+                        pool_exists=$(virsh pool-list --all | grep "$pool_name")
+                        if [ -z "$pool_exists" ]; then
+                            echo "No pool with this name was found. Please try again."
+                            continue
+                        fi
+
                         virsh pool-destroy "$pool_name"
                         ;;
 
@@ -224,6 +248,14 @@ while true; do
                         if [ -z "$pool_name" ]; then
                             pool_name="default"
                         fi
+
+                        # Check to see if this pool exists before continuing
+                        pool_exists=$(virsh pool-list --all | grep "$pool_name")
+                        if [ -z "$pool_exists" ]; then
+                            echo "No pool with this name was found. Please try again."
+                            continue
+                        fi
+
                         read -ep "Enter the name of the new storage volume (e.g., new-vm): " volume_name
                         read -ep "Enter the size of the volume (e.g., 10G): " volume_capacity
                         virsh vol-create-as --pool "$pool_name" --name "$volume_name.qcow2" --capacity "$volume_capacity" --format qcow2
@@ -235,6 +267,14 @@ while true; do
                         if [ -z "$pool_name" ]; then
                             pool_name="default"
                         fi
+                        
+                        # Check to see if this pool exists before continuing
+                        pool_exists=$(virsh pool-list --all | grep "$pool_name")
+                        if [ -z "$pool_exists" ]; then
+                            echo "No pool with this name was found. Please try again."
+                            continue
+                        fi
+
                         read -ep "Enter the name of the volume to delete (e.g., new-vm): " volume_name
 
                         # Delete the storage volume
@@ -248,9 +288,53 @@ while true; do
                         read -ep "Enter the storage pool name that the volume is under [default]: " pool_name
                         if [ -z "$pool_name" ]; then
                             pool_name="default"
+                        fi
+
+                        # Check to see if this pool exists before continuing
+                        pool_exists=$(virsh pool-list --all | grep "$pool_name")
+                        if [ -z "$pool_exists" ]; then
+                            echo "No pool with this name was found. Please try again."
+                            continue
                         fi                        
 
                         virsh vol-clone "$vm_name.qcow2" "$new_vm_name.qcow2" --pool "$pool_name"
+                        ;;
+                    9)
+                        # Download a iso / file
+                        read -ep "Enter the full URL to download from (e.g., https://example/image.iso): " url_path
+                        read -ep "Enter the storage pool name that the file will download to [default]: " pool_name
+                        if [ -z "$pool_name" ]; then
+                            pool_name="default"
+                        fi
+
+                        # Check to see if this pool exists before continuing
+                        pool_exists=$(virsh pool-list --all | grep "$pool_name")
+                        if [ -z "$pool_exists" ]; then
+                            echo "No pool with this name was found. Please try again."
+                            continue
+                        fi
+
+                        pool_path=$(virsh pool-dumpxml "$pool_name" | grep '<path>' | cut -d'>' -f2 | cut -d'<' -f1)
+                        cd "$pool_path"
+                        
+                        # Extract filename from URL
+                        file_name=$(basename "$url_path")
+                        
+                        # Check if file already exists
+                        if [ -f "$file_name" ]; then
+                            echo "File '$file_name' already exists in $pool_path. Skipping download."
+                            continue
+                        fi
+                        
+                        wget --tries=2 --timeout=10 "$url_path"
+                        if [ ! $? == 0 ]; then
+                            echo "Failed to download the file."
+                            continue
+                        else
+                            echo "You may need to stop and start the pool to see the new image within bashvm"
+                            echo "You can check to see if the file is there at "$pool_path""
+                        fi
+
                         ;;
                     
                     q)
@@ -265,7 +349,7 @@ while true; do
             done
             ;;
         3)
-                       # Networks Menu       
+            # Networks Menu       
             while true; do
                 echo -e "\n============================================== Manage Network =============================================="
                 echo " s. Show all networks                   1. Show more details of a network   2. Start a network"
@@ -489,7 +573,7 @@ while true; do
                         if [ -z "$net_name" ]; then
                             net_name="default"
                         fi
-                        
+
                         echo ""
 
                         virsh net-dhcp-leases "$net_name"
@@ -619,6 +703,14 @@ while true; do
                         if [ -z "$pool_name" ]; then
                             pool_name="default"
                         fi
+
+                        # Check to see if this pool exists before continuing
+                        pool_exists=$(virsh pool-list --all | grep "$pool_name")
+                        if [ -z "$pool_exists" ]; then
+                            echo "No pool with this name was found. Please try again."
+                            continue
+                        fi
+
                         virsh pool-edit "$pool_name"
                         ;;
                     3)
@@ -1027,6 +1119,7 @@ while true; do
             # sqlite editor
             bash bashvm-sqlite-editor.sh
             ;;
+
         q)
             # Exit the script
             echo "Exiting."
