@@ -10,7 +10,7 @@ read -ep "Enter the VM name: " vm_name
 # If the variable is empty then don't continue
 if [ -z "$vm_name" ]; then
     echo "Invalid response. Please enter a VM name."
-    exit 1
+    exit
 fi
 
 # Get the network name
@@ -24,7 +24,6 @@ if [[ -z "$int_name" ]]; then
     int_name="virbr0"
 fi
 
-
 # Database file and table name
 db_file="bashvm.db"
 net_table=""$net_name"_table"
@@ -32,15 +31,23 @@ net_table=""$net_name"_table"
 # Check if the database exists
 if [ ! -f "$db_file" ]; then
     echo "Database file '$db_file' does not exist. Nothing to delete."
-    exit 1
+    exit
 fi
 
 # Confirm the record exists before deleting
-record_count=$(sqlite3 $db_file "SELECT COUNT(*) FROM $net_table WHERE vm_name = '$vm_name';")
+vm_exists=$(sqlite3 "$db_file" "SELECT EXISTS(SELECT 1 FROM "$net_table" WHERE vm_name='$vm_name');")
 
-if [ -z "$record_count" ]; then
-    echo "No record found for VM name '$vm_name'."
-    exit 1
+# Verify the result
+if [[ "$vm_exists" -eq 0 ]]; then
+    echo "No record found for VM name '$vm_name' in the database."
+    exit
+fi
+
+# Check if there are rules present in the hook file
+vm_hook=$(cat /etc/libvirt/hooks/qemu | grep "$vm_name")
+if [ -z "$vm_hook" ]; then
+    echo "No record found for VM name '$vm_name' in the hook file. ( /etc/libvirt/hooks/qemu )"
+    exit
 fi
 
 # Delete the record
