@@ -39,24 +39,23 @@ net_table="${net_name}_table"
 # Function to delete a VM's database entry
 delete_db_entry() {
     
-    resource=$(sqlite3 "$db_file" "SELECT ipv4, ssh_port, start_port, end_port FROM $net_table WHERE vm_name = '$vm_name';")
-
-    if [ -z "$resource" ]; then
-        echo "No database entry found for the VM. Skipping database deletion."    
-        return
-    fi
-
-    sqlite3 "$db_file" "DELETE FROM $net_table WHERE vm_name = '$vm_name';"
-    if [ $? -eq 0 ]; then
-        echo "Database entry deleted." 
+    vm_exists=$(sqlite3 "$db_file" "SELECT EXISTS(SELECT 1 FROM "$net_table" WHERE vm_name='$vm_name');")
+    if [[ "$vm_exists" -eq 0 ]]; then
+        echo "No database entry found for the VM. Skipping database deletion."
     else
-        echo "Failed to delete database entry."
+        sqlite3 "$db_file" "DELETE FROM $net_table WHERE vm_name = '$vm_name';"
+        if [ $? -eq 0 ]; then
+            echo "Database entry deleted." 
+        else
+            echo "Failed to delete database entry."
+        fi
     fi
     
 }
 
 # Function to delete the VM and related resources
 delete_vm() {
+    
     echo "Removing DHCP reservation..."
     vm_mac=$(virsh net-dumpxml "$net_name" 2>/dev/null | grep "$vm_name" | head -n 1 | awk '{print $2}' | cut -d"'" -f2)
     vm_ip=$(virsh net-dumpxml "$net_name" 2>/dev/null | grep "$vm_name" | head -n 1 | awk '{print $4}' | cut -d"'" -f2)
@@ -107,14 +106,7 @@ if [ "$confirmation" != "DELETE" ]; then
     exit
 fi
 
-# Confirm the record exists before attempting database deletion
-record_count=$(sqlite3 "$db_file" "SELECT COUNT(*) FROM $net_table WHERE vm_name = '$vm_name';" 2>/dev/null)
-if [ ! -z "$record_count" ]; then
-    delete_db_entry
-else
-    echo "No database entry exists for the VM. Skipping database operations."
-fi
-
+delete_db_entry
 delete_vm
 
 echo "VM deletion process completed."
