@@ -870,7 +870,7 @@ while true; do
 
         8)
             # VNC / Console Access
-                        while true; do
+            while true; do
                 echo -e "\n======================== VNC / Console Access ========================"
                 echo "s. Show assigned VNC ports  1. Add VNC port with password  2. Remove VNC port"        
                 echo "3. Console into a vm        q. Back to main menu"
@@ -901,6 +901,12 @@ while true; do
                     1)
                         # Add vnc access with password
                         read -ep "Enter the name of the virtual machine (e.g., vm1): " vm_name
+
+                        vm_check=$(virsh dominfo "$vm_name")
+                        if [ ! $? == 0 ];then
+                            continue
+                        fi
+                        
                         read -ep "Enter a VNC password to use (e.g., pass123): " vnc_pass
 
                         add_vnc=" <channel type='unix'>
@@ -942,6 +948,12 @@ while true; do
                     2)
                         # Remove VNC Port
                         read -ep "Enter the name of the virtual machine: " vm_name
+                        
+                        vm_check=$(virsh dominfo "$vm_name")
+                        if [ ! $? == 0 ];then
+                            continue
+                        fi
+                        
                         remove_vnc=" <channel type='unix'>
                             <target type='virtio' name='org.qemu.guest_agent.0'/>
                             <address type='virtio-serial' controller='0' bus='0' port='1'/>
@@ -978,8 +990,14 @@ while true; do
 
                     3)
                         # Console into a VM
-                        read -ep "Enter the VM name to console into: " hostname
-                        virsh console "$hostname"
+                        read -ep "Enter the VM name to console into: " vm_name
+
+                        vm_check=$(virsh dominfo "$vm_name")
+                        if [ ! $? == 0 ];then
+                            continue
+                        fi
+
+                        virsh console "$vm_name"
                         ;;
                         
                     q)
