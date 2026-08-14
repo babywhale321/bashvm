@@ -1,3 +1,5 @@
+
+
 # bashvm
 
 bashvm is a console based virtual machine manager
@@ -35,6 +37,9 @@ Download the new version
 Copy the database file back into the bashvm directory
 
 `cp bashvm.db bashvm/`
+
+`cd bashvm/`
+`bash bashvm-installer.sh`
 
 ### Recommended OS for bashvm
 #### amd64
