@@ -173,7 +173,7 @@ while true; do
                         done
                         
                         while true; do
-                            read -ep "Enter the name for the new cloned VM: " vm_name_new
+                            read -ep "Enter the new name of the VM: " vm_name_new
                             vm_check=$(virsh dominfo "$vm_name_new" >> /dev/null)
                             if [ $? == 0 ];then
                                 echo "Please try another name, this one is already taken."
