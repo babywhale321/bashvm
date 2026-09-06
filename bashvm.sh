@@ -24,7 +24,7 @@ while true; do
                     echo " 6. Enable autostart of a VM   7. Disable autostart of a VM     8. Create a new / existing VM"
                     echo " 9. Undefine a VM             10. Create a new VM (Automated)  11. Console into a VM"        
                     echo "12. Change resources of a VM  13. Delete a VM                  14. Clone a VM"
-                    echo "15. Rename a VM                q. Back to main menu"
+                    echo "15. Clone multiple VM's       16. Rename a VM                   q. Back to main menu"
                     echo ""
                     read -ep "Enter your choice: " vm_manage_choice
                     case $vm_manage_choice in
@@ -116,9 +116,42 @@ while true; do
                         bash bashvm-delete-vm.sh
                         ;;
 
+                    
                     14)
                         # Clone a VM
-                        read -ep "Enter the name of the vm to clone (e.g., test-vm): " vm_name
+                        while true; do
+                            read -ep "Enter the name of the VM to clone (e.g., test-vm): " vm_name
+                            vm_check=$(virsh dominfo "$vm_name")
+                            if [ ! $? == 0 ];then
+                                continue
+                            fi
+                            break
+                        done
+
+                        while true; do
+                            read -ep "Enter the name for the new cloned VM: " vm_name_new
+                            vm_check=$(virsh dominfo "$vm_name_new" >> /dev/null)
+                            if [ $? == 0 ];then
+                                echo "Please try another name, this one is already taken."
+                                continue
+                            fi
+                            break
+                        done
+
+                        virt-clone --original "$vm_name" --name "$vm_name_new" --auto-clone
+                        ;;
+
+                    15)
+                        # Clone multiple virtual machines
+                        while true; do
+                            read -ep "Enter the name of the VM to clone (e.g., test-vm): " vm_name
+                            vm_check=$(virsh dominfo "$vm_name")
+                            if [ ! $? == 0 ];then
+                                continue
+                            fi
+                            break
+                        done
+
                         read -ep "Enter the amount of clones of this vm to create (e.g., 1): " clone_num
                         counter=1
                         while [ "$counter" -le "$clone_num" ]
@@ -127,10 +160,27 @@ while true; do
                             ((counter++))
                         done
                         ;;
-                    15)
+
+                    16)
                         # Rename a VM
-                        read -ep "Enter the name of the virtual machine: " vm_name
-                        read -ep "Enter the new name of the virtual machine: " vm_name_new
+                        while true; do
+                            read -ep "Enter the name of the VM to rename (e.g., test-vm): " vm_name
+                            vm_check=$(virsh dominfo "$vm_name")
+                            if [ ! $? == 0 ];then
+                                continue
+                            fi
+                            break
+                        done
+                        
+                        while true; do
+                            read -ep "Enter the name for the new cloned VM: " vm_name_new
+                            vm_check=$(virsh dominfo "$vm_name_new" >> /dev/null)
+                            if [ $? == 0 ];then
+                                echo "Please try another name, this one is already taken."
+                                continue
+                            fi
+                            break
+                        done
 
                         virsh domrename "$vm_name" "$vm_name_new"
                         ;;
