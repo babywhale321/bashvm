@@ -29,19 +29,30 @@ pool_image_download() {
     fi
 }
 
+check_iso_server() {
+iso_site="iso.bashvm.com"
+ping -4 -c 1 -W 1 "$iso_site" >> /dev/null
+}
 
 # Prompt user for VM details
 read -ep "Enter the name for the new / existing virtual machine: " new_vm_name
 read -ep "Enter the amount of memory in MB (e.g., 1024): " new_memory
 read -ep "Enter the number of virtual CPUs (e.g., 2): " new_vcpus
 
-echo ""
-echo "1. debian-13.2         2. ubuntu-24.04"
-echo ""
+if check_iso_server; then
+    echo ""
+    echo "1. debian-13.2         2. ubuntu-24.04"
+    echo ""
 
-echo "Enter the iso you would like to use"
-read -ep "You can safely say no if you have your own or not using an iso: " iso_question
-
+    echo "Enter the iso you would like to use"
+    read -ep "You can enter nothing if you have your own iso or not using an iso: " iso_question
+else
+    echo ""
+    echo "iso.bashvm.com seems to be down."
+    echo "You will need to supply your own ISO file."
+    echo ""
+    iso_question=""
+fi
 
 if [ "$iso_question" == 1 ];then
     iso_img="debian-13.2.0-arm64-netinst.iso"
