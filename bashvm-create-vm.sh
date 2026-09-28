@@ -29,19 +29,31 @@ pool_image_download() {
     fi
 }
 
+check_iso_server() {
+iso_site="iso.bashvm.com"
+ping -4 -c 1 -W 1 "$iso_site" >> /dev/null
+}
 
 # Prompt user for VM details
 read -ep "Enter the name for the new / existing virtual machine: " new_vm_name
 read -ep "Enter the amount of memory in MB (e.g., 1024): " new_memory
 read -ep "Enter the number of virtual CPUs (e.g., 2): " new_vcpus
 
-echo ""
-echo "1. debian-13.2         2. ubuntu-24.04  3. AlmaLinux-10.1"
-echo "4. openmediavault-7.4  5. TrueNAS-SCALE-25.10"
-echo ""
+if check_iso_server; then
+    echo ""
+    echo "1. debian-13.2         2. ubuntu-24.04  3. AlmaLinux-10.1"
+    echo "4. openmediavault-7.4  5. TrueNAS-SCALE-25.10"
+    echo ""
 
-echo "Enter the iso you would like to use"
-read -ep "You can enter nothing if you have your own iso or not using an iso: " iso_question
+    echo "Enter the iso you would like to use"
+    read -ep "You can enter nothing if you have your own iso or not using an iso: " iso_question
+else
+    echo ""
+    echo "iso.bashvm.com seems to be down."
+    echo "You will need to supply your own ISO file."
+    echo ""
+    iso_question=""
+fi
 
 target_bus="<target dev='vda' bus='virtio'/>
 <address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x0'/>"
