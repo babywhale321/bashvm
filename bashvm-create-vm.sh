@@ -10,22 +10,28 @@ generate_mac_address() {
 }
 
 pool_image_download() {
+    # Prompt for the storage pool name, default to "default" if empty
     read -ep "Enter the storage pool name to download / use [default]: " pool_name
 
     if [ -z "$pool_name" ]; then
         pool_name="default"
     fi
+
+    # Get the filesystem path of the storage pool
     pool_path=$(virsh pool-dumpxml "$pool_name" | grep '<path>' | cut -d'>' -f2 | cut -d'<' -f1)
+
+    # Full path to where the ISO should live
     iso_path="$pool_path/$iso_img"
+
     # Check to see if the iso file is there
     if [ -f "$iso_path" ]; then
         # ISO is already present, Dont download
-        echo "File "$iso_img" already there. Canceling re-download."
+        echo "File $iso_img already there. Canceling re-download."
     else
-        # ISO is not present, Download
-        cd "$pool_path"
-        wget "$iso_download"
-        iso_path="$pool_path/$iso_img"
+        # Download to a .part file so it doesn't get mistaken for a complete one and then wget -c can resume it
+        part="${iso_path}.part"
+
+        wget -c -O "$part" "$iso_download" && mv "$part" "$iso_path"
     fi
 }
 

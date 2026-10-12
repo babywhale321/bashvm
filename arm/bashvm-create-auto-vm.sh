@@ -77,16 +77,16 @@ final_message: "The system is up, after "$UPTIME" seconds"
 mv bashvm-cloudinit.yaml /var/lib/libvirt/images
 
 echo ""
-echo "Starting download of cloud image..."
+echo "Starting download of cloud image if not already there..."
 
 # Check to see if the qcow2 file is there
 if [ -f "/var/lib/libvirt/images/$qcow2_image" ]; then
     # Dont download
     echo "File $qcow2_image already there. Canceling re-download..."
 else
-    # Download
-    wget $qcow2_download
-    mv $qcow2_image /var/lib/libvirt/images/$qcow2_image
+    # Download or resume downloading
+    part="/var/lib/libvirt/images/${qcow2_image}.part"
+    wget -c -O "$part" "$qcow2_download" && mv "$part" "/var/lib/libvirt/images/$qcow2_image"
 fi
 
 virsh net-info default | grep "Active:" | grep "yes" >> /dev/null

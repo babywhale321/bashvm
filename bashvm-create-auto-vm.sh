@@ -86,8 +86,7 @@ if [ -f "/var/lib/libvirt/images/$qcow2_image" ]; then
     echo "File $qcow2_image already there. Canceling re-download..."
 else
     # Download
-    wget $qcow2_download
-    mv $qcow2_image /var/lib/libvirt/images/$qcow2_image
+    wget -P /var/lib/libvirt/images/$qcow2_image $qcow2_download
 fi
 
 virsh net-info default | grep "Active:" | grep "yes" >> /dev/null
