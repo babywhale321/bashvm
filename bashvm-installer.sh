@@ -113,21 +113,24 @@ fi
 
 # Certificate dir
 CERT_DIR="/etc/pki/libvirt-vnc"
-# CA validity
-CA_DAYS=3650
+# Validity
+VALID_DAYS="3650"
+
+# Determine hostname and IPs
+HOSTNAME_FQDN=$(hostname -f 2>/dev/null || hostname)
+IP_ADDRS=$(hostname -I | tr ' ' '\n' | grep -v '^$' || true)
 
 mkdir -p "$CERT_DIR"
 chmod 755 "$CERT_DIR"
 
-echo "Generating Certificate Authority (CA)..."
 cd "$CERT_DIR"
 
 # CA template
 cat > ca.info <<EOF
-cn = "VNC CA"
+cn = "$HOSTNAME_FQDN"
 ca
 cert_signing_key
-expiration_days = $CA_DAYS
+expiration_days = $VALID_DAYS
 EOF
 
 # Generate CA private key
@@ -138,17 +141,11 @@ certtool --generate-self-signed \
     --outfile ca-cert.pem
 rm -f ca.info
 
-echo "Generating server certificate..."
-
-# Determine hostname and IPs
-HOSTNAME_FQDN=$(hostname -f 2>/dev/null || hostname)
-HOSTNAME_SHORT=$(hostname -s)
-IP_ADDRS=$(hostname -I | tr ' ' '\n' | grep -v '^$' || true)
-
 # Server template
 cat > server.info <<EOF
-organization = "Libvirt VNC"
+organization = "$HOSTNAME_FQDN"
 cn = "$HOSTNAME_FQDN"
+expiration_days = $VALID_DAYS
 EOF
 
 # Add all detected IPv4/IPv6 addresses
@@ -213,7 +210,7 @@ echo "Configuration updated."
 # Check to see if other virtual machines are running.
 vm_on=$(virsh list --all | grep -E '^\s+[0-9]+' | wc -l)
 
-# If only 1 then restart libvirtd
+# If none then restart libvirtd
 if [ "$vm_on" -eq 0 ]; then
     systemctl restart libvirtd
 else
