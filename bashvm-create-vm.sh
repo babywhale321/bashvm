@@ -177,6 +177,7 @@ vm_xml="<domain type='kvm'>
     <vmport state='off'/>
 </features>
 <cpu mode='host-passthrough' check='none' migratable='on'>
+  <topology sockets='1' cores='$new_vcpus' threads='1'/>
 </cpu>
 <clock offset='utc'>
     <timer name='rtc' tickpolicy='catchup'/>
