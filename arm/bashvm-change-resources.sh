@@ -124,7 +124,7 @@ while true; do
             read -ep "Enter the new vcpu number (e.g., 4): " vcpu_num
             virt-xml "$vm_name" --edit --vcpus "$vcpu_num",cores="$vcpu_num",sockets=1,threads=1
             if [ ! $? == 0 ]; then
-                echo "Failed to set new vcpu maximum"
+                echo "Failed to set new vcpu count"
                 break
             fi
             echo "New vcpu count has been set successfully"
