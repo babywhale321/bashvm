@@ -56,8 +56,8 @@ The bashvm installer script installs the following packages
 ### Screenshots
 https://bashvm.com/screenshots.html
 
-### Guide
-https://bashvm.com/guide.html
+### Documentation
+https://bashvm.com/documentation.html
 
 ### Donations:
 https://www.paypal.com/paypalme/babywhale123
