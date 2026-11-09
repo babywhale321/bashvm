@@ -227,7 +227,7 @@ while true; do
                             echo "No pool with this name was found. Please try again."
                             continue
                         fi
-
+                        virsh pool-refresh "$pool_name" >> /dev/null
                         virsh vol-list --pool "$pool_name"
                         ;;
                     

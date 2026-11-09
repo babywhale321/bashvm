@@ -106,6 +106,7 @@ else
     fi
     
     # List everything in pool
+    virsh pool-refresh "$pool_name" >> /dev/null
     virsh vol-list --pool "$pool_name"
 
     # full iso path needed
@@ -124,8 +125,8 @@ if [[ "$lowercase_input" == y || "$lowercase_input" == ye || "$lowercase_input" 
 
     # disk name, capacity and pool
     read -ep "Enter the name of the new storage volume (e.g., new-vm): " volume_name
-    read -ep "Enter the size of the volume (e.g., 10GB): " volume_capacity
-    read -ep "Enter the storage pool name [default]: " pool_name
+    read -ep "Enter the size of the new volume (e.g., 10GB): " volume_capacity
+    read -ep "Enter the storage pool name where the new volume will reside [default]: " pool_name
     if [ -z "$pool_name" ]; then
         pool_name="default"
     fi
@@ -139,6 +140,7 @@ else
         pool_name="default"
     fi
     # List everything in pool
+    virsh pool-refresh "$pool_name" >> /dev/null
     virsh vol-list --pool "$pool_name"
     # full disk path needed
     read -ep "Enter the full path of the virtual machine disk (e.g., /var/lib/libvirt/images/vm.qcow2): " disk_path
@@ -156,6 +158,8 @@ if [ -z "$mac_address" ];then
     mac_address=$(generate_mac_address)
 fi
 
+#Generate VNC password
+vnc_pass=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 8)
 # Generate a UUID
 uuid=$(cat /proc/sys/kernel/random/uuid)
 
@@ -273,7 +277,7 @@ vm_xml="<domain type='kvm'>
     </input>
     <input type='mouse' bus='ps2'/>
     <input type='keyboard' bus='ps2'/>
-    <graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0'>
+    <graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0' passwd='$vnc_pass'>
     <listen type='address' address='0.0.0.0'/>
     </graphics>
     <sound model='ich9'>
@@ -303,7 +307,9 @@ echo "$vm_xml" > "$vm_xml_file"
 # Create the new virtual machine
 virsh define "$vm_xml_file"
 
-echo "Please note that there will be a vnc port automatically assigned to this vm with no password"
-echo "The VNC password can be set within the VNC / Console Access menu"
+echo "Please note that there will be a vnc port and password automatically assigned to this vm."
+echo "VNC Password: "$vnc_pass""
+echo "The VNC password can be changed within the VNC / Console Access menu"
+echo "You can check what VNC port has been assigned when the VM is started in the VNC / Console Access menu"
 echo "To have console access for this vm you will need to run this systemd command on the vm"
 echo "systemctl enable --now serial-getty@ttyS0.service"

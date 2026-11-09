@@ -77,6 +77,7 @@ else
         pool_name="default"
     fi
     # List everything in pool
+    virsh pool-refresh "$pool_name" >> /dev/null
     virsh vol-list --pool "$pool_name"
     # full iso path needed
     echo "Enter the full path to the ISO file (e.g., /var/lib/libvirt/images/debian-12.6.0-arm64-netinst.iso)"
@@ -97,8 +98,8 @@ if [[ "$lowercase_input" == y || "$lowercase_input" == ye || "$lowercase_input" 
 
     # disk name, capacity and pool
     read -ep "Enter the name of the new storage volume (e.g., new-vm): " volume_name
-    read -ep "Enter the size of the volume (e.g., 10GB): " volume_capacity
-    read -ep "Enter the storage pool name [default]: " pool_name
+    read -ep "Enter the size of the new volume (e.g., 10GB): " volume_capacity
+    read -ep "Enter the storage pool name where the new volume will reside [default]: " pool_name
     if [ -z "$pool_name" ]; then
         pool_name="default"
     fi
@@ -112,6 +113,7 @@ else
         pool_name="default"
     fi
     # List everything in pool
+    virsh pool-refresh "$pool_name" >> /dev/null
     virsh vol-list --pool "$pool_name"
     # full disk path needed
     read -ep "Enter the full path of the virtual machine disk (e.g., /var/lib/libvirt/images/vm.qcow2): " disk_path
