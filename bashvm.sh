@@ -664,20 +664,28 @@ while true; do
         4)
             # Managing a snapshot
             while true; do
-                echo -e "\n========================= Manage Snapshot ========================="
-                echo "s. Show all snapshots of a VM  1. Create a snapshot  2. Delete a snapshot"
-                echo "3. Revert to a snapshot        q. Back to main menu"
+                echo -e "\n=========================== Manage Snapshot ==========================="
+                echo "s. Show all snapshots  1. Show all snapshots of a VM  2. Create a snapshot"
+                echo "3. Delete a snapshot   4. Revert to a snapshot        q. Back to main menu"
                 echo ""
                 read -ep "Enter your choice: " snapshot_manage_choice
 
                 case $snapshot_manage_choice in
                     s)
+                        for vm in $(virsh list --all --name); do
+                            [ -z "$vm" ] && continue
+                            echo "Snapshots for $vm"
+                            virsh snapshot-list "$vm"
+                            echo ""
+                        done
+                        ;;
+                    1)
                         # List all snapshots of a virtual machine
                         read -ep "Enter the name of the virtual machine: " vm_name
 
                         virsh snapshot-list "$vm_name"
                         ;;
-                    1)
+                    2)
                         # Create a snapshot of a virtual machine
                         read -ep "Enter the name of the virtual machine: " vm_name
                         
@@ -690,7 +698,7 @@ while true; do
                         
                         virsh snapshot-create-as "$vm_name" "$snapshot_name"
                         ;;
-                    2)
+                    3)
                         # Delete a snapshot of a virtual machine
                         read -ep "Enter the name of the virtual machine: " vm_name
 
@@ -703,7 +711,7 @@ while true; do
                         
                         virsh snapshot-delete "$vm_name" "$snapshot_name"
                         ;;
-                    3)
+                    4)
                         # Revert to a snapshot of a virtual machine
                         read -ep "Enter the name of the virtual machine: " vm_name
 
