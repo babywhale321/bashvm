@@ -707,8 +707,21 @@ while true; do
                         fi
 
                         read -ep "Enter the name of the snapshot to delete: " snapshot_name
+
+                        echo ""
+                        echo "Are you sure you would like to delete this snapshot?"
+                        read -ep "Type DELETE to delete the snapshot or anything else to cancel: " confirmation
+
+                        if [ "$confirmation" != "DELETE" ]; then
+                            echo "Deletion cancelled"
+                            continue
+                        fi
                         
                         virsh snapshot-delete "$vm_name" "$snapshot_name"
+                        if [ ! $? == 0 ]; then
+                            echo "Failed to delete snapshot ""$snapshot_name"""
+                            continue
+                        fi
                         ;;
                     4)
                         # Revert to a snapshot of a virtual machine
@@ -720,6 +733,15 @@ while true; do
                         fi
                         
                         read -ep "Enter the name of the snapshot to revert to: " snapshot_name
+
+                        echo ""
+                        echo "Are you sure you would like to revert this snapshot?"
+                        read -ep "Type REVERT to revert the snapshot or anything else to cancel: " confirmation
+
+                        if [ "$confirmation" != "REVERT" ]; then
+                            echo "Revert cancelled"
+                            continue
+                        fi
                         
                         virsh snapshot-revert "$vm_name" "$snapshot_name"
                         if [ ! $? == 0 ]; then
